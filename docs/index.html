@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>RGB-D Depth Lab | 完整视频</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand-block">
+      <div class="brand-mark" aria-hidden="true"></div>
+      <div>
+        <h1>RGB-D Depth Lab</h1>
+        <p id="brand-subtitle">完整视频 · 三相机深度处理对比</p>
+      </div>
+    </div>
+    <div class="header-status">
+      <span class="status-dot" aria-hidden="true"></span>
+      <span>本地完整媒体</span>
+      <span class="status-divider"></span>
+      <span id="media-count">85 个视频</span>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <nav class="view-switcher" aria-label="页面版本">
+      <button id="depth-view" type="button" data-view="depth">
+        <i data-lucide="layers-3"></i>
+        <span><strong>深度处理对比</strong><small>完整 RGB + 方法 A/B 深度视频</small></span>
+      </button>
+      <button id="attention-view" type="button" data-view="attention">
+        <i data-lucide="scan-eye"></i>
+        <span><strong>ACT 热力图对比</strong><small>完整 RGB + 方法 A/B 注意力视频</small></span>
+      </button>
+    </nav>
+
+    <section class="control-strip" aria-label="比较控制">
+      <label class="control-field dataset-field">
+        <span>数据集</span>
+        <select id="dataset-select"></select>
+      </label>
+      <label class="control-field">
+        <span>方法 A</span>
+        <select id="method-a-select"></select>
+      </label>
+      <button id="swap-methods" class="icon-button" type="button" title="交换方法 A 和 B" aria-label="交换方法 A 和 B">
+        <i data-lucide="arrow-left-right"></i>
+      </button>
+      <label class="control-field">
+        <span>方法 B</span>
+        <select id="method-b-select"></select>
+      </label>
+      <div class="model-stamp">
+        <span id="stamp-label">显示范围</span>
+        <strong id="stamp-value">Metric depth · 0.2–4.0 m</strong>
+      </div>
+    </section>
+
+    <section class="viewer" aria-label="RGB-D 完整视频比较">
+      <div class="viewer-heading">
+        <div>
+          <p id="viewer-eyebrow" class="eyebrow">30 FPS · 三相机同步视频</p>
+          <h2 id="dataset-title">加载中</h2>
+        </div>
+        <div class="frame-readout">
+          <span id="time-readout">00:00.000 / 00:00.000</span>
+          <strong id="frame-readout">帧 0 / 0</strong>
+        </div>
+      </div>
+
+      <div class="camera-header" aria-hidden="true">
+        <span></span>
+        <div id="cam-h-header" class="primary-camera"><strong>Head</strong><small id="cam-h-role">主要视角 · Gemini-335L</small></div>
+        <div id="cam-l-header" class="control-wrist"><strong>Left Wrist</strong><small id="cam-l-role">非执行腕对照 · D405</small></div>
+        <div id="cam-r-header" class="control-wrist"><strong>Right Wrist</strong><small id="cam-r-role">非执行腕对照 · D405</small></div>
+      </div>
+
+      <div class="visual-row rgb-row">
+        <div class="row-label">
+          <span class="row-index">RGB</span>
+          <strong>参考视频</strong>
+          <small>同步彩色图像</small>
+        </div>
+        <div class="media-frame"><video id="rgb-video" muted playsinline preload="metadata"></video></div>
+      </div>
+
+      <div class="visual-row method-a-row">
+        <div class="row-label">
+          <span class="row-index">A</span>
+          <strong id="method-a-label">方法 A</strong>
+          <small id="method-a-caption">Metric depth · 0.2–4.0 m</small>
+        </div>
+        <div class="media-frame"><video id="method-a-video" muted playsinline preload="metadata"></video></div>
+      </div>
+
+      <div class="visual-row method-b-row">
+        <div class="row-label">
+          <span class="row-index">B</span>
+          <strong id="method-b-label">方法 B</strong>
+          <small id="method-b-caption">Metric depth · 0.2–4.0 m</small>
+        </div>
+        <div class="media-frame"><video id="method-b-video" muted playsinline preload="metadata"></video></div>
+      </div>
+
+      <div class="transport video-transport">
+        <div class="transport-buttons">
+          <button id="previous-frame" class="icon-button" type="button" title="后退一帧" aria-label="后退一帧"><i data-lucide="skip-back"></i></button>
+          <button id="play-pause" class="icon-button primary" type="button" title="播放或暂停" aria-label="播放或暂停"><i data-lucide="play"></i></button>
+          <button id="next-frame" class="icon-button" type="button" title="前进一帧" aria-label="前进一帧"><i data-lucide="skip-forward"></i></button>
+        </div>
+        <input id="timeline" type="range" min="0" max="1" value="0" step="0.001" aria-label="视频时间轴">
+        <label class="speed-control" title="播放速度">
+          <i data-lucide="gauge"></i>
+          <select id="speed-select" aria-label="播放速度">
+            <option value="0.25">0.25×</option>
+            <option value="0.5">0.5×</option>
+            <option value="1" selected>1×</option>
+            <option value="2">2×</option>
+          </select>
+        </label>
+        <div id="visual-legend" class="heat-legend" title="深度范围">
+          <span id="legend-low">0.2 m</span><div id="legend-ramp" class="legend-ramp depth-ramp"></div><span id="legend-high">4.0 m</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="depth-summary" class="depth-summary" aria-label="深度视频显示规则">
+      <div><i data-lucide="ruler"></i><span><strong>统一物理量程</strong><small>三路相机和全部方法均按 0.2–4.0 m 显示</small></span></div>
+      <div><i data-lucide="film"></i><span><strong>完整时序</strong><small>保留每个数据集全部对齐帧，30 FPS 播放</small></span></div>
+      <div><i data-lucide="refresh-cw"></i><span><strong>同步校正</strong><small>RGB 主时钟持续校正 A/B 视频时间漂移</small></span></div>
+    </section>
+
+    <section id="metrics-band" class="metrics-band hidden" aria-label="离线评测指标">
+      <div class="metric-heading">
+        <p class="eyebrow">统一无 Prompt ACT</p>
+        <h2>当前数据集动作误差</h2>
+        <p>MAE 单位为 rad，数值越低越好。</p>
+      </div>
+      <article class="method-metrics method-a-metrics">
+        <div class="metric-method"><span>A</span><strong id="metric-a-name">方法 A</strong></div>
+        <dl>
+          <div><dt>数据集 MAE</dt><dd id="metric-a-dataset">--</dd></div>
+          <div><dt>全局 MAE</dt><dd id="metric-a-global">--</dd></div>
+          <div><dt>注意力熵</dt><dd id="metric-a-entropy">--</dd></div>
+        </dl>
+      </article>
+      <article class="method-metrics method-b-metrics">
+        <div class="metric-method"><span>B</span><strong id="metric-b-name">方法 B</strong></div>
+        <dl>
+          <div><dt>数据集 MAE</dt><dd id="metric-b-dataset">--</dd></div>
+          <div><dt>全局 MAE</dt><dd id="metric-b-global">--</dd></div>
+          <div><dt>注意力熵</dt><dd id="metric-b-entropy">--</dd></div>
+        </dl>
+      </article>
+    </section>
+
+    <section id="roi-analysis" class="roi-analysis hidden" aria-label="执行腕目标 ROI 注意力分析">
+      <div class="roi-analysis-head">
+        <div>
+          <p class="eyebrow">最终批准 SAM2 目标轨迹</p>
+          <h2>执行腕目标 ROI 注意力分析</h2>
+          <p><span id="roi-event-count">19</span> 次抓取等权 · <span id="roi-view-count">2,813</span> 个有效执行腕 ROI</p>
+        </div>
+        <a class="review-link" href="attention_review/index.html" target="_blank" rel="noopener">
+          <i data-lucide="images"></i><span>查看接触关键帧</span>
+        </a>
+      </div>
+
+      <div class="roi-comparison-grid">
+        <article class="roi-method roi-method-a">
+          <div class="roi-method-title"><span>A</span><strong id="roi-a-name">方法 A</strong></div>
+          <dl class="roi-metric-list">
+            <div><dt>当前数据集执行腕 ROI lift</dt><dd id="roi-a-sequence-lift">--</dd></div>
+            <div><dt>19 次抓取执行腕 ROI lift</dt><dd id="roi-a-lift">--</dd></div>
+            <div><dt>全局 ROI mass（未重归一化）</dt><dd id="roi-a-global-mass">--</dd></div>
+            <div><dt>相对原始深度</dt><dd id="roi-a-delta">--</dd></div>
+            <div><dt>目标/背景密度比</dt><dd id="roi-a-density">--</dd></div>
+            <div><dt>峰值命中 ROI</dt><dd id="roi-a-hit">--</dd></div>
+          </dl>
+          <p id="roi-a-ci" class="roi-ci">配对区间 --</p>
+        </article>
+
+        <article class="roi-method roi-method-b">
+          <div class="roi-method-title"><span>B</span><strong id="roi-b-name">方法 B</strong></div>
+          <dl class="roi-metric-list">
+            <div><dt>当前数据集执行腕 ROI lift</dt><dd id="roi-b-sequence-lift">--</dd></div>
+            <div><dt>19 次抓取执行腕 ROI lift</dt><dd id="roi-b-lift">--</dd></div>
+            <div><dt>全局 ROI mass（未重归一化）</dt><dd id="roi-b-global-mass">--</dd></div>
+            <div><dt>相对原始深度</dt><dd id="roi-b-delta">--</dd></div>
+            <div><dt>目标/背景密度比</dt><dd id="roi-b-density">--</dd></div>
+            <div><dt>峰值命中 ROI</dt><dd id="roi-b-hit">--</dd></div>
+          </dl>
+          <p id="roi-b-ci" class="roi-ci">配对区间 --</p>
+        </article>
+      </div>
+
+      <div class="roi-analysis-foot">
+        <div class="roi-conclusion">
+          <span class="analysis-icon"><i data-lucide="chart-no-axes-combined"></i></span>
+          <div><strong id="roi-comparison-title">A/B 综合分析</strong><p id="roi-comparison-text">正在读取最新注意力指标。</p><small id="roi-significance"></small></div>
+        </div>
+        <div class="roi-ranking-wrap">
+          <strong>执行腕 ROI lift 排名</strong>
+          <ol id="roi-ranking" class="roi-ranking"></ol>
+        </div>
+      </div>
+    </section>
+
+    <footer class="method-note">
+      <i data-lucide="info"></i>
+      <span id="method-note-text">深度视频使用统一量程伪彩显示，可连续观察空洞、边缘、噪声和时序稳定性。</span>
+    </footer>
+  </main>
+
+  <div id="loading-state" class="loading-state"><span></span><b id="loading-text">正在加载完整视频目录</b></div>
+  <script src="vendor/lucide.min.js"></script>
+  <script src="data/catalog.js"></script>
+  <script src="data/attention_metrics.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

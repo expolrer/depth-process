@@ -1,0 +1,860 @@
+{
+  "generatedAt": "2026-08-14T03:15:42.893019+00:00",
+  "ok": true,
+  "datasets": 5,
+  "videos": 85,
+  "bytes": 491029017,
+  "failures": [],
+  "records": [
+    {
+      "path": "media/leju_claw/rgb.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 1747,
+      "fps": "30/1",
+      "duration": 58.233333,
+      "sampleAspectRatio": "1:1",
+      "bytes": 4561751
+    },
+    {
+      "path": "media/leju_claw/depth/raw_aligned.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 1747,
+      "fps": "30/1",
+      "duration": 58.233333,
+      "sampleAspectRatio": "1:1",
+      "bytes": 26789804
+    },
+    {
+      "path": "media/leju_claw/depth/rgb_guided.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 1747,
+      "fps": "30/1",
+      "duration": 58.233333,
+      "sampleAspectRatio": "1:1",
+      "bytes": 22269375
+    },
+    {
+      "path": "media/leju_claw/depth/temporal_rgb_guided.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 1747,
+      "fps": "30/1",
+      "duration": 58.233333,
+      "sampleAspectRatio": "1:1",
+      "bytes": 22187371
+    },
+    {
+      "path": "media/leju_claw/depth/lingbot_v05.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 1747,
+      "fps": "30/1",
+      "duration": 58.233333,
+      "sampleAspectRatio": "1:1",
+      "bytes": 3469370
+    },
+    {
+      "path": "media/leju_claw/depth/depth_anything_v2_fused.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 1747,
+      "fps": "30/1",
+      "duration": 58.233333,
+      "sampleAspectRatio": "1:1",
+      "bytes": 16003337
+    },
+    {
+      "path": "media/leju_claw/depth/lingbot_v05_sensor_fused.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 1747,
+      "fps": "30/1",
+      "duration": 58.233333,
+      "sampleAspectRatio": "1:1",
+      "bytes": 12434465
+    },
+    {
+      "path": "media/leju_claw/depth/ai_consensus_fused.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 1747,
+      "fps": "30/1",
+      "duration": 58.233333,
+      "sampleAspectRatio": "1:1",
+      "bytes": 18522558
+    },
+    {
+      "path": "media/leju_claw/attention/raw_aligned.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 1747,
+      "fps": "30/1",
+      "duration": 58.233333,
+      "sampleAspectRatio": "N/A",
+      "bytes": 8311631
+    },
+    {
+      "path": "media/leju_claw/attention/rgb_guided.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 1747,
+      "fps": "30/1",
+      "duration": 58.233333,
+      "sampleAspectRatio": "N/A",
+      "bytes": 8556944
+    },
+    {
+      "path": "media/leju_claw/attention/temporal_rgb_guided.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 1747,
+      "fps": "30/1",
+      "duration": 58.233333,
+      "sampleAspectRatio": "N/A",
+      "bytes": 8578147
+    },
+    {
+      "path": "media/leju_claw/attention/lingbot_v05.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 1747,
+      "fps": "30/1",
+      "duration": 58.233333,
+      "sampleAspectRatio": "N/A",
+      "bytes": 6771680
+    },
+    {
+      "path": "media/leju_claw/attention/depth_anything_v2_fused.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 1747,
+      "fps": "30/1",
+      "duration": 58.233333,
+      "sampleAspectRatio": "N/A",
+      "bytes": 7820963
+    },
+    {
+      "path": "media/leju_claw/attention/lingbot_v05_sensor_fused.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 1747,
+      "fps": "30/1",
+      "duration": 58.233333,
+      "sampleAspectRatio": "N/A",
+      "bytes": 7668537
+    },
+    {
+      "path": "media/leju_claw/attention/ai_consensus_fused.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 1747,
+      "fps": "30/1",
+      "duration": 58.233333,
+      "sampleAspectRatio": "N/A",
+      "bytes": 8135643
+    },
+    {
+      "path": "media/leju_claw/attention/zero_depth.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 1747,
+      "fps": "30/1",
+      "duration": 58.233333,
+      "sampleAspectRatio": "N/A",
+      "bytes": 2848582
+    },
+    {
+      "path": "media/leju_claw/attention/spatially_shuffled_raw.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 1747,
+      "fps": "30/1",
+      "duration": 58.233333,
+      "sampleAspectRatio": "N/A",
+      "bytes": 13156417
+    },
+    {
+      "path": "media/dex_hand/rgb.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 1382,
+      "fps": "30/1",
+      "duration": 46.066667,
+      "sampleAspectRatio": "1:1",
+      "bytes": 4656818
+    },
+    {
+      "path": "media/dex_hand/depth/raw_aligned.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 1382,
+      "fps": "30/1",
+      "duration": 46.066667,
+      "sampleAspectRatio": "1:1",
+      "bytes": 14284074
+    },
+    {
+      "path": "media/dex_hand/depth/rgb_guided.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 1382,
+      "fps": "30/1",
+      "duration": 46.066667,
+      "sampleAspectRatio": "1:1",
+      "bytes": 12514403
+    },
+    {
+      "path": "media/dex_hand/depth/temporal_rgb_guided.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 1382,
+      "fps": "30/1",
+      "duration": 46.066667,
+      "sampleAspectRatio": "1:1",
+      "bytes": 12386457
+    },
+    {
+      "path": "media/dex_hand/depth/lingbot_v05.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 1382,
+      "fps": "30/1",
+      "duration": 46.066667,
+      "sampleAspectRatio": "1:1",
+      "bytes": 3765892
+    },
+    {
+      "path": "media/dex_hand/depth/depth_anything_v2_fused.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 1382,
+      "fps": "30/1",
+      "duration": 46.066667,
+      "sampleAspectRatio": "1:1",
+      "bytes": 11062259
+    },
+    {
+      "path": "media/dex_hand/depth/lingbot_v05_sensor_fused.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 1382,
+      "fps": "30/1",
+      "duration": 46.066667,
+      "sampleAspectRatio": "1:1",
+      "bytes": 8449633
+    },
+    {
+      "path": "media/dex_hand/depth/ai_consensus_fused.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 1382,
+      "fps": "30/1",
+      "duration": 46.066667,
+      "sampleAspectRatio": "1:1",
+      "bytes": 11171530
+    },
+    {
+      "path": "media/dex_hand/attention/raw_aligned.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 1382,
+      "fps": "30/1",
+      "duration": 46.066667,
+      "sampleAspectRatio": "N/A",
+      "bytes": 7205624
+    },
+    {
+      "path": "media/dex_hand/attention/rgb_guided.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 1382,
+      "fps": "30/1",
+      "duration": 46.066667,
+      "sampleAspectRatio": "N/A",
+      "bytes": 7330726
+    },
+    {
+      "path": "media/dex_hand/attention/temporal_rgb_guided.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 1382,
+      "fps": "30/1",
+      "duration": 46.066667,
+      "sampleAspectRatio": "N/A",
+      "bytes": 7343714
+    },
+    {
+      "path": "media/dex_hand/attention/lingbot_v05.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 1382,
+      "fps": "30/1",
+      "duration": 46.066667,
+      "sampleAspectRatio": "N/A",
+      "bytes": 6278749
+    },
+    {
+      "path": "media/dex_hand/attention/depth_anything_v2_fused.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 1382,
+      "fps": "30/1",
+      "duration": 46.066667,
+      "sampleAspectRatio": "N/A",
+      "bytes": 7091066
+    },
+    {
+      "path": "media/dex_hand/attention/lingbot_v05_sensor_fused.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 1382,
+      "fps": "30/1",
+      "duration": 46.066667,
+      "sampleAspectRatio": "N/A",
+      "bytes": 6850782
+    },
+    {
+      "path": "media/dex_hand/attention/ai_consensus_fused.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 1382,
+      "fps": "30/1",
+      "duration": 46.066667,
+      "sampleAspectRatio": "N/A",
+      "bytes": 6985639
+    },
+    {
+      "path": "media/dex_hand/attention/zero_depth.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 1382,
+      "fps": "30/1",
+      "duration": 46.066667,
+      "sampleAspectRatio": "N/A",
+      "bytes": 2850841
+    },
+    {
+      "path": "media/dex_hand/attention/spatially_shuffled_raw.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 1382,
+      "fps": "30/1",
+      "duration": 46.066667,
+      "sampleAspectRatio": "N/A",
+      "bytes": 11862994
+    },
+    {
+      "path": "media/chengzhong/rgb.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 389,
+      "fps": "30/1",
+      "duration": 12.966667,
+      "sampleAspectRatio": "1:1",
+      "bytes": 1352159
+    },
+    {
+      "path": "media/chengzhong/depth/raw_aligned.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 389,
+      "fps": "30/1",
+      "duration": 12.966667,
+      "sampleAspectRatio": "1:1",
+      "bytes": 4822827
+    },
+    {
+      "path": "media/chengzhong/depth/rgb_guided.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 389,
+      "fps": "30/1",
+      "duration": 12.966667,
+      "sampleAspectRatio": "1:1",
+      "bytes": 4085421
+    },
+    {
+      "path": "media/chengzhong/depth/temporal_rgb_guided.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 389,
+      "fps": "30/1",
+      "duration": 12.966667,
+      "sampleAspectRatio": "1:1",
+      "bytes": 4063869
+    },
+    {
+      "path": "media/chengzhong/depth/lingbot_v05.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 389,
+      "fps": "30/1",
+      "duration": 12.966667,
+      "sampleAspectRatio": "1:1",
+      "bytes": 623233
+    },
+    {
+      "path": "media/chengzhong/depth/depth_anything_v2_fused.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 389,
+      "fps": "30/1",
+      "duration": 12.966667,
+      "sampleAspectRatio": "1:1",
+      "bytes": 2884878
+    },
+    {
+      "path": "media/chengzhong/depth/lingbot_v05_sensor_fused.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 389,
+      "fps": "30/1",
+      "duration": 12.966667,
+      "sampleAspectRatio": "1:1",
+      "bytes": 2265006
+    },
+    {
+      "path": "media/chengzhong/depth/ai_consensus_fused.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 389,
+      "fps": "30/1",
+      "duration": 12.966667,
+      "sampleAspectRatio": "1:1",
+      "bytes": 3170697
+    },
+    {
+      "path": "media/chengzhong/attention/raw_aligned.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 389,
+      "fps": "30/1",
+      "duration": 12.966667,
+      "sampleAspectRatio": "N/A",
+      "bytes": 1899092
+    },
+    {
+      "path": "media/chengzhong/attention/rgb_guided.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 389,
+      "fps": "30/1",
+      "duration": 12.966667,
+      "sampleAspectRatio": "N/A",
+      "bytes": 1913370
+    },
+    {
+      "path": "media/chengzhong/attention/temporal_rgb_guided.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 389,
+      "fps": "30/1",
+      "duration": 12.966667,
+      "sampleAspectRatio": "N/A",
+      "bytes": 1920803
+    },
+    {
+      "path": "media/chengzhong/attention/lingbot_v05.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 389,
+      "fps": "30/1",
+      "duration": 12.966667,
+      "sampleAspectRatio": "N/A",
+      "bytes": 1702861
+    },
+    {
+      "path": "media/chengzhong/attention/depth_anything_v2_fused.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 389,
+      "fps": "30/1",
+      "duration": 12.966667,
+      "sampleAspectRatio": "N/A",
+      "bytes": 1956001
+    },
+    {
+      "path": "media/chengzhong/attention/lingbot_v05_sensor_fused.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 389,
+      "fps": "30/1",
+      "duration": 12.966667,
+      "sampleAspectRatio": "N/A",
+      "bytes": 1890706
+    },
+    {
+      "path": "media/chengzhong/attention/ai_consensus_fused.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 389,
+      "fps": "30/1",
+      "duration": 12.966667,
+      "sampleAspectRatio": "N/A",
+      "bytes": 1997278
+    },
+    {
+      "path": "media/chengzhong/attention/zero_depth.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 389,
+      "fps": "30/1",
+      "duration": 12.966667,
+      "sampleAspectRatio": "N/A",
+      "bytes": 831585
+    },
+    {
+      "path": "media/chengzhong/attention/spatially_shuffled_raw.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 389,
+      "fps": "30/1",
+      "duration": 12.966667,
+      "sampleAspectRatio": "N/A",
+      "bytes": 3228223
+    },
+    {
+      "path": "media/dajian/rgb.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 601,
+      "fps": "30/1",
+      "duration": 20.033333,
+      "sampleAspectRatio": "1:1",
+      "bytes": 2113969
+    },
+    {
+      "path": "media/dajian/depth/raw_aligned.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 601,
+      "fps": "30/1",
+      "duration": 20.033333,
+      "sampleAspectRatio": "1:1",
+      "bytes": 4876968
+    },
+    {
+      "path": "media/dajian/depth/rgb_guided.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 601,
+      "fps": "30/1",
+      "duration": 20.033333,
+      "sampleAspectRatio": "1:1",
+      "bytes": 4077056
+    },
+    {
+      "path": "media/dajian/depth/temporal_rgb_guided.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 601,
+      "fps": "30/1",
+      "duration": 20.033333,
+      "sampleAspectRatio": "1:1",
+      "bytes": 4038579
+    },
+    {
+      "path": "media/dajian/depth/lingbot_v05.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 601,
+      "fps": "30/1",
+      "duration": 20.033333,
+      "sampleAspectRatio": "1:1",
+      "bytes": 1123246
+    },
+    {
+      "path": "media/dajian/depth/depth_anything_v2_fused.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 601,
+      "fps": "30/1",
+      "duration": 20.033333,
+      "sampleAspectRatio": "1:1",
+      "bytes": 3701472
+    },
+    {
+      "path": "media/dajian/depth/lingbot_v05_sensor_fused.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 601,
+      "fps": "30/1",
+      "duration": 20.033333,
+      "sampleAspectRatio": "1:1",
+      "bytes": 2846909
+    },
+    {
+      "path": "media/dajian/depth/ai_consensus_fused.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 601,
+      "fps": "30/1",
+      "duration": 20.033333,
+      "sampleAspectRatio": "1:1",
+      "bytes": 3943966
+    },
+    {
+      "path": "media/dajian/attention/raw_aligned.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 601,
+      "fps": "30/1",
+      "duration": 20.033333,
+      "sampleAspectRatio": "N/A",
+      "bytes": 2919509
+    },
+    {
+      "path": "media/dajian/attention/rgb_guided.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 601,
+      "fps": "30/1",
+      "duration": 20.033333,
+      "sampleAspectRatio": "N/A",
+      "bytes": 2880790
+    },
+    {
+      "path": "media/dajian/attention/temporal_rgb_guided.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 601,
+      "fps": "30/1",
+      "duration": 20.033333,
+      "sampleAspectRatio": "N/A",
+      "bytes": 2877340
+    },
+    {
+      "path": "media/dajian/attention/lingbot_v05.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 601,
+      "fps": "30/1",
+      "duration": 20.033333,
+      "sampleAspectRatio": "N/A",
+      "bytes": 2537697
+    },
+    {
+      "path": "media/dajian/attention/depth_anything_v2_fused.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 601,
+      "fps": "30/1",
+      "duration": 20.033333,
+      "sampleAspectRatio": "N/A",
+      "bytes": 2917505
+    },
+    {
+      "path": "media/dajian/attention/lingbot_v05_sensor_fused.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 601,
+      "fps": "30/1",
+      "duration": 20.033333,
+      "sampleAspectRatio": "N/A",
+      "bytes": 2839239
+    },
+    {
+      "path": "media/dajian/attention/ai_consensus_fused.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 601,
+      "fps": "30/1",
+      "duration": 20.033333,
+      "sampleAspectRatio": "N/A",
+      "bytes": 2935475
+    },
+    {
+      "path": "media/dajian/attention/zero_depth.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 601,
+      "fps": "30/1",
+      "duration": 20.033333,
+      "sampleAspectRatio": "N/A",
+      "bytes": 1163306
+    },
+    {
+      "path": "media/dajian/attention/spatially_shuffled_raw.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 601,
+      "fps": "30/1",
+      "duration": 20.033333,
+      "sampleAspectRatio": "N/A",
+      "bytes": 5406331
+    },
+    {
+      "path": "media/zhoumian/rgb.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 788,
+      "fps": "30/1",
+      "duration": 26.266667,
+      "sampleAspectRatio": "1:1",
+      "bytes": 2143714
+    },
+    {
+      "path": "media/zhoumian/depth/raw_aligned.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 788,
+      "fps": "30/1",
+      "duration": 26.266667,
+      "sampleAspectRatio": "1:1",
+      "bytes": 5748244
+    },
+    {
+      "path": "media/zhoumian/depth/rgb_guided.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 788,
+      "fps": "30/1",
+      "duration": 26.266667,
+      "sampleAspectRatio": "1:1",
+      "bytes": 4916229
+    },
+    {
+      "path": "media/zhoumian/depth/temporal_rgb_guided.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 788,
+      "fps": "30/1",
+      "duration": 26.266667,
+      "sampleAspectRatio": "1:1",
+      "bytes": 4854223
+    },
+    {
+      "path": "media/zhoumian/depth/lingbot_v05.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 788,
+      "fps": "30/1",
+      "duration": 26.266667,
+      "sampleAspectRatio": "1:1",
+      "bytes": 748493
+    },
+    {
+      "path": "media/zhoumian/depth/depth_anything_v2_fused.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 788,
+      "fps": "30/1",
+      "duration": 26.266667,
+      "sampleAspectRatio": "1:1",
+      "bytes": 2517516
+    },
+    {
+      "path": "media/zhoumian/depth/lingbot_v05_sensor_fused.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 788,
+      "fps": "30/1",
+      "duration": 26.266667,
+      "sampleAspectRatio": "1:1",
+      "bytes": 2127854
+    },
+    {
+      "path": "media/zhoumian/depth/ai_consensus_fused.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 788,
+      "fps": "30/1",
+      "duration": 26.266667,
+      "sampleAspectRatio": "1:1",
+      "bytes": 3141835
+    },
+    {
+      "path": "media/zhoumian/attention/raw_aligned.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 788,
+      "fps": "30/1",
+      "duration": 26.266667,
+      "sampleAspectRatio": "N/A",
+      "bytes": 3664795
+    },
+    {
+      "path": "media/zhoumian/attention/rgb_guided.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 788,
+      "fps": "30/1",
+      "duration": 26.266667,
+      "sampleAspectRatio": "N/A",
+      "bytes": 3617858
+    },
+    {
+      "path": "media/zhoumian/attention/temporal_rgb_guided.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 788,
+      "fps": "30/1",
+      "duration": 26.266667,
+      "sampleAspectRatio": "N/A",
+      "bytes": 3621908
+    },
+    {
+      "path": "media/zhoumian/attention/lingbot_v05.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 788,
+      "fps": "30/1",
+      "duration": 26.266667,
+      "sampleAspectRatio": "N/A",
+      "bytes": 2468787
+    },
+    {
+      "path": "media/zhoumian/attention/depth_anything_v2_fused.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 788,
+      "fps": "30/1",
+      "duration": 26.266667,
+      "sampleAspectRatio": "N/A",
+      "bytes": 3314338
+    },
+    {
+      "path": "media/zhoumian/attention/lingbot_v05_sensor_fused.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 788,
+      "fps": "30/1",
+      "duration": 26.266667,
+      "sampleAspectRatio": "N/A",
+      "bytes": 3275862
+    },
+    {
+      "path": "media/zhoumian/attention/ai_consensus_fused.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 788,
+      "fps": "30/1",
+      "duration": 26.266667,
+      "sampleAspectRatio": "N/A",
+      "bytes": 3358565
+    },
+    {
+      "path": "media/zhoumian/attention/zero_depth.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 788,
+      "fps": "30/1",
+      "duration": 26.266667,
+      "sampleAspectRatio": "N/A",
+      "bytes": 1235711
+    },
+    {
+      "path": "media/zhoumian/attention/spatially_shuffled_raw.mp4",
+      "width": 960,
+      "height": 240,
+      "frames": 788,
+      "fps": "30/1",
+      "duration": 26.266667,
+      "sampleAspectRatio": "N/A",
+      "bytes": 6287943
+    }
+  ]
+}

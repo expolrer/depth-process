@@ -42,6 +42,9 @@ __pycache__/
 *.avi
 *.mkv
 
+# GitHub Pages intentionally publishes the complete RGB-D comparison videos.
+!/docs/media/**/*.mp4
+
 # Credentials and machine-local configuration
 .env
 .env.*

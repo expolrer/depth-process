@@ -3,6 +3,19 @@
 本项目用于从 `/ssd/hhw/depth` 下的 5 个 ROS1 bag 中提取、处理并对比物理尺度深度数据。
 项目不会修改源 rosbag，也不会修改服务器上的官方模型仓库。
 
+## RGB-D Depth Lab 在线展示
+
+[打开完整交互页面](https://expolrer.github.io/depth-process/) ·
+[深度处理对比](https://expolrer.github.io/depth-process/?view=depth) ·
+[ACT 热力图对比](https://expolrer.github.io/depth-process/?view=attention) ·
+[接触关键帧与批准 ROI](https://expolrer.github.io/depth-process/attention_review/)
+
+[![RGB-D Depth Lab 深度处理对比页面](docs/qa-depth-video.png)](https://expolrer.github.io/depth-process/?view=depth)
+
+在线页面包含 5 个数据集和 85 个完整同步视频，可在 Head、Left Wrist、Right Wrist 三视角下切换
+7 种深度处理方法，并对比对应的无 Prompt ACT 热力图、动作误差和执行腕目标 ROI 指标。
+页面静态资源位于 `docs/`，GitHub Pages 发布源应设置为 `main` 分支的 `/docs` 目录。
+
 ## 相机处理方式
 
 - `cam_h`：Orbbec Gemini-335L。录制的深度图已经位于彩色相机光学坐标系中。

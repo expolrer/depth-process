@@ -1,0 +1,1332 @@
+[
+  {
+    "eventId": "chengzhong_xianxia_main1:grasp_000_left",
+    "eventIndex": 0,
+    "sequenceSlug": "chengzhong",
+    "side": "left",
+    "method": "raw_aligned",
+    "headFrame": 85,
+    "wristFrame": 86,
+    "image": "images/chengzhong/grasp_000_left__raw_aligned.jpg"
+  },
+  {
+    "eventId": "chengzhong_xianxia_main1:grasp_000_left",
+    "eventIndex": 0,
+    "sequenceSlug": "chengzhong",
+    "side": "left",
+    "method": "rgb_guided",
+    "headFrame": 85,
+    "wristFrame": 86,
+    "image": "images/chengzhong/grasp_000_left__rgb_guided.jpg"
+  },
+  {
+    "eventId": "chengzhong_xianxia_main1:grasp_000_left",
+    "eventIndex": 0,
+    "sequenceSlug": "chengzhong",
+    "side": "left",
+    "method": "temporal_rgb_guided",
+    "headFrame": 85,
+    "wristFrame": 86,
+    "image": "images/chengzhong/grasp_000_left__temporal_rgb_guided.jpg"
+  },
+  {
+    "eventId": "chengzhong_xianxia_main1:grasp_000_left",
+    "eventIndex": 0,
+    "sequenceSlug": "chengzhong",
+    "side": "left",
+    "method": "lingbot_v05",
+    "headFrame": 85,
+    "wristFrame": 86,
+    "image": "images/chengzhong/grasp_000_left__lingbot_v05.jpg"
+  },
+  {
+    "eventId": "chengzhong_xianxia_main1:grasp_000_left",
+    "eventIndex": 0,
+    "sequenceSlug": "chengzhong",
+    "side": "left",
+    "method": "depth_anything_v2_fused",
+    "headFrame": 85,
+    "wristFrame": 86,
+    "image": "images/chengzhong/grasp_000_left__depth_anything_v2_fused.jpg"
+  },
+  {
+    "eventId": "chengzhong_xianxia_main1:grasp_000_left",
+    "eventIndex": 0,
+    "sequenceSlug": "chengzhong",
+    "side": "left",
+    "method": "lingbot_v05_sensor_fused",
+    "headFrame": 85,
+    "wristFrame": 86,
+    "image": "images/chengzhong/grasp_000_left__lingbot_v05_sensor_fused.jpg"
+  },
+  {
+    "eventId": "chengzhong_xianxia_main1:grasp_000_left",
+    "eventIndex": 0,
+    "sequenceSlug": "chengzhong",
+    "side": "left",
+    "method": "ai_consensus_fused",
+    "headFrame": 85,
+    "wristFrame": 86,
+    "image": "images/chengzhong/grasp_000_left__ai_consensus_fused.jpg"
+  },
+  {
+    "eventId": "chengzhong_xianxia_main1:grasp_001_right",
+    "eventIndex": 1,
+    "sequenceSlug": "chengzhong",
+    "side": "right",
+    "method": "raw_aligned",
+    "headFrame": 273,
+    "wristFrame": 274,
+    "image": "images/chengzhong/grasp_001_right__raw_aligned.jpg"
+  },
+  {
+    "eventId": "chengzhong_xianxia_main1:grasp_001_right",
+    "eventIndex": 1,
+    "sequenceSlug": "chengzhong",
+    "side": "right",
+    "method": "rgb_guided",
+    "headFrame": 273,
+    "wristFrame": 274,
+    "image": "images/chengzhong/grasp_001_right__rgb_guided.jpg"
+  },
+  {
+    "eventId": "chengzhong_xianxia_main1:grasp_001_right",
+    "eventIndex": 1,
+    "sequenceSlug": "chengzhong",
+    "side": "right",
+    "method": "temporal_rgb_guided",
+    "headFrame": 273,
+    "wristFrame": 274,
+    "image": "images/chengzhong/grasp_001_right__temporal_rgb_guided.jpg"
+  },
+  {
+    "eventId": "chengzhong_xianxia_main1:grasp_001_right",
+    "eventIndex": 1,
+    "sequenceSlug": "chengzhong",
+    "side": "right",
+    "method": "lingbot_v05",
+    "headFrame": 273,
+    "wristFrame": 274,
+    "image": "images/chengzhong/grasp_001_right__lingbot_v05.jpg"
+  },
+  {
+    "eventId": "chengzhong_xianxia_main1:grasp_001_right",
+    "eventIndex": 1,
+    "sequenceSlug": "chengzhong",
+    "side": "right",
+    "method": "depth_anything_v2_fused",
+    "headFrame": 273,
+    "wristFrame": 274,
+    "image": "images/chengzhong/grasp_001_right__depth_anything_v2_fused.jpg"
+  },
+  {
+    "eventId": "chengzhong_xianxia_main1:grasp_001_right",
+    "eventIndex": 1,
+    "sequenceSlug": "chengzhong",
+    "side": "right",
+    "method": "lingbot_v05_sensor_fused",
+    "headFrame": 273,
+    "wristFrame": 274,
+    "image": "images/chengzhong/grasp_001_right__lingbot_v05_sensor_fused.jpg"
+  },
+  {
+    "eventId": "chengzhong_xianxia_main1:grasp_001_right",
+    "eventIndex": 1,
+    "sequenceSlug": "chengzhong",
+    "side": "right",
+    "method": "ai_consensus_fused",
+    "headFrame": 273,
+    "wristFrame": 274,
+    "image": "images/chengzhong/grasp_001_right__ai_consensus_fused.jpg"
+  },
+  {
+    "eventId": "dajian_xianxia_main1:grasp_000_right",
+    "eventIndex": 0,
+    "sequenceSlug": "dajian",
+    "side": "right",
+    "method": "raw_aligned",
+    "headFrame": 232,
+    "wristFrame": 232,
+    "image": "images/dajian/grasp_000_right__raw_aligned.jpg"
+  },
+  {
+    "eventId": "dajian_xianxia_main1:grasp_000_right",
+    "eventIndex": 0,
+    "sequenceSlug": "dajian",
+    "side": "right",
+    "method": "rgb_guided",
+    "headFrame": 232,
+    "wristFrame": 232,
+    "image": "images/dajian/grasp_000_right__rgb_guided.jpg"
+  },
+  {
+    "eventId": "dajian_xianxia_main1:grasp_000_right",
+    "eventIndex": 0,
+    "sequenceSlug": "dajian",
+    "side": "right",
+    "method": "temporal_rgb_guided",
+    "headFrame": 232,
+    "wristFrame": 232,
+    "image": "images/dajian/grasp_000_right__temporal_rgb_guided.jpg"
+  },
+  {
+    "eventId": "dajian_xianxia_main1:grasp_000_right",
+    "eventIndex": 0,
+    "sequenceSlug": "dajian",
+    "side": "right",
+    "method": "lingbot_v05",
+    "headFrame": 232,
+    "wristFrame": 232,
+    "image": "images/dajian/grasp_000_right__lingbot_v05.jpg"
+  },
+  {
+    "eventId": "dajian_xianxia_main1:grasp_000_right",
+    "eventIndex": 0,
+    "sequenceSlug": "dajian",
+    "side": "right",
+    "method": "depth_anything_v2_fused",
+    "headFrame": 232,
+    "wristFrame": 232,
+    "image": "images/dajian/grasp_000_right__depth_anything_v2_fused.jpg"
+  },
+  {
+    "eventId": "dajian_xianxia_main1:grasp_000_right",
+    "eventIndex": 0,
+    "sequenceSlug": "dajian",
+    "side": "right",
+    "method": "lingbot_v05_sensor_fused",
+    "headFrame": 232,
+    "wristFrame": 232,
+    "image": "images/dajian/grasp_000_right__lingbot_v05_sensor_fused.jpg"
+  },
+  {
+    "eventId": "dajian_xianxia_main1:grasp_000_right",
+    "eventIndex": 0,
+    "sequenceSlug": "dajian",
+    "side": "right",
+    "method": "ai_consensus_fused",
+    "headFrame": 232,
+    "wristFrame": 232,
+    "image": "images/dajian/grasp_000_right__ai_consensus_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003:grasp_000_right",
+    "eventIndex": 0,
+    "sequenceSlug": "dex_hand",
+    "side": "right",
+    "method": "raw_aligned",
+    "headFrame": 156,
+    "wristFrame": 156,
+    "image": "images/dex_hand/grasp_000_right__raw_aligned.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003:grasp_000_right",
+    "eventIndex": 0,
+    "sequenceSlug": "dex_hand",
+    "side": "right",
+    "method": "rgb_guided",
+    "headFrame": 156,
+    "wristFrame": 156,
+    "image": "images/dex_hand/grasp_000_right__rgb_guided.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003:grasp_000_right",
+    "eventIndex": 0,
+    "sequenceSlug": "dex_hand",
+    "side": "right",
+    "method": "temporal_rgb_guided",
+    "headFrame": 156,
+    "wristFrame": 156,
+    "image": "images/dex_hand/grasp_000_right__temporal_rgb_guided.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003:grasp_000_right",
+    "eventIndex": 0,
+    "sequenceSlug": "dex_hand",
+    "side": "right",
+    "method": "lingbot_v05",
+    "headFrame": 156,
+    "wristFrame": 156,
+    "image": "images/dex_hand/grasp_000_right__lingbot_v05.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003:grasp_000_right",
+    "eventIndex": 0,
+    "sequenceSlug": "dex_hand",
+    "side": "right",
+    "method": "depth_anything_v2_fused",
+    "headFrame": 156,
+    "wristFrame": 156,
+    "image": "images/dex_hand/grasp_000_right__depth_anything_v2_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003:grasp_000_right",
+    "eventIndex": 0,
+    "sequenceSlug": "dex_hand",
+    "side": "right",
+    "method": "lingbot_v05_sensor_fused",
+    "headFrame": 156,
+    "wristFrame": 156,
+    "image": "images/dex_hand/grasp_000_right__lingbot_v05_sensor_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003:grasp_000_right",
+    "eventIndex": 0,
+    "sequenceSlug": "dex_hand",
+    "side": "right",
+    "method": "ai_consensus_fused",
+    "headFrame": 156,
+    "wristFrame": 156,
+    "image": "images/dex_hand/grasp_000_right__ai_consensus_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003:grasp_001_right",
+    "eventIndex": 1,
+    "sequenceSlug": "dex_hand",
+    "side": "right",
+    "method": "raw_aligned",
+    "headFrame": 238,
+    "wristFrame": 238,
+    "image": "images/dex_hand/grasp_001_right__raw_aligned.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003:grasp_001_right",
+    "eventIndex": 1,
+    "sequenceSlug": "dex_hand",
+    "side": "right",
+    "method": "rgb_guided",
+    "headFrame": 238,
+    "wristFrame": 238,
+    "image": "images/dex_hand/grasp_001_right__rgb_guided.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003:grasp_001_right",
+    "eventIndex": 1,
+    "sequenceSlug": "dex_hand",
+    "side": "right",
+    "method": "temporal_rgb_guided",
+    "headFrame": 238,
+    "wristFrame": 238,
+    "image": "images/dex_hand/grasp_001_right__temporal_rgb_guided.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003:grasp_001_right",
+    "eventIndex": 1,
+    "sequenceSlug": "dex_hand",
+    "side": "right",
+    "method": "lingbot_v05",
+    "headFrame": 238,
+    "wristFrame": 238,
+    "image": "images/dex_hand/grasp_001_right__lingbot_v05.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003:grasp_001_right",
+    "eventIndex": 1,
+    "sequenceSlug": "dex_hand",
+    "side": "right",
+    "method": "depth_anything_v2_fused",
+    "headFrame": 238,
+    "wristFrame": 238,
+    "image": "images/dex_hand/grasp_001_right__depth_anything_v2_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003:grasp_001_right",
+    "eventIndex": 1,
+    "sequenceSlug": "dex_hand",
+    "side": "right",
+    "method": "lingbot_v05_sensor_fused",
+    "headFrame": 238,
+    "wristFrame": 238,
+    "image": "images/dex_hand/grasp_001_right__lingbot_v05_sensor_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003:grasp_001_right",
+    "eventIndex": 1,
+    "sequenceSlug": "dex_hand",
+    "side": "right",
+    "method": "ai_consensus_fused",
+    "headFrame": 238,
+    "wristFrame": 238,
+    "image": "images/dex_hand/grasp_001_right__ai_consensus_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003:grasp_002_left",
+    "eventIndex": 2,
+    "sequenceSlug": "dex_hand",
+    "side": "left",
+    "method": "raw_aligned",
+    "headFrame": 721,
+    "wristFrame": 721,
+    "image": "images/dex_hand/grasp_002_left__raw_aligned.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003:grasp_002_left",
+    "eventIndex": 2,
+    "sequenceSlug": "dex_hand",
+    "side": "left",
+    "method": "rgb_guided",
+    "headFrame": 721,
+    "wristFrame": 721,
+    "image": "images/dex_hand/grasp_002_left__rgb_guided.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003:grasp_002_left",
+    "eventIndex": 2,
+    "sequenceSlug": "dex_hand",
+    "side": "left",
+    "method": "temporal_rgb_guided",
+    "headFrame": 721,
+    "wristFrame": 721,
+    "image": "images/dex_hand/grasp_002_left__temporal_rgb_guided.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003:grasp_002_left",
+    "eventIndex": 2,
+    "sequenceSlug": "dex_hand",
+    "side": "left",
+    "method": "lingbot_v05",
+    "headFrame": 721,
+    "wristFrame": 721,
+    "image": "images/dex_hand/grasp_002_left__lingbot_v05.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003:grasp_002_left",
+    "eventIndex": 2,
+    "sequenceSlug": "dex_hand",
+    "side": "left",
+    "method": "depth_anything_v2_fused",
+    "headFrame": 721,
+    "wristFrame": 721,
+    "image": "images/dex_hand/grasp_002_left__depth_anything_v2_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003:grasp_002_left",
+    "eventIndex": 2,
+    "sequenceSlug": "dex_hand",
+    "side": "left",
+    "method": "lingbot_v05_sensor_fused",
+    "headFrame": 721,
+    "wristFrame": 721,
+    "image": "images/dex_hand/grasp_002_left__lingbot_v05_sensor_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003:grasp_002_left",
+    "eventIndex": 2,
+    "sequenceSlug": "dex_hand",
+    "side": "left",
+    "method": "ai_consensus_fused",
+    "headFrame": 721,
+    "wristFrame": 721,
+    "image": "images/dex_hand/grasp_002_left__ai_consensus_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003:grasp_003_left",
+    "eventIndex": 3,
+    "sequenceSlug": "dex_hand",
+    "side": "left",
+    "method": "raw_aligned",
+    "headFrame": 935,
+    "wristFrame": 936,
+    "image": "images/dex_hand/grasp_003_left__raw_aligned.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003:grasp_003_left",
+    "eventIndex": 3,
+    "sequenceSlug": "dex_hand",
+    "side": "left",
+    "method": "rgb_guided",
+    "headFrame": 935,
+    "wristFrame": 936,
+    "image": "images/dex_hand/grasp_003_left__rgb_guided.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003:grasp_003_left",
+    "eventIndex": 3,
+    "sequenceSlug": "dex_hand",
+    "side": "left",
+    "method": "temporal_rgb_guided",
+    "headFrame": 935,
+    "wristFrame": 936,
+    "image": "images/dex_hand/grasp_003_left__temporal_rgb_guided.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003:grasp_003_left",
+    "eventIndex": 3,
+    "sequenceSlug": "dex_hand",
+    "side": "left",
+    "method": "lingbot_v05",
+    "headFrame": 935,
+    "wristFrame": 936,
+    "image": "images/dex_hand/grasp_003_left__lingbot_v05.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003:grasp_003_left",
+    "eventIndex": 3,
+    "sequenceSlug": "dex_hand",
+    "side": "left",
+    "method": "depth_anything_v2_fused",
+    "headFrame": 935,
+    "wristFrame": 936,
+    "image": "images/dex_hand/grasp_003_left__depth_anything_v2_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003:grasp_003_left",
+    "eventIndex": 3,
+    "sequenceSlug": "dex_hand",
+    "side": "left",
+    "method": "lingbot_v05_sensor_fused",
+    "headFrame": 935,
+    "wristFrame": 936,
+    "image": "images/dex_hand/grasp_003_left__lingbot_v05_sensor_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003:grasp_003_left",
+    "eventIndex": 3,
+    "sequenceSlug": "dex_hand",
+    "side": "left",
+    "method": "ai_consensus_fused",
+    "headFrame": 935,
+    "wristFrame": 936,
+    "image": "images/dex_hand/grasp_003_left__ai_consensus_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003:grasp_004_left",
+    "eventIndex": 4,
+    "sequenceSlug": "dex_hand",
+    "side": "left",
+    "method": "raw_aligned",
+    "headFrame": 1152,
+    "wristFrame": 1153,
+    "image": "images/dex_hand/grasp_004_left__raw_aligned.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003:grasp_004_left",
+    "eventIndex": 4,
+    "sequenceSlug": "dex_hand",
+    "side": "left",
+    "method": "rgb_guided",
+    "headFrame": 1152,
+    "wristFrame": 1153,
+    "image": "images/dex_hand/grasp_004_left__rgb_guided.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003:grasp_004_left",
+    "eventIndex": 4,
+    "sequenceSlug": "dex_hand",
+    "side": "left",
+    "method": "temporal_rgb_guided",
+    "headFrame": 1152,
+    "wristFrame": 1153,
+    "image": "images/dex_hand/grasp_004_left__temporal_rgb_guided.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003:grasp_004_left",
+    "eventIndex": 4,
+    "sequenceSlug": "dex_hand",
+    "side": "left",
+    "method": "lingbot_v05",
+    "headFrame": 1152,
+    "wristFrame": 1153,
+    "image": "images/dex_hand/grasp_004_left__lingbot_v05.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003:grasp_004_left",
+    "eventIndex": 4,
+    "sequenceSlug": "dex_hand",
+    "side": "left",
+    "method": "depth_anything_v2_fused",
+    "headFrame": 1152,
+    "wristFrame": 1153,
+    "image": "images/dex_hand/grasp_004_left__depth_anything_v2_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003:grasp_004_left",
+    "eventIndex": 4,
+    "sequenceSlug": "dex_hand",
+    "side": "left",
+    "method": "lingbot_v05_sensor_fused",
+    "headFrame": 1152,
+    "wristFrame": 1153,
+    "image": "images/dex_hand/grasp_004_left__lingbot_v05_sensor_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003:grasp_004_left",
+    "eventIndex": 4,
+    "sequenceSlug": "dex_hand",
+    "side": "left",
+    "method": "ai_consensus_fused",
+    "headFrame": 1152,
+    "wristFrame": 1153,
+    "image": "images/dex_hand/grasp_004_left__ai_consensus_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_000_right",
+    "eventIndex": 0,
+    "sequenceSlug": "leju_claw",
+    "side": "right",
+    "method": "raw_aligned",
+    "headFrame": 91,
+    "wristFrame": 91,
+    "image": "images/leju_claw/grasp_000_right__raw_aligned.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_000_right",
+    "eventIndex": 0,
+    "sequenceSlug": "leju_claw",
+    "side": "right",
+    "method": "rgb_guided",
+    "headFrame": 91,
+    "wristFrame": 91,
+    "image": "images/leju_claw/grasp_000_right__rgb_guided.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_000_right",
+    "eventIndex": 0,
+    "sequenceSlug": "leju_claw",
+    "side": "right",
+    "method": "temporal_rgb_guided",
+    "headFrame": 91,
+    "wristFrame": 91,
+    "image": "images/leju_claw/grasp_000_right__temporal_rgb_guided.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_000_right",
+    "eventIndex": 0,
+    "sequenceSlug": "leju_claw",
+    "side": "right",
+    "method": "lingbot_v05",
+    "headFrame": 91,
+    "wristFrame": 91,
+    "image": "images/leju_claw/grasp_000_right__lingbot_v05.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_000_right",
+    "eventIndex": 0,
+    "sequenceSlug": "leju_claw",
+    "side": "right",
+    "method": "depth_anything_v2_fused",
+    "headFrame": 91,
+    "wristFrame": 91,
+    "image": "images/leju_claw/grasp_000_right__depth_anything_v2_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_000_right",
+    "eventIndex": 0,
+    "sequenceSlug": "leju_claw",
+    "side": "right",
+    "method": "lingbot_v05_sensor_fused",
+    "headFrame": 91,
+    "wristFrame": 91,
+    "image": "images/leju_claw/grasp_000_right__lingbot_v05_sensor_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_000_right",
+    "eventIndex": 0,
+    "sequenceSlug": "leju_claw",
+    "side": "right",
+    "method": "ai_consensus_fused",
+    "headFrame": 91,
+    "wristFrame": 91,
+    "image": "images/leju_claw/grasp_000_right__ai_consensus_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_001_right",
+    "eventIndex": 1,
+    "sequenceSlug": "leju_claw",
+    "side": "right",
+    "method": "raw_aligned",
+    "headFrame": 268,
+    "wristFrame": 268,
+    "image": "images/leju_claw/grasp_001_right__raw_aligned.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_001_right",
+    "eventIndex": 1,
+    "sequenceSlug": "leju_claw",
+    "side": "right",
+    "method": "rgb_guided",
+    "headFrame": 268,
+    "wristFrame": 268,
+    "image": "images/leju_claw/grasp_001_right__rgb_guided.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_001_right",
+    "eventIndex": 1,
+    "sequenceSlug": "leju_claw",
+    "side": "right",
+    "method": "temporal_rgb_guided",
+    "headFrame": 268,
+    "wristFrame": 268,
+    "image": "images/leju_claw/grasp_001_right__temporal_rgb_guided.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_001_right",
+    "eventIndex": 1,
+    "sequenceSlug": "leju_claw",
+    "side": "right",
+    "method": "lingbot_v05",
+    "headFrame": 268,
+    "wristFrame": 268,
+    "image": "images/leju_claw/grasp_001_right__lingbot_v05.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_001_right",
+    "eventIndex": 1,
+    "sequenceSlug": "leju_claw",
+    "side": "right",
+    "method": "depth_anything_v2_fused",
+    "headFrame": 268,
+    "wristFrame": 268,
+    "image": "images/leju_claw/grasp_001_right__depth_anything_v2_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_001_right",
+    "eventIndex": 1,
+    "sequenceSlug": "leju_claw",
+    "side": "right",
+    "method": "lingbot_v05_sensor_fused",
+    "headFrame": 268,
+    "wristFrame": 268,
+    "image": "images/leju_claw/grasp_001_right__lingbot_v05_sensor_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_001_right",
+    "eventIndex": 1,
+    "sequenceSlug": "leju_claw",
+    "side": "right",
+    "method": "ai_consensus_fused",
+    "headFrame": 268,
+    "wristFrame": 268,
+    "image": "images/leju_claw/grasp_001_right__ai_consensus_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_002_left",
+    "eventIndex": 2,
+    "sequenceSlug": "leju_claw",
+    "side": "left",
+    "method": "raw_aligned",
+    "headFrame": 499,
+    "wristFrame": 499,
+    "image": "images/leju_claw/grasp_002_left__raw_aligned.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_002_left",
+    "eventIndex": 2,
+    "sequenceSlug": "leju_claw",
+    "side": "left",
+    "method": "rgb_guided",
+    "headFrame": 499,
+    "wristFrame": 499,
+    "image": "images/leju_claw/grasp_002_left__rgb_guided.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_002_left",
+    "eventIndex": 2,
+    "sequenceSlug": "leju_claw",
+    "side": "left",
+    "method": "temporal_rgb_guided",
+    "headFrame": 499,
+    "wristFrame": 499,
+    "image": "images/leju_claw/grasp_002_left__temporal_rgb_guided.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_002_left",
+    "eventIndex": 2,
+    "sequenceSlug": "leju_claw",
+    "side": "left",
+    "method": "lingbot_v05",
+    "headFrame": 499,
+    "wristFrame": 499,
+    "image": "images/leju_claw/grasp_002_left__lingbot_v05.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_002_left",
+    "eventIndex": 2,
+    "sequenceSlug": "leju_claw",
+    "side": "left",
+    "method": "depth_anything_v2_fused",
+    "headFrame": 499,
+    "wristFrame": 499,
+    "image": "images/leju_claw/grasp_002_left__depth_anything_v2_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_002_left",
+    "eventIndex": 2,
+    "sequenceSlug": "leju_claw",
+    "side": "left",
+    "method": "lingbot_v05_sensor_fused",
+    "headFrame": 499,
+    "wristFrame": 499,
+    "image": "images/leju_claw/grasp_002_left__lingbot_v05_sensor_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_002_left",
+    "eventIndex": 2,
+    "sequenceSlug": "leju_claw",
+    "side": "left",
+    "method": "ai_consensus_fused",
+    "headFrame": 499,
+    "wristFrame": 499,
+    "image": "images/leju_claw/grasp_002_left__ai_consensus_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_003_left",
+    "eventIndex": 3,
+    "sequenceSlug": "leju_claw",
+    "side": "left",
+    "method": "raw_aligned",
+    "headFrame": 660,
+    "wristFrame": 660,
+    "image": "images/leju_claw/grasp_003_left__raw_aligned.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_003_left",
+    "eventIndex": 3,
+    "sequenceSlug": "leju_claw",
+    "side": "left",
+    "method": "rgb_guided",
+    "headFrame": 660,
+    "wristFrame": 660,
+    "image": "images/leju_claw/grasp_003_left__rgb_guided.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_003_left",
+    "eventIndex": 3,
+    "sequenceSlug": "leju_claw",
+    "side": "left",
+    "method": "temporal_rgb_guided",
+    "headFrame": 660,
+    "wristFrame": 660,
+    "image": "images/leju_claw/grasp_003_left__temporal_rgb_guided.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_003_left",
+    "eventIndex": 3,
+    "sequenceSlug": "leju_claw",
+    "side": "left",
+    "method": "lingbot_v05",
+    "headFrame": 660,
+    "wristFrame": 660,
+    "image": "images/leju_claw/grasp_003_left__lingbot_v05.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_003_left",
+    "eventIndex": 3,
+    "sequenceSlug": "leju_claw",
+    "side": "left",
+    "method": "depth_anything_v2_fused",
+    "headFrame": 660,
+    "wristFrame": 660,
+    "image": "images/leju_claw/grasp_003_left__depth_anything_v2_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_003_left",
+    "eventIndex": 3,
+    "sequenceSlug": "leju_claw",
+    "side": "left",
+    "method": "lingbot_v05_sensor_fused",
+    "headFrame": 660,
+    "wristFrame": 660,
+    "image": "images/leju_claw/grasp_003_left__lingbot_v05_sensor_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_003_left",
+    "eventIndex": 3,
+    "sequenceSlug": "leju_claw",
+    "side": "left",
+    "method": "ai_consensus_fused",
+    "headFrame": 660,
+    "wristFrame": 660,
+    "image": "images/leju_claw/grasp_003_left__ai_consensus_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_004_right",
+    "eventIndex": 4,
+    "sequenceSlug": "leju_claw",
+    "side": "right",
+    "method": "raw_aligned",
+    "headFrame": 891,
+    "wristFrame": 891,
+    "image": "images/leju_claw/grasp_004_right__raw_aligned.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_004_right",
+    "eventIndex": 4,
+    "sequenceSlug": "leju_claw",
+    "side": "right",
+    "method": "rgb_guided",
+    "headFrame": 891,
+    "wristFrame": 891,
+    "image": "images/leju_claw/grasp_004_right__rgb_guided.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_004_right",
+    "eventIndex": 4,
+    "sequenceSlug": "leju_claw",
+    "side": "right",
+    "method": "temporal_rgb_guided",
+    "headFrame": 891,
+    "wristFrame": 891,
+    "image": "images/leju_claw/grasp_004_right__temporal_rgb_guided.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_004_right",
+    "eventIndex": 4,
+    "sequenceSlug": "leju_claw",
+    "side": "right",
+    "method": "lingbot_v05",
+    "headFrame": 891,
+    "wristFrame": 891,
+    "image": "images/leju_claw/grasp_004_right__lingbot_v05.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_004_right",
+    "eventIndex": 4,
+    "sequenceSlug": "leju_claw",
+    "side": "right",
+    "method": "depth_anything_v2_fused",
+    "headFrame": 891,
+    "wristFrame": 891,
+    "image": "images/leju_claw/grasp_004_right__depth_anything_v2_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_004_right",
+    "eventIndex": 4,
+    "sequenceSlug": "leju_claw",
+    "side": "right",
+    "method": "lingbot_v05_sensor_fused",
+    "headFrame": 891,
+    "wristFrame": 891,
+    "image": "images/leju_claw/grasp_004_right__lingbot_v05_sensor_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_004_right",
+    "eventIndex": 4,
+    "sequenceSlug": "leju_claw",
+    "side": "right",
+    "method": "ai_consensus_fused",
+    "headFrame": 891,
+    "wristFrame": 891,
+    "image": "images/leju_claw/grasp_004_right__ai_consensus_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_005_left",
+    "eventIndex": 5,
+    "sequenceSlug": "leju_claw",
+    "side": "left",
+    "method": "raw_aligned",
+    "headFrame": 1105,
+    "wristFrame": 1105,
+    "image": "images/leju_claw/grasp_005_left__raw_aligned.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_005_left",
+    "eventIndex": 5,
+    "sequenceSlug": "leju_claw",
+    "side": "left",
+    "method": "rgb_guided",
+    "headFrame": 1105,
+    "wristFrame": 1105,
+    "image": "images/leju_claw/grasp_005_left__rgb_guided.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_005_left",
+    "eventIndex": 5,
+    "sequenceSlug": "leju_claw",
+    "side": "left",
+    "method": "temporal_rgb_guided",
+    "headFrame": 1105,
+    "wristFrame": 1105,
+    "image": "images/leju_claw/grasp_005_left__temporal_rgb_guided.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_005_left",
+    "eventIndex": 5,
+    "sequenceSlug": "leju_claw",
+    "side": "left",
+    "method": "lingbot_v05",
+    "headFrame": 1105,
+    "wristFrame": 1105,
+    "image": "images/leju_claw/grasp_005_left__lingbot_v05.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_005_left",
+    "eventIndex": 5,
+    "sequenceSlug": "leju_claw",
+    "side": "left",
+    "method": "depth_anything_v2_fused",
+    "headFrame": 1105,
+    "wristFrame": 1105,
+    "image": "images/leju_claw/grasp_005_left__depth_anything_v2_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_005_left",
+    "eventIndex": 5,
+    "sequenceSlug": "leju_claw",
+    "side": "left",
+    "method": "lingbot_v05_sensor_fused",
+    "headFrame": 1105,
+    "wristFrame": 1105,
+    "image": "images/leju_claw/grasp_005_left__lingbot_v05_sensor_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_005_left",
+    "eventIndex": 5,
+    "sequenceSlug": "leju_claw",
+    "side": "left",
+    "method": "ai_consensus_fused",
+    "headFrame": 1105,
+    "wristFrame": 1105,
+    "image": "images/leju_claw/grasp_005_left__ai_consensus_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_006_left",
+    "eventIndex": 6,
+    "sequenceSlug": "leju_claw",
+    "side": "left",
+    "method": "raw_aligned",
+    "headFrame": 1292,
+    "wristFrame": 1293,
+    "image": "images/leju_claw/grasp_006_left__raw_aligned.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_006_left",
+    "eventIndex": 6,
+    "sequenceSlug": "leju_claw",
+    "side": "left",
+    "method": "rgb_guided",
+    "headFrame": 1292,
+    "wristFrame": 1293,
+    "image": "images/leju_claw/grasp_006_left__rgb_guided.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_006_left",
+    "eventIndex": 6,
+    "sequenceSlug": "leju_claw",
+    "side": "left",
+    "method": "temporal_rgb_guided",
+    "headFrame": 1292,
+    "wristFrame": 1293,
+    "image": "images/leju_claw/grasp_006_left__temporal_rgb_guided.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_006_left",
+    "eventIndex": 6,
+    "sequenceSlug": "leju_claw",
+    "side": "left",
+    "method": "lingbot_v05",
+    "headFrame": 1292,
+    "wristFrame": 1293,
+    "image": "images/leju_claw/grasp_006_left__lingbot_v05.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_006_left",
+    "eventIndex": 6,
+    "sequenceSlug": "leju_claw",
+    "side": "left",
+    "method": "depth_anything_v2_fused",
+    "headFrame": 1292,
+    "wristFrame": 1293,
+    "image": "images/leju_claw/grasp_006_left__depth_anything_v2_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_006_left",
+    "eventIndex": 6,
+    "sequenceSlug": "leju_claw",
+    "side": "left",
+    "method": "lingbot_v05_sensor_fused",
+    "headFrame": 1292,
+    "wristFrame": 1293,
+    "image": "images/leju_claw/grasp_006_left__lingbot_v05_sensor_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_006_left",
+    "eventIndex": 6,
+    "sequenceSlug": "leju_claw",
+    "side": "left",
+    "method": "ai_consensus_fused",
+    "headFrame": 1292,
+    "wristFrame": 1293,
+    "image": "images/leju_claw/grasp_006_left__ai_consensus_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_007_right",
+    "eventIndex": 7,
+    "sequenceSlug": "leju_claw",
+    "side": "right",
+    "method": "raw_aligned",
+    "headFrame": 1523,
+    "wristFrame": 1524,
+    "image": "images/leju_claw/grasp_007_right__raw_aligned.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_007_right",
+    "eventIndex": 7,
+    "sequenceSlug": "leju_claw",
+    "side": "right",
+    "method": "rgb_guided",
+    "headFrame": 1523,
+    "wristFrame": 1524,
+    "image": "images/leju_claw/grasp_007_right__rgb_guided.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_007_right",
+    "eventIndex": 7,
+    "sequenceSlug": "leju_claw",
+    "side": "right",
+    "method": "temporal_rgb_guided",
+    "headFrame": 1523,
+    "wristFrame": 1524,
+    "image": "images/leju_claw/grasp_007_right__temporal_rgb_guided.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_007_right",
+    "eventIndex": 7,
+    "sequenceSlug": "leju_claw",
+    "side": "right",
+    "method": "lingbot_v05",
+    "headFrame": 1523,
+    "wristFrame": 1524,
+    "image": "images/leju_claw/grasp_007_right__lingbot_v05.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_007_right",
+    "eventIndex": 7,
+    "sequenceSlug": "leju_claw",
+    "side": "right",
+    "method": "depth_anything_v2_fused",
+    "headFrame": 1523,
+    "wristFrame": 1524,
+    "image": "images/leju_claw/grasp_007_right__depth_anything_v2_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_007_right",
+    "eventIndex": 7,
+    "sequenceSlug": "leju_claw",
+    "side": "right",
+    "method": "lingbot_v05_sensor_fused",
+    "headFrame": 1523,
+    "wristFrame": 1524,
+    "image": "images/leju_claw/grasp_007_right__lingbot_v05_sensor_fused.jpg"
+  },
+  {
+    "eventId": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_007_right",
+    "eventIndex": 7,
+    "sequenceSlug": "leju_claw",
+    "side": "right",
+    "method": "ai_consensus_fused",
+    "headFrame": 1523,
+    "wristFrame": 1524,
+    "image": "images/leju_claw/grasp_007_right__ai_consensus_fused.jpg"
+  },
+  {
+    "eventId": "zhoumian_xianxia_main1:grasp_000_right",
+    "eventIndex": 0,
+    "sequenceSlug": "zhoumian",
+    "side": "right",
+    "method": "raw_aligned",
+    "headFrame": 159,
+    "wristFrame": 160,
+    "image": "images/zhoumian/grasp_000_right__raw_aligned.jpg"
+  },
+  {
+    "eventId": "zhoumian_xianxia_main1:grasp_000_right",
+    "eventIndex": 0,
+    "sequenceSlug": "zhoumian",
+    "side": "right",
+    "method": "rgb_guided",
+    "headFrame": 159,
+    "wristFrame": 160,
+    "image": "images/zhoumian/grasp_000_right__rgb_guided.jpg"
+  },
+  {
+    "eventId": "zhoumian_xianxia_main1:grasp_000_right",
+    "eventIndex": 0,
+    "sequenceSlug": "zhoumian",
+    "side": "right",
+    "method": "temporal_rgb_guided",
+    "headFrame": 159,
+    "wristFrame": 160,
+    "image": "images/zhoumian/grasp_000_right__temporal_rgb_guided.jpg"
+  },
+  {
+    "eventId": "zhoumian_xianxia_main1:grasp_000_right",
+    "eventIndex": 0,
+    "sequenceSlug": "zhoumian",
+    "side": "right",
+    "method": "lingbot_v05",
+    "headFrame": 159,
+    "wristFrame": 160,
+    "image": "images/zhoumian/grasp_000_right__lingbot_v05.jpg"
+  },
+  {
+    "eventId": "zhoumian_xianxia_main1:grasp_000_right",
+    "eventIndex": 0,
+    "sequenceSlug": "zhoumian",
+    "side": "right",
+    "method": "depth_anything_v2_fused",
+    "headFrame": 159,
+    "wristFrame": 160,
+    "image": "images/zhoumian/grasp_000_right__depth_anything_v2_fused.jpg"
+  },
+  {
+    "eventId": "zhoumian_xianxia_main1:grasp_000_right",
+    "eventIndex": 0,
+    "sequenceSlug": "zhoumian",
+    "side": "right",
+    "method": "lingbot_v05_sensor_fused",
+    "headFrame": 159,
+    "wristFrame": 160,
+    "image": "images/zhoumian/grasp_000_right__lingbot_v05_sensor_fused.jpg"
+  },
+  {
+    "eventId": "zhoumian_xianxia_main1:grasp_000_right",
+    "eventIndex": 0,
+    "sequenceSlug": "zhoumian",
+    "side": "right",
+    "method": "ai_consensus_fused",
+    "headFrame": 159,
+    "wristFrame": 160,
+    "image": "images/zhoumian/grasp_000_right__ai_consensus_fused.jpg"
+  },
+  {
+    "eventId": "zhoumian_xianxia_main1:grasp_001_right",
+    "eventIndex": 1,
+    "sequenceSlug": "zhoumian",
+    "side": "right",
+    "method": "raw_aligned",
+    "headFrame": 342,
+    "wristFrame": 343,
+    "image": "images/zhoumian/grasp_001_right__raw_aligned.jpg"
+  },
+  {
+    "eventId": "zhoumian_xianxia_main1:grasp_001_right",
+    "eventIndex": 1,
+    "sequenceSlug": "zhoumian",
+    "side": "right",
+    "method": "rgb_guided",
+    "headFrame": 342,
+    "wristFrame": 343,
+    "image": "images/zhoumian/grasp_001_right__rgb_guided.jpg"
+  },
+  {
+    "eventId": "zhoumian_xianxia_main1:grasp_001_right",
+    "eventIndex": 1,
+    "sequenceSlug": "zhoumian",
+    "side": "right",
+    "method": "temporal_rgb_guided",
+    "headFrame": 342,
+    "wristFrame": 343,
+    "image": "images/zhoumian/grasp_001_right__temporal_rgb_guided.jpg"
+  },
+  {
+    "eventId": "zhoumian_xianxia_main1:grasp_001_right",
+    "eventIndex": 1,
+    "sequenceSlug": "zhoumian",
+    "side": "right",
+    "method": "lingbot_v05",
+    "headFrame": 342,
+    "wristFrame": 343,
+    "image": "images/zhoumian/grasp_001_right__lingbot_v05.jpg"
+  },
+  {
+    "eventId": "zhoumian_xianxia_main1:grasp_001_right",
+    "eventIndex": 1,
+    "sequenceSlug": "zhoumian",
+    "side": "right",
+    "method": "depth_anything_v2_fused",
+    "headFrame": 342,
+    "wristFrame": 343,
+    "image": "images/zhoumian/grasp_001_right__depth_anything_v2_fused.jpg"
+  },
+  {
+    "eventId": "zhoumian_xianxia_main1:grasp_001_right",
+    "eventIndex": 1,
+    "sequenceSlug": "zhoumian",
+    "side": "right",
+    "method": "lingbot_v05_sensor_fused",
+    "headFrame": 342,
+    "wristFrame": 343,
+    "image": "images/zhoumian/grasp_001_right__lingbot_v05_sensor_fused.jpg"
+  },
+  {
+    "eventId": "zhoumian_xianxia_main1:grasp_001_right",
+    "eventIndex": 1,
+    "sequenceSlug": "zhoumian",
+    "side": "right",
+    "method": "ai_consensus_fused",
+    "headFrame": 342,
+    "wristFrame": 343,
+    "image": "images/zhoumian/grasp_001_right__ai_consensus_fused.jpg"
+  },
+  {
+    "eventId": "zhoumian_xianxia_main1:grasp_002_right",
+    "eventIndex": 2,
+    "sequenceSlug": "zhoumian",
+    "side": "right",
+    "method": "raw_aligned",
+    "headFrame": 566,
+    "wristFrame": 567,
+    "image": "images/zhoumian/grasp_002_right__raw_aligned.jpg"
+  },
+  {
+    "eventId": "zhoumian_xianxia_main1:grasp_002_right",
+    "eventIndex": 2,
+    "sequenceSlug": "zhoumian",
+    "side": "right",
+    "method": "rgb_guided",
+    "headFrame": 566,
+    "wristFrame": 567,
+    "image": "images/zhoumian/grasp_002_right__rgb_guided.jpg"
+  },
+  {
+    "eventId": "zhoumian_xianxia_main1:grasp_002_right",
+    "eventIndex": 2,
+    "sequenceSlug": "zhoumian",
+    "side": "right",
+    "method": "temporal_rgb_guided",
+    "headFrame": 566,
+    "wristFrame": 567,
+    "image": "images/zhoumian/grasp_002_right__temporal_rgb_guided.jpg"
+  },
+  {
+    "eventId": "zhoumian_xianxia_main1:grasp_002_right",
+    "eventIndex": 2,
+    "sequenceSlug": "zhoumian",
+    "side": "right",
+    "method": "lingbot_v05",
+    "headFrame": 566,
+    "wristFrame": 567,
+    "image": "images/zhoumian/grasp_002_right__lingbot_v05.jpg"
+  },
+  {
+    "eventId": "zhoumian_xianxia_main1:grasp_002_right",
+    "eventIndex": 2,
+    "sequenceSlug": "zhoumian",
+    "side": "right",
+    "method": "depth_anything_v2_fused",
+    "headFrame": 566,
+    "wristFrame": 567,
+    "image": "images/zhoumian/grasp_002_right__depth_anything_v2_fused.jpg"
+  },
+  {
+    "eventId": "zhoumian_xianxia_main1:grasp_002_right",
+    "eventIndex": 2,
+    "sequenceSlug": "zhoumian",
+    "side": "right",
+    "method": "lingbot_v05_sensor_fused",
+    "headFrame": 566,
+    "wristFrame": 567,
+    "image": "images/zhoumian/grasp_002_right__lingbot_v05_sensor_fused.jpg"
+  },
+  {
+    "eventId": "zhoumian_xianxia_main1:grasp_002_right",
+    "eventIndex": 2,
+    "sequenceSlug": "zhoumian",
+    "side": "right",
+    "method": "ai_consensus_fused",
+    "headFrame": 566,
+    "wristFrame": 567,
+    "image": "images/zhoumian/grasp_002_right__ai_consensus_fused.jpg"
+  }
+]
