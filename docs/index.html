@@ -132,6 +132,50 @@
       <div><i data-lucide="refresh-cw"></i><span><strong>同步校正</strong><small>RGB 主时钟持续校正 A/B 视频时间漂移</small></span></div>
     </section>
 
+    <section id="project-metrics" class="project-metrics" aria-labelledby="project-metrics-title">
+      <div class="project-metrics-head">
+        <div>
+          <p class="eyebrow">Depth quality · downstream proxy</p>
+          <h2 id="project-metrics-title">项目指标总览</h2>
+          <p>同一批 RGB-D 数据、统一物理量程与同一无 Prompt ACT 检查点下的全局结果。</p>
+        </div>
+        <span id="metrics-updated" class="metrics-updated">报告日期 --</span>
+      </div>
+
+      <div class="metrics-scope" role="list" aria-label="指标统计范围">
+        <div role="listitem"><span>RGB-D 相机帧</span><strong id="scope-rgbd-frames">--</strong><small id="scope-streams">--</small></div>
+        <div role="listitem"><span>参与统计像素</span><strong id="scope-pixels">--</strong><small>16-bit 毫米深度</small></div>
+        <div role="listitem"><span>原始有效深度</span><strong id="scope-raw-valid">--</strong><small id="scope-depth-distribution">--</small></div>
+        <div role="listitem"><span>ACT 留出帧</span><strong id="scope-act-frames">--</strong><small>14-DoF 动作块误差</small></div>
+        <div role="listitem"><span>批准目标 ROI</span><strong id="scope-roi-events">--</strong><small id="scope-roi-records">--</small></div>
+      </div>
+
+      <div id="metrics-highlights" class="metrics-highlights" aria-label="主要结果"></div>
+
+      <div class="metrics-table-wrap">
+        <table class="depth-metrics-table">
+          <thead>
+            <tr>
+              <th scope="col">方法</th>
+              <th scope="col"><abbr title="输出有效深度像素占全部像素的比例">有效覆盖率</abbr></th>
+              <th scope="col"><abbr title="原始无效、处理后有效的像素占全部像素的比例">新增填充率</abbr></th>
+              <th scope="col"><abbr title="在原始传感器有效像素上的 MAE / RMSE">传感器重叠误差</abbr></th>
+              <th scope="col"><abbr title="留出帧 14-DoF 动作块 MAE；下方为首步 MAE">ACT MAE</abbr></th>
+              <th scope="col">相对原始</th>
+              <th scope="col"><abbr title="执行腕目标 ROI 注意力密度相对均匀基线的提升">ROI lift</abbr></th>
+            </tr>
+          </thead>
+          <tbody id="depth-metrics-body"></tbody>
+        </table>
+      </div>
+
+      <div class="metrics-interpretation">
+        <p><i data-lucide="shield-check"></i><span><strong>“0（保留）”不是零预测误差。</strong>传感器保真融合直接复制原始有效像素，因此重叠区误差按构造为 0；该指标不衡量孔洞填充值的真实准确性。</span></p>
+        <p><i data-lucide="activity"></i><span><strong>ACT 是下游代理评测。</strong>动作 MAE 越低越好，但当前结果是统一无 Prompt、Depth-only 的离线留出集预测，不等同于真机任务成功率。</span></p>
+        <p><i data-lucide="scan-eye"></i><span><strong>注意力只用于解释。</strong>全零深度的 ROI lift 也可偏高，因此 ROI 集中度不能脱离动作误差和负对照单独作为方法排名依据。</span></p>
+      </div>
+    </section>
+
     <section id="metrics-band" class="metrics-band hidden" aria-label="离线评测指标">
       <div class="metric-heading">
         <p class="eyebrow">统一无 Prompt ACT</p>
@@ -218,6 +262,7 @@
   <script src="vendor/lucide.min.js"></script>
   <script src="data/catalog.js"></script>
   <script src="data/attention_metrics.js"></script>
+  <script src="data/depth_quality_metrics.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

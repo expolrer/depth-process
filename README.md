@@ -10,11 +10,36 @@
 [ACT 热力图对比](https://expolrer.github.io/depth-process/?view=attention) ·
 [接触关键帧与批准 ROI](https://expolrer.github.io/depth-process/attention_review/)
 
-[![RGB-D Depth Lab 深度处理对比页面](docs/qa-depth-video.png)](https://expolrer.github.io/depth-process/?view=depth)
+[![RGB-D Depth Lab 项目指标总览](docs/qa-project-metrics.png)](https://expolrer.github.io/depth-process/?view=depth)
 
 在线页面包含 5 个数据集和 85 个完整同步视频，可在 Head、Left Wrist、Right Wrist 三视角下切换
 7 种深度处理方法，并对比对应的无 Prompt ACT 热力图、动作误差和执行腕目标 ROI 指标。
 页面静态资源位于 `docs/`，GitHub Pages 发布源应设置为 `main` 分支的 `/docs` 目录。
+
+## 项目指标总览
+
+全量深度统计覆盖 5 个数据集、15 路相机流、14,731 个 RGB-D 相机帧和
+5,996,106,240 个像素。原始对齐深度有效率为 65.49%，深度中位数为 0.733 m，
+P95 为 4.010 m。下游代理评测使用同一个无 Prompt、Depth-only ACT 检查点，
+在 932 个留出帧上计算 14-DoF 动作块误差。
+
+| 方法 | 有效覆盖率 | 新增填充率 | 传感器重叠 MAE | ACT chunk MAE | 相对原始 ACT | 执行腕 ROI lift |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| 原始对齐深度 | 65.49% | 0.00% | 基准 | 0.1157 rad | 基线 | 1.085 |
+| RGB 引导 | 67.20% | 1.71% | 2.16 cm | 0.1164 rad | 上升 0.62% | 1.086 |
+| RGB + 时序 | 67.20% | 1.71% | 2.24 cm | 0.1164 rad | 上升 0.64% | 1.086 |
+| LingBot-Depth v0.5 | 99.14% | 33.82% | 15.00 cm | **0.1123 rad** | **降低 2.90%** | 1.104 |
+| Depth Anything V2 融合 | 89.44% | 23.94% | 0（保留） | 0.1151 rad | 降低 0.48% | 1.098 |
+| LingBot 传感器融合 | **99.32%** | **33.82%** | 0（保留） | 0.1150 rad | 降低 0.59% | **1.105** |
+| AI 双模型一致性融合 | 86.88% | 21.39% | 0（保留） | 0.1148 rad | 降低 0.78% | 1.095 |
+
+`新增填充率` 是“原始无效、处理后有效”的像素占全部像素的比例。融合方法的
+`0（保留）` 表示其直接复制原始有效传感器像素，因此重叠区误差按构造为 0；
+它不代表孔洞填充值具有零误差。ACT 是离线下游代理评测，不等同于真机成功率。
+全零深度和空间打乱深度的 ACT MAE 分别为 0.2562 和 0.2400 rad，明显劣于正常方法；
+但全零深度的 ROI lift 仍可偏高，因此注意力集中度不能脱离动作误差和负对照单独排名。
+
+首页指标数据同时保存为 `docs/data/depth_quality_metrics.json`，便于复核或二次分析。
 
 ## 相机处理方式
 

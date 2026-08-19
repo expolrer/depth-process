@@ -3,6 +3,7 @@ const initialView = new URLSearchParams(window.location.search).get("view");
 const state = {
   catalog: null,
   roiMetrics: null,
+  depthQualityMetrics: null,
   view: initialView === "attention" ? "attention" : "depth",
   datasetIndex: 0,
   selections: {
@@ -198,6 +199,80 @@ function renderPlayIcon() {
 }
 
 function metricText(value) { return Number(value).toFixed(4); }
+
+function percentText(value, digits = 2) {
+  return `${(Number(value) * 100).toFixed(digits)}%`;
+}
+
+function renderProjectMetrics() {
+  const report = state.depthQualityMetrics;
+  if (!report) {
+    $("project-metrics").classList.add("hidden");
+    return;
+  }
+
+  const { scope, depth_distribution: distribution, methods, negative_controls: controls } = report;
+  const raw = methods.find((method) => method.id === "raw_aligned");
+  const bestCoverage = methods.reduce((best, method) => method.valid_fraction > best.valid_fraction ? method : best);
+  const bestAct = methods.reduce((best, method) => method.act_chunk_mae_rad < best.act_chunk_mae_rad ? method : best);
+  const bestRoi = methods.reduce((best, method) => method.roi_attention_lift > best.roi_attention_lift ? method : best);
+  const zeroControl = controls.find((control) => control.id === "zero_depth");
+  const shuffleControl = controls.find((control) => control.id === "spatially_shuffled_raw");
+
+  $("metrics-updated").textContent = `报告日期 ${report.updated}`;
+  $("scope-rgbd-frames").textContent = scope.rgbd_frames.toLocaleString("zh-CN");
+  $("scope-streams").textContent = `${scope.datasets} 个数据集 · ${scope.camera_streams} 路相机流`;
+  $("scope-pixels").textContent = scope.pixels.toLocaleString("zh-CN");
+  $("scope-raw-valid").textContent = percentText(distribution.raw_valid_fraction);
+  $("scope-depth-distribution").textContent = `中位 ${distribution.median_m.toFixed(3)} m · P95 ${distribution.p95_m.toFixed(3)} m`;
+  $("scope-act-frames").textContent = scope.act_held_out_frames.toLocaleString("zh-CN");
+  $("scope-roi-events").textContent = `${scope.roi_events} 次抓取`;
+  $("scope-roi-records").textContent = `每方法 ${scope.roi_records_per_method.toLocaleString("zh-CN")} 个执行腕 ROI`;
+
+  const actGain = (raw.act_chunk_mae_rad - bestAct.act_chunk_mae_rad) / raw.act_chunk_mae_rad * 100;
+  $("metrics-highlights").innerHTML = `
+    <div><i data-lucide="maximize-2"></i><span><strong>最高覆盖 ${percentText(bestCoverage.valid_fraction)}</strong><small>${bestCoverage.label}，新增填充 ${percentText(bestCoverage.filled_fraction)}</small></span></div>
+    <div><i data-lucide="circle-gauge"></i><span><strong>最低 ACT MAE ${bestAct.act_chunk_mae_rad.toFixed(4)} rad</strong><small>${bestAct.label}，较原始降低 ${actGain.toFixed(2)}%</small></span></div>
+    <div><i data-lucide="focus"></i><span><strong>普通方法最高 ROI lift ${bestRoi.roi_attention_lift.toFixed(3)}</strong><small>${bestRoi.label}；此项仅解释注意力分布</small></span></div>
+    <div><i data-lucide="test-tube-2"></i><span><strong>负对照 ACT MAE ${zeroControl.act_chunk_mae_rad.toFixed(4)} / ${shuffleControl.act_chunk_mae_rad.toFixed(4)}</strong><small>全零 / 空间打乱，明显高于正常深度方法</small></span></div>
+  `;
+
+  $("depth-metrics-body").innerHTML = methods.map((method) => {
+    const isCoverageBest = method.id === bestCoverage.id;
+    const isActBest = method.id === bestAct.id;
+    const isRoiBest = method.id === bestRoi.id;
+    const actDelta = (method.act_chunk_mae_rad - raw.act_chunk_mae_rad) / raw.act_chunk_mae_rad * 100;
+    let sensorError;
+    if (method.sensor_behavior === "reference") {
+      sensorError = `<strong>基准</strong><small>自比较不适用</small>`;
+    } else if (method.sensor_behavior === "preserved") {
+      sensorError = `<strong class="preserved-value">0（保留）</strong><small>有效像素原样复制</small>`;
+    } else {
+      sensorError = `<strong>${(method.sensor_mae_m * 100).toFixed(2)} cm</strong><small>RMSE ${(method.sensor_rmse_m * 100).toFixed(2)} cm</small>`;
+    }
+
+    let deltaText = `<span class="delta-baseline">基线</span>`;
+    if (method.id !== raw.id) {
+      const direction = actDelta < 0 ? "↓" : "↑";
+      const deltaClass = actDelta < 0 ? "delta-better" : "delta-worse";
+      deltaText = `<span class="${deltaClass}">${direction} ${Math.abs(actDelta).toFixed(2)}%</span>`;
+    }
+
+    return `
+      <tr>
+        <td><strong>${method.label}</strong><small>${method.kind}</small></td>
+        <td><strong>${percentText(method.valid_fraction)}</strong>${isCoverageBest ? '<span class="best-tag">最高</span>' : ""}</td>
+        <td><strong>${percentText(method.filled_fraction)}</strong></td>
+        <td>${sensorError}</td>
+        <td><strong>${method.act_chunk_mae_rad.toFixed(4)} rad</strong><small>首步 ${method.act_first_step_mae_rad.toFixed(4)}</small>${isActBest ? '<span class="best-tag">最低</span>' : ""}</td>
+        <td>${deltaText}</td>
+        <td><strong>${method.roi_attention_lift.toFixed(3)}</strong>${isRoiBest ? '<span class="best-tag">最高</span>' : ""}</td>
+      </tr>
+    `;
+  }).join("");
+
+  lucide.createIcons({ attrs: { "stroke-width": 1.8 } });
+}
 
 function signedMetric(value, digits = 4) {
   const numeric = Number(value);
@@ -425,8 +500,10 @@ async function initialize() {
     }
     state.roiMetrics = window.ACT_ROI_METRICS || null;
     if (!state.roiMetrics) throw new Error("最新 ROI 注意力指标未加载");
+    state.depthQualityMetrics = window.DEPTH_QUALITY_METRICS || null;
     const videoCount = state.catalog.datasets.length * (1 + 7 + 9);
     $("media-count").textContent = `${videoCount} 个视频`;
+    renderProjectMetrics();
     setupControls();
     renderViewChrome();
     renderLabels();

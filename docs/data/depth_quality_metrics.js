@@ -1,0 +1,49 @@
+window.DEPTH_QUALITY_METRICS = {
+  "schema": "rgbd_depth_quality_homepage_v1",
+  "updated": "2026-08-20",
+  "sources": [
+    "outputs/reports/norm_stats.json",
+    "outputs/comparisons/comparison_summary.json",
+    "outputs/act_no_prompt/final_depth_only/benchmark_report.json",
+    "docs/data/attention_metrics.json"
+  ],
+  "scope": {
+    "datasets": 5,
+    "camera_streams": 15,
+    "rgbd_frames": 14731,
+    "pixels": 5996106240,
+    "act_held_out_frames": 932,
+    "roi_events": 19,
+    "roi_records_per_method": 2813
+  },
+  "depth_distribution": {
+    "unit": "m",
+    "valid_range_m": [0.08, 10.0],
+    "display_range_m": [0.2, 4.0],
+    "raw_valid_fraction": 0.6549496909847948,
+    "mean_m": 1.3117069890896955,
+    "std_m": 1.4433993797534725,
+    "median_m": 0.7330000400543213,
+    "p95_m": 4.010000228881836
+  },
+  "methods": [
+    {"id":"raw_aligned","label":"原始对齐深度","kind":"基线","sensor_behavior":"reference","valid_fraction":0.6549496909847948,"filled_fraction":0.0,"sensor_mae_m":null,"sensor_rmse_m":null,"act_chunk_mae_rad":0.11567807970600967,"act_first_step_mae_rad":0.0809848738147904,"roi_attention_lift":1.0852476963840172},
+    {"id":"rgb_guided","label":"RGB 引导","kind":"经典处理","sensor_behavior":"modified","valid_fraction":0.6720241022614035,"filled_fraction":0.017074411276608734,"sensor_mae_m":0.021598374285272413,"sensor_rmse_m":0.08079419168817453,"act_chunk_mae_rad":0.11639444099074164,"act_first_step_mae_rad":0.08264316924505626,"roi_attention_lift":1.0856784513719289},
+    {"id":"temporal_rgb_guided","label":"RGB + 时序","kind":"经典处理","sensor_behavior":"modified","valid_fraction":0.6720070753783042,"filled_fraction":0.017073703984270966,"sensor_mae_m":0.022404462740921113,"sensor_rmse_m":0.08091913958226099,"act_chunk_mae_rad":0.1164227097556661,"act_first_step_mae_rad":0.08270872850713373,"roi_attention_lift":1.0857214083151447},
+    {"id":"lingbot_v05","label":"LingBot-Depth v0.5","kind":"纯模型输出","sensor_behavior":"predicted","valid_fraction":0.9914412048509668,"filled_fraction":0.3382253827443858,"sensor_mae_m":0.1499583711956347,"sensor_rmse_m":0.5786909901917032,"act_chunk_mae_rad":0.11232132263693204,"act_first_step_mae_rad":0.07532372473208616,"roi_attention_lift":1.1042852603089903},
+    {"id":"depth_anything_v2_fused","label":"Depth Anything V2 融合","kind":"传感器保真融合","sensor_behavior":"preserved","valid_fraction":0.894378117289663,"filled_fraction":0.23942842630486813,"sensor_mae_m":0.0,"sensor_rmse_m":0.0,"act_chunk_mae_rad":0.11512431366025797,"act_first_step_mae_rad":0.07940401657639216,"roi_attention_lift":1.098476685215816},
+    {"id":"lingbot_v05_sensor_fused","label":"LingBot 传感器融合","kind":"传感器保真融合","sensor_behavior":"preserved","valid_fraction":0.9931750737291806,"filled_fraction":0.3382253827443858,"sensor_mae_m":0.0,"sensor_rmse_m":0.0,"act_chunk_mae_rad":0.11499788258851419,"act_first_step_mae_rad":0.07940006953196464,"roi_attention_lift":1.1045526423258631},
+    {"id":"ai_consensus_fused","label":"AI 双模型一致性融合","kind":"传感器保真融合","sensor_behavior":"preserved","valid_fraction":0.8688450815374479,"filled_fraction":0.21389539055265305,"sensor_mae_m":0.0,"sensor_rmse_m":0.0,"act_chunk_mae_rad":0.1147736503374925,"act_first_step_mae_rad":0.07944150878416842,"roi_attention_lift":1.0948306488600776}
+  ],
+  "negative_controls": [
+    {"id":"zero_depth","label":"全零深度","act_chunk_mae_rad":0.25616718853349474,"roi_attention_lift":1.1617248053292542},
+    {"id":"spatially_shuffled_raw","label":"空间打乱深度","act_chunk_mae_rad":0.23999968031883204,"roi_attention_lift":1.0911643341383261}
+  ],
+  "definitions": {
+    "valid_fraction": "输出中位于有效物理量程内的像素占全部像素的比例。",
+    "filled_fraction": "原始深度无效、处理后有效的像素占全部像素的比例。",
+    "sensor_overlap_error": "仅在原始传感器有效且输出有效的重叠像素上，与原始深度比较。",
+    "act_chunk_mae": "统一无 Prompt、Depth-only ACT 在留出帧上的 14-DoF 动作块 MAE，单位 rad，越低越好。",
+    "roi_attention_lift": "执行腕目标 ROI 的注意力密度相对全图均匀基线的提升；仅用于解释关注分布，不能单独证明任务成功。"
+  }
+};
