@@ -1,0 +1,57 @@
+# Python environments and caches
+/.venv/
+/venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+/.pytest_cache/
+/.ruff_cache/
+
+# Generated datasets, reports, logs, and viewer media
+/outputs/
+/logs/
+/reports/
+/smoke/
+/contact_samples/
+/review_data/
+/qa/
+/viewer/data/
+/viewer/media/
+
+# Local model/dependency copies
+/models/
+/vendor/
+/wheelhouse/
+/external/
+/checkpoints/
+
+# Legacy duplicate entry points; canonical copies live under scripts/
+/build_video_viewer.py
+/validate_lingbot_attention.py
+/scripts/pyproject.toml
+
+# Model weights, robot datasets, and generated media
+*.bag
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.onnx
+*.engine
+*.mp4
+*.avi
+*.mkv
+
+# Credentials and machine-local configuration
+.env
+.env.*
+*.pem
+*.key
+id_rsa*
+id_ed25519*
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

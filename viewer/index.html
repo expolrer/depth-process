@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
+    <link rel="icon" href="data:," />
+    <title>RGB-D Depth Lab</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-mobile-camera="cam_h">
+    <header class="app-header">
+      <div class="brand-block">
+        <span class="brand-icon" aria-hidden="true"><i data-lucide="scan-line"></i></span>
+        <div>
+          <h1>RGB-D Depth Lab</h1>
+          <p id="datasetMeta">正在读取数据目录</p>
+        </div>
+      </div>
+      <div class="health" id="health" data-state="loading">
+        <span class="health-dot" aria-hidden="true"></span>
+        <span id="healthText">载入中</span>
+      </div>
+    </header>
+
+    <section class="control-band" aria-label="播放控制">
+      <div class="select-controls">
+        <label class="select-field dataset-field">
+          <span>数据集</span>
+          <select id="datasetSelect" aria-label="数据集"></select>
+        </label>
+        <label class="select-field method-field method-a-field">
+          <span><b class="method-marker marker-a"></b>方法 A</span>
+          <select id="methodASelect" aria-label="深度方法 A"></select>
+        </label>
+        <button class="icon-button swap-button" id="swapMethods" type="button" title="交换方法 A 和 B" aria-label="交换方法 A 和 B">
+          <i data-lucide="arrow-up-down"></i>
+        </button>
+        <label class="select-field method-field method-b-field">
+          <span><b class="method-marker marker-b"></b>方法 B</span>
+          <select id="methodBSelect" aria-label="深度方法 B"></select>
+        </label>
+      </div>
+
+      <div class="mobile-camera-tabs" id="mobileCameraTabs" role="tablist" aria-label="相机视角"></div>
+
+      <div class="transport-row">
+        <div class="transport-buttons">
+          <button class="icon-button" id="previousFrame" type="button" title="上一帧" aria-label="上一帧">
+            <i data-lucide="step-back"></i>
+          </button>
+          <button class="play-button" id="playPause" type="button" title="播放" aria-label="播放">
+            <i data-lucide="play"></i>
+          </button>
+          <button class="icon-button" id="nextFrame" type="button" title="下一帧" aria-label="下一帧">
+            <i data-lucide="step-forward"></i>
+          </button>
+        </div>
+        <output class="timecode" id="timecode">00:00.000 / 00:00.000</output>
+        <input id="timeline" class="timeline" type="range" min="0" max="1" value="0" step="1" aria-label="视频时间轴" />
+        <output class="framecode" id="framecode">帧 0 / 0</output>
+        <div class="speed-control" id="speedControl" aria-label="播放速度">
+          <button type="button" data-speed="0.5">0.5×</button>
+          <button type="button" data-speed="1" class="is-active">1×</button>
+          <button type="button" data-speed="2">2×</button>
+        </div>
+      </div>
+    </section>
+
+    <main class="workspace">
+      <section class="matrix" id="videoMatrix" aria-label="同步 RGB 和深度视频">
+        <div class="matrix-corner" aria-hidden="true"></div>
+        <div class="camera-header camera-cam-h" data-camera="cam_h">
+          <span>头部</span><small>Gemini-335L</small>
+        </div>
+        <div class="camera-header camera-cam-l" data-camera="cam_l">
+          <span>左腕</span><small>D405</small>
+        </div>
+        <div class="camera-header camera-cam-r" data-camera="cam_r">
+          <span>右腕</span><small>D405</small>
+        </div>
+
+        <div class="row-label row-rgb"><span class="row-icon rgb-icon"><i data-lucide="video"></i></span><b>RGB</b></div>
+        <div class="row-label row-method-a"><span class="row-icon method-a-icon">A</span><b id="methodARowLabel">方法 A</b></div>
+        <div class="row-label row-method-b"><span class="row-icon method-b-icon">B</span><b id="methodBRowLabel">方法 B</b></div>
+      </section>
+
+      <footer class="visual-legends">
+        <div class="legend-group" id="depthLegend">
+          <div class="legend-title"><i data-lucide="ruler"></i><span>Metric Depth</span></div>
+          <div class="legend-ramp" aria-label="深度颜色范围">
+            <span class="legend-near">近</span>
+            <div class="turbo-ramp" aria-hidden="true"></div>
+            <span class="legend-far">远</span>
+          </div>
+          <div class="legend-ticks" id="legendTicks"></div>
+          <div class="invalid-key"><span></span>无效深度</div>
+        </div>
+        <div class="legend-group attention-legend" id="attentionLegend" hidden>
+          <div class="legend-title"><i data-lucide="focus"></i><span>Relative Attention</span></div>
+          <div class="legend-ramp" aria-label="相对注意力范围">
+            <span>低</span>
+            <div class="attention-ramp" aria-hidden="true"></div>
+            <span>高</span>
+          </div>
+          <div class="legend-ticks">0.0 — 1.0</div>
+          <div class="relative-key">逐帧 P5–P99.5</div>
+        </div>
+      </footer>
+    </main>
+
+    <template id="videoCellTemplate">
+      <figure class="video-cell">
+        <video muted playsinline preload="metadata"></video>
+        <figcaption>
+          <span class="cell-camera"></span>
+          <span class="cell-state">等待载入</span>
+        </figcaption>
+        <div class="video-placeholder" aria-hidden="true">
+          <i data-lucide="loader-circle"></i>
+        </div>
+      </figure>
+    </template>
+
+    <script src="vendor/lucide.min.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
