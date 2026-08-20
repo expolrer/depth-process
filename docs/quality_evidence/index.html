@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>深度处理质量证据 | RGB-D Depth Lab</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <a class="back-link" href="../index.html?view=attention" aria-label="返回完整视频页面">
+      <i data-lucide="arrow-left"></i><span>RGB-D Depth Lab</span>
+    </a>
+    <div class="header-title">
+      <strong>深度处理质量证据</strong>
+      <small>无模型 · CPU-only · 分层抽样</small>
+    </div>
+    <div class="run-status"><span></span>未占用训练 GPU</div>
+  </header>
+
+  <main>
+    <section class="scope-band" aria-label="评估范围">
+      <div><small>数据集</small><strong id="scope-sequences">5</strong></div>
+      <div><small>相机视角</small><strong id="scope-cameras">15</strong></div>
+      <div><small>空间质量帧</small><strong id="scope-spatial">180</strong></div>
+      <div><small>遮挡三帧组</small><strong id="scope-temporal">90</strong></div>
+      <div><small>批准 ROI 帧</small><strong id="scope-roi">410</strong></div>
+      <div><small>运行耗时</small><strong id="scope-elapsed">62.1 s</strong></div>
+    </section>
+
+    <section class="control-band" aria-label="方法比较">
+      <label><span>方法 A</span><select id="method-a"></select></label>
+      <button id="swap-methods" class="icon-button" type="button" title="交换方法" aria-label="交换方法"><i data-lucide="arrow-left-right"></i></button>
+      <label><span>方法 B</span><select id="method-b"></select></label>
+      <div class="downloads">
+        <a href="method_summary.csv" download title="下载汇总 CSV"><i data-lucide="table-2"></i><span>CSV</span></a>
+        <a href="depth_quality_evidence.json" download title="下载完整 JSON"><i data-lucide="braces"></i><span>JSON</span></a>
+      </div>
+    </section>
+
+    <nav class="evidence-tabs" aria-label="证据类型">
+      <button type="button" class="active" data-tab="quality"><i data-lucide="scan-line"></i><span>无模型质量</span></button>
+      <button type="button" data-tab="recovery"><i data-lucide="square-dashed-mouse-pointer"></i><span>遮挡恢复</span></button>
+      <button type="button" data-tab="geometry"><i data-lucide="axis-3d"></i><span>三视角几何</span></button>
+      <button type="button" data-tab="roi"><i data-lucide="focus"></i><span>任务 ROI</span></button>
+    </nav>
+
+    <section class="evidence-heading">
+      <div>
+        <p id="evidence-kicker">证据一</p>
+        <h1 id="evidence-title">无模型的深度质量证据</h1>
+        <p id="evidence-description"></p>
+      </div>
+      <div class="primary-readout">
+        <small id="primary-label">主观察指标</small>
+        <strong id="primary-winner">--</strong>
+        <span id="primary-value">--</span>
+      </div>
+    </section>
+
+    <section class="comparison" aria-label="所选方法比较">
+      <article class="method-column method-a-column">
+        <div class="method-name"><span>A</span><strong id="method-a-name">--</strong></div>
+        <div id="method-a-metrics" class="metric-grid"></div>
+      </article>
+      <article class="method-column method-b-column">
+        <div class="method-name"><span>B</span><strong id="method-b-name">--</strong></div>
+        <div id="method-b-metrics" class="metric-grid"></div>
+      </article>
+    </section>
+
+    <section class="interpretation" aria-label="结果解释">
+      <i data-lucide="scale"></i>
+      <div><strong id="interpretation-title">A/B 证据解释</strong><p id="interpretation-text"></p></div>
+    </section>
+
+    <section class="ranking-section">
+      <div class="section-heading">
+        <div><p>全部方法</p><h2 id="ranking-title">指标排名</h2></div>
+        <small id="ranking-note"></small>
+      </div>
+      <div class="table-wrap"><table><thead id="ranking-head"></thead><tbody id="ranking-body"></tbody></table></div>
+    </section>
+
+    <section class="visual-section">
+      <div class="section-heading">
+        <div><p>固定量程 0.2–4.0 m</p><h2>任务目标代表帧</h2></div>
+        <label class="representative-control"><span>数据集</span><select id="representative-select"></select></label>
+      </div>
+      <figure>
+        <img id="representative-image" alt="RGB、原始深度和三种处理方法的任务目标对比">
+        <figcaption id="representative-caption"></figcaption>
+      </figure>
+    </section>
+
+    <section class="methodology">
+      <div class="section-heading"><div><p>解释边界</p><h2>如何阅读这些证据</h2></div></div>
+      <ol id="limitations"></ol>
+      <p id="geometry-warning" class="geometry-warning"><i data-lucide="triangle-alert"></i><span></span></p>
+    </section>
+  </main>
+
+  <script src="../vendor/lucide.min.js"></script>
+  <script src="evidence_data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

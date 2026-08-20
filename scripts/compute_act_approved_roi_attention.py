@@ -397,7 +397,7 @@ def render_html(summary: dict[str, Any], output_path: Path) -> None:
 <style>
 :root{{--ink:#17202a;--muted:#667085;--line:#d9dee7;--paper:#f7f8fa;--accent:#0f766e;--warn:#9a3412}}
 *{{box-sizing:border-box}} body{{margin:0;font-family:Arial,"Microsoft YaHei",sans-serif;color:var(--ink);background:var(--paper);letter-spacing:0;overflow-x:hidden}}
-header{{background:#fff;border-bottom:1px solid var(--line);padding:24px max(24px,calc((100% - 1440px)/2))}}
+header{{background:#fff;border-bottom:1px solid var(--line);padding:24px max(24px,calc((100% - 1440px)/2))}} .header-row{{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}} .heatmap-link{{display:inline-flex;align-items:center;height:38px;padding:0 14px;border:1px solid var(--accent);border-radius:5px;color:var(--accent);font-weight:700;text-decoration:none;white-space:nowrap}}
 h1{{font-size:26px;margin:0 0 8px;overflow-wrap:anywhere}} header p,.note{{color:var(--muted);margin:0;line-height:1.65;overflow-wrap:anywhere}}
 main{{max-width:1440px;margin:auto;padding:24px}} .summary{{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:20px}}
 .summary div{{background:#fff;padding:16px;min-width:0;overflow-wrap:anywhere}} .summary b{{display:block;font-size:24px;color:var(--accent)}}
@@ -406,7 +406,7 @@ th,td{{padding:12px 14px;border-bottom:1px solid var(--line);text-align:right;wh
 small{{display:block;color:var(--muted);font-weight:normal;margin-top:4px}} tr.control{{background:#fff7ed}} .note{{background:#fff;border-left:4px solid var(--warn);padding:16px;margin-top:20px}}
 @media(max-width:760px){{.summary{{grid-template-columns:1fr 1fr}} main{{padding:12px}} h1{{font-size:22px}}}}
 </style></head><body>
-<header><h1>不同深度处理方法的 ACT 目标注意力指标</h1><p>无 Prompt、Depth-only ACT checkpoint_009000；ROI 来自最终批准的头部与执行腕部 SAM2 目标轨迹。</p></header>
+<header><div class="header-row"><div><h1>不同深度处理方法的 ACT 目标注意力指标</h1><p>无 Prompt、Depth-only ACT checkpoint_009000；ROI 来自最终批准的头部与执行腕部 SAM2 目标轨迹。</p></div><a class="heatmap-link" href="heatmaps/">查看注意力热图</a></div></header>
 <main><section class="summary"><div><b>{summary['diagnostics']['events']}</b>次批准抓取</div><div><b>{summary['diagnostics']['samples']}</b>个对齐时刻</div><div><b>{summary['frame_records_per_method']}</b>个有效双视角 ROI</div><div><b>{len(NORMAL_METHODS)}</b>种处理方法 + 2 个负对照</div></section>
 <div class="table-wrap"><table><thead><tr><th>排序</th><th>深度方法</th><th>ROI 提升倍数 ↑</th><th>目标/背景密度比 ↑</th><th>峰值命中率 ↑</th><th>视角内 ROI 占比 ↑</th><th>质心距离 ↓</th><th>动作 MAE ↓</th></tr></thead><tbody>{''.join(rows_html)}</tbody></table></div>
 <p class="note"><b>解释边界：</b>排名主指标按 19 次抓取等权，避免长抓取主导结果。注意力更集中只能说明同一个 ACT 对该深度输入分配了更多目标区域注意力，不能单独证明任务成功；动作 MAE 是独立的留出集离线指标。零深度和空间打乱用于检查指标是否具备基本辨别力。</p>

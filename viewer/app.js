@@ -76,22 +76,19 @@ function updateReadouts(frame = state.currentFrame) {
 function createVideoCells() {
   const fragment = document.createDocumentFragment();
   for (const row of ROWS) {
-    state.catalog.cameras.forEach((camera, cameraIndex) => {
-      const cell = elements.cellTemplate.content.firstElementChild.cloneNode(true);
-      cell.dataset.row = row;
-      cell.dataset.camera = camera.id;
-      cell.style.gridColumn = String(cameraIndex + 2);
-      cell.style.gridRow = String(ROWS.indexOf(row) + 2);
-      cell.querySelector(".cell-camera").textContent = `${camera.label} · ${camera.model}`;
-      const video = cell.querySelector("video");
-      video.dataset.row = row;
-      video.dataset.camera = camera.id;
-      video.disablePictureInPicture = true;
-      video.controls = false;
-      video.playbackRate = state.playbackRate;
-      state.videos.set(`${row}:${camera.id}`, video);
-      fragment.appendChild(cell);
-    });
+    const cell = elements.cellTemplate.content.firstElementChild.cloneNode(true);
+    cell.classList.add("video-strip");
+    cell.dataset.row = row;
+    cell.style.gridColumn = "2 / 5";
+    cell.style.gridRow = String(ROWS.indexOf(row) + 2);
+    cell.querySelector(".cell-camera").textContent = "头部 · 左腕 · 右腕";
+    const video = cell.querySelector("video");
+    video.dataset.row = row;
+    video.disablePictureInPicture = true;
+    video.controls = false;
+    video.playbackRate = state.playbackRate;
+    state.videos.set(row, video);
+    fragment.appendChild(cell);
   }
   elements.matrix.appendChild(fragment);
 }
@@ -128,8 +125,8 @@ function populateSelect(select, items, value, labelBuilder) {
   }
 }
 
-function videoSource(row, cameraId) {
-  const media = state.dataset.media[cameraId];
+function videoSource(row) {
+  const media = state.dataset.mosaic;
   if (row === "rgb") return media.rgb;
   const methodId = row === "method-a" ? state.methodA : state.methodB;
   return media.methods[methodId];
@@ -169,28 +166,26 @@ async function loadRows(rows, keepFrame = state.currentFrame) {
   const pending = [];
 
   for (const row of rows) {
-    for (const camera of state.catalog.cameras) {
-      const video = state.videos.get(`${row}:${camera.id}`);
-      const cell = video.closest(".video-cell");
-      const stateLabel = cell.querySelector(".cell-state");
-      cell.classList.remove("is-ready", "is-error");
-      stateLabel.textContent = "载入中";
-      video.src = videoSource(row, camera.id);
-      video.load();
-      pending.push(
-        waitForVideo(video, generation)
-          .then(() => {
-            if (generation !== state.generation) return;
-            cell.classList.add("is-ready");
-            stateLabel.textContent = `${state.catalog.fps.toFixed(0)} FPS`;
-          })
-          .catch((error) => {
-            cell.classList.add("is-error");
-            stateLabel.textContent = "载入失败";
-            throw error;
-          }),
-      );
-    }
+    const video = state.videos.get(row);
+    const cell = video.closest(".video-cell");
+    const stateLabel = cell.querySelector(".cell-state");
+    cell.classList.remove("is-ready", "is-error");
+    stateLabel.textContent = "载入中";
+    video.src = videoSource(row);
+    video.load();
+    pending.push(
+      waitForVideo(video, generation)
+        .then(() => {
+          if (generation !== state.generation) return;
+          cell.classList.add("is-ready");
+          stateLabel.textContent = `${state.catalog.fps.toFixed(0)} FPS · 3 视角`;
+        })
+        .catch((error) => {
+          cell.classList.add("is-error");
+          stateLabel.textContent = "载入失败";
+          throw error;
+        }),
+    );
   }
 
   const results = await Promise.allSettled(pending);
@@ -237,7 +232,7 @@ function allVideos() {
 }
 
 function masterVideo() {
-  return state.videos.get("rgb:cam_h");
+  return state.videos.get("rgb");
 }
 
 function waitUntil(video, predicate, eventNames, generation, timeoutMs = 12000) {

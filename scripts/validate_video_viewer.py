@@ -59,18 +59,38 @@ def main() -> int:
             issues.append({"asset": static_name, "error": "Missing or empty static asset"})
 
     seen: set[str] = set()
+    def add_references(references: list[tuple[str, str]], expected_frames: int) -> None:
+        for stream_id, relative_path in references:
+            if relative_path in seen:
+                issues.append({"asset": relative_path, "error": "Duplicate catalog reference"})
+                continue
+            seen.add(relative_path)
+            assets.append((viewer_root / relative_path, expected_frames, stream_id))
+
     for dataset in catalog["datasets"]:
+        if "media" not in dataset:
+            # Version 1 catalogs store each three-camera mosaic as one video.
+            expected_frames = int(dataset["frameCount"])
+            references = [("rgb", dataset["rgb"])]
+            references.extend((f"depth:{key}", value) for key, value in dataset["depth"].items())
+            references.extend(
+                (f"attention:{key}", value) for key, value in dataset.get("attention", {}).items()
+            )
+            add_references(references, expected_frames)
+            continue
+
         for camera in catalog["cameras"]:
             camera_id = camera["id"]
             expected_frames = int(dataset["frameCounts"][camera_id])
             media = dataset["media"][camera_id]
-            references = [("rgb", media["rgb"]), *media["methods"].items()]
-            for stream_id, relative_path in references:
-                if relative_path in seen:
-                    issues.append({"asset": relative_path, "error": "Duplicate catalog reference"})
-                    continue
-                seen.add(relative_path)
-                assets.append((viewer_root / relative_path, expected_frames, stream_id))
+            add_references([("rgb", media["rgb"]), *media["methods"].items()], expected_frames)
+
+        mosaic = dataset.get("mosaic")
+        if not mosaic:
+            issues.append({"asset": dataset["id"], "error": "Missing mosaic media catalog"})
+            continue
+        mosaic_references = [("mosaic_rgb", mosaic["rgb"]), *mosaic["methods"].items()]
+        add_references(mosaic_references, int(dataset["frameCounts"]["cam_h"]))
 
     results: list[dict[str, Any]] = []
     with ThreadPoolExecutor(max_workers=max(1, args.workers)) as executor:

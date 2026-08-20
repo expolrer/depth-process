@@ -60,6 +60,7 @@ class VideoTask:
     kind: str
     frame_paths: tuple[Path, ...]
     output_path: Path
+    frame_count: int | None = None
 
 
 def parse_args() -> argparse.Namespace:
@@ -204,6 +205,45 @@ def collect_tasks(args: argparse.Namespace) -> tuple[list[VideoTask], list[dict[
                 "methods": method_media,
             }
 
+        mosaic_rgb = f"media/{slug}/mosaic/rgb.mp4"
+        mosaic_methods: dict[str, str] = {}
+        mosaic_rgb_inputs = tuple(
+            viewer_root / dataset_entry["media"][camera_id]["rgb"]
+            for camera_id, _label, _model in CAMERAS
+        )
+        tasks.append(
+            VideoTask(
+                dataset_dir.name,
+                slug,
+                "mosaic",
+                "rgb",
+                "mosaic",
+                mosaic_rgb_inputs,
+                viewer_root / mosaic_rgb,
+                dataset_entry["frameCounts"]["cam_h"],
+            )
+        )
+        for method_id, _method_label, _family in METHODS:
+            relative = f"media/{slug}/mosaic/{method_id}.mp4"
+            mosaic_methods[method_id] = relative
+            inputs = tuple(
+                viewer_root / dataset_entry["media"][camera_id]["methods"][method_id]
+                for camera_id, _label, _model in CAMERAS
+            )
+            tasks.append(
+                VideoTask(
+                    dataset_dir.name,
+                    slug,
+                    "mosaic",
+                    method_id,
+                    "mosaic",
+                    inputs,
+                    viewer_root / relative,
+                    dataset_entry["frameCounts"]["cam_h"],
+                )
+            )
+        dataset_entry["mosaic"] = {"rgb": mosaic_rgb, "methods": mosaic_methods}
+
         master_count = dataset_entry["frameCounts"]["cam_h"]
         dataset_entry["durationSeconds"] = master_count / args.fps
         datasets.append(dataset_entry)
@@ -325,6 +365,35 @@ def encode_depth(task: VideoTask, args: argparse.Namespace, temporary_path: Path
         raise
 
 
+def encode_mosaic(task: VideoTask, args: argparse.Namespace, temporary_path: Path) -> None:
+    if len(task.frame_paths) != 3 or task.frame_count is None:
+        raise ValueError("A mosaic task requires three camera videos and a frame count")
+    command = ["ffmpeg", "-hide_banner", "-loglevel", "error"]
+    for path in task.frame_paths:
+        if not path.is_file():
+            raise FileNotFoundError(path)
+        command.extend(["-i", str(path)])
+    command.extend(
+        [
+            "-filter_complex",
+            (
+                "[0:v]setpts=PTS-STARTPTS[v0];"
+                "[1:v]setpts=PTS-STARTPTS[v1];"
+                "[2:v]setpts=PTS-STARTPTS[v2];"
+                "[v0][v1][v2]hstack=inputs=3[v]"
+            ),
+            "-map",
+            "[v]",
+            "-frames:v",
+            str(task.frame_count),
+            *ffmpeg_output_args(args, temporary_path),
+        ]
+    )
+    result = subprocess.run(command, capture_output=True, text=True, check=False)
+    if result.returncode:
+        raise RuntimeError(result.stderr.strip() or f"ffmpeg exited {result.returncode}")
+
+
 def probe_video(path: Path) -> dict[str, Any]:
     command = [
         "ffprobe",
@@ -361,6 +430,8 @@ def encode_task(task: VideoTask, args: argparse.Namespace) -> dict[str, Any]:
     try:
         if task.kind in {"rgb", "precolored"}:
             encode_rgb(task, args, temporary_path)
+        elif task.kind == "mosaic":
+            encode_mosaic(task, args, temporary_path)
         else:
             encode_depth(task, args, temporary_path)
         probe = probe_video(temporary_path)
@@ -403,6 +474,38 @@ def write_catalog(
     )
 
 
+def run_task_phase(
+    tasks: list[VideoTask],
+    args: argparse.Namespace,
+    records: list[dict[str, Any]],
+    failures: list[dict[str, str]],
+    completed_offset: int,
+    total_tasks: int,
+) -> None:
+    if not tasks:
+        return
+    with ThreadPoolExecutor(max_workers=max(1, args.workers)) as executor:
+        pending = {executor.submit(encode_task, task, args): task for task in tasks}
+        for phase_completed, future in enumerate(as_completed(pending), start=1):
+            completed = completed_offset + phase_completed
+            task = pending[future]
+            identity = f"{task.dataset_slug}/{task.camera_id}/{task.stream_id}"
+            try:
+                result = future.result()
+                records.append({"video": identity, **result})
+                print(
+                    f"[{completed:03d}/{total_tasks:03d}] "
+                    f"{result['status']:7s} {identity}",
+                    flush=True,
+                )
+            except Exception as exc:
+                failures.append({"video": identity, "error": str(exc)})
+                print(
+                    f"[{completed:03d}/{total_tasks:03d}] FAILED  {identity}: {exc}",
+                    file=sys.stderr,
+                )
+
+
 def main() -> int:
     args = parse_args()
     if args.depth_max_m <= args.depth_min_m:
@@ -418,18 +521,20 @@ def main() -> int:
 
     records: list[dict[str, Any]] = []
     failures: list[dict[str, str]] = []
-    with ThreadPoolExecutor(max_workers=max(1, args.workers)) as executor:
-        pending = {executor.submit(encode_task, task, args): task for task in tasks}
-        for completed, future in enumerate(as_completed(pending), start=1):
-            task = pending[future]
-            identity = f"{task.dataset_slug}/{task.camera_id}/{task.stream_id}"
-            try:
-                result = future.result()
-                records.append({"video": identity, **result})
-                print(f"[{completed:03d}/{len(tasks):03d}] {result['status']:7s} {identity}", flush=True)
-            except Exception as exc:
-                failures.append({"video": identity, "error": str(exc)})
-                print(f"[{completed:03d}/{len(tasks):03d}] FAILED  {identity}: {exc}", file=sys.stderr)
+    component_tasks = [task for task in tasks if task.kind != "mosaic"]
+    mosaic_tasks = [task for task in tasks if task.kind == "mosaic"]
+    run_task_phase(component_tasks, args, records, failures, 0, len(tasks))
+    if failures:
+        print("Skipping mosaic phase because component videos failed", file=sys.stderr)
+    else:
+        run_task_phase(
+            mosaic_tasks,
+            args,
+            records,
+            failures,
+            len(component_tasks),
+            len(tasks),
+        )
 
     write_catalog(viewer_root, datasets, args)
     report = {

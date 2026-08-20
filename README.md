@@ -8,7 +8,9 @@
 [打开完整交互页面](https://expolrer.github.io/depth-process/) ·
 [深度处理对比](https://expolrer.github.io/depth-process/?view=depth) ·
 [ACT 热力图对比](https://expolrer.github.io/depth-process/?view=attention) ·
-[接触关键帧与批准 ROI](https://expolrer.github.io/depth-process/attention_review/)
+[接触关键帧与批准 ROI](https://expolrer.github.io/depth-process/attention_review/) ·
+[四类深度质量证据](https://expolrer.github.io/depth-process/quality_evidence/) ·
+[RGB-D 数据增强审计](https://expolrer.github.io/depth-process/augmentation/)
 
 [![RGB-D Depth Lab 项目指标总览](docs/qa-project-metrics.png)](https://expolrer.github.io/depth-process/?view=depth)
 
@@ -40,6 +42,34 @@ P95 为 4.010 m。下游代理评测使用同一个无 Prompt、Depth-only ACT �
 但全零深度的 ROI lift 仍可偏高，因此注意力集中度不能脱离动作误差和负对照单独排名。
 
 首页指标数据同时保存为 `docs/data/depth_quality_metrics.json`，便于复核或二次分析。
+
+## 四类无模型深度质量证据
+
+最新评估覆盖 5 个数据集、15 路相机视图、180 帧空间质量样本、90 个时序片段和
+410 帧人工批准任务 ROI。计算过程只使用 RGB、深度、时序对应关系和批准 ROI，
+不调用注意力图或训练后的动作策略，因此可在不占用训练 GPU 的情况下复核：
+
+| 证据 | 主要结果 | 解读边界 |
+| --- | --- | --- |
+| 无模型深度质量 | LingBot v0.5 的 RGB-Depth 边缘 F1 为 **0.437**，原始深度为 0.287；时序残差由 11.24 mm 降至 **3.72 mm** | 平滑度降低也可能是过度平滑，需与边缘保留共同分析 |
+| 自然遮挡恢复 | LingBot 传感器融合恢复覆盖率 **99.72%**，5 cm 内正确率 **83.48%** | 仅评估前后帧可双向观测的自然孔洞，不是激光真值 |
+| 三视角几何一致性 | LingBot v0.5 主要平面 RMSE 最低，为 **6.90 mm** | rosbag 缺少公共机器人坐标系外参，这是旋转不变几何代理，不是严格重投影误差 |
+| 任务目标 ROI 几何 | LingBot 传感器融合 ROI 覆盖率和边界完整率均为 **99.9%**；原始深度为 64.6% 和 61.2% | 反映目标区域深度可用性，不等同于抓取成功率 |
+
+完整数值、方法排名、代表帧与限制说明保存在 `docs/quality_evidence/`。评估脚本为
+`scripts/evaluate_depth_quality_evidence.py`，与模型训练进程相互独立。
+
+## 两套 RGB-D 数据增强版本
+
+增强代码位于 `depth_pipeline/augmentation.py`，配置和深度提取、修复、融合、评估脚本独立：
+
+- `config/rgb_augmentation_only.yaml`：仅修改 RGB，深度始终保持原值，适合作为 RGB 鲁棒性消融对照。
+- `config/rgbd_paired_augmentation.yaml`：`RandomMask` 和 `RandomBorderCutout` 对 RGB 与深度使用同一空间掩码；亮度、对比度、饱和度、色相、锐度、RGB 高斯噪声和 Gamma 只改变 RGB，metric depth 保持原值。
+- 每次最多执行一种变换；Identity 权重为 3，采样概率 25%，其余 9 种策略权重均为 1，采样概率各 8.33%。固定 seed 可复现采样结果。
+- 版本一用于对照；对于真正读取对齐 RGB-D 的 DataLoader，优先使用版本二，避免空间遮挡造成跨模态错位。若训练仓库只读取预计算 RGB VAE latent，应在 latent 提取前完成 RGB 增强。
+
+三视角审计页位于 `docs/augmentation/`，覆盖 5 个数据集、15 路相机、10 种策略和
+150 个固定种子样例。随机遮挡的 RGB-D 配对掩码 IoU 为 **1.000**。
 
 ## 相机处理方式
 
@@ -147,12 +177,13 @@ seeking.
 PYTHONPATH=. .venv/bin/python -m pytest -q tests
 ```
 
-测试输出中的 `2 passed` 表示 pytest 一共执行了 2 个自动化测试，并且两个测试都通过了，没有出现失败或错误：
+当前测试集包含 7 个自动化测试：
 
 1. `tests/test_rosbag_extract.py`：验证 RGB 与深度帧的最近时间戳配对逻辑。
 2. `tests/test_fusion.py`：验证 Depth-Anything 相对逆深度的物理尺度标定，以及传感器深度与模型预测的融合逻辑。
+3. `tests/test_augmentation.py`：5 个测试覆盖确定性采样、RGB-only 深度不变、配对空间掩码、光度变换深度不变和权重概率。
 
-`2 passed` 不表示只处理了 2 帧，也不代表仅凭两个单元测试就证明全部深度图的视觉质量完全正确。完整数据集是否有漏帧、输出尺寸是否一致、模型权重是否匹配等内容，由 `scripts/validate_outputs.py` 和生成的 `outputs/reports/validation_report.json` 另外检查。
+测试通过不代表仅凭单元测试就证明全部深度图的视觉质量完全正确。完整数据集是否有漏帧、输出尺寸是否一致、模型权重是否匹配等内容，由 `scripts/validate_outputs.py`、四类质量证据和生成的验证报告另外检查。
 
 ## 方法适用范围
 

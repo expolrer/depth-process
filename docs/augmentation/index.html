@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>RGB-D 数据增强审计</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <a class="back-link" href="../index.html" title="返回完整视频页面"><i data-lucide="arrow-left"></i><span>RGB-D Depth Lab</span></a>
+    <div class="header-title"><strong>RGB-D 数据增强审计</strong><small>双版本 · 固定种子 · 三视角</small></div>
+    <div class="status"><span></span>本地 CPU 生成</div>
+  </header>
+
+  <main>
+    <section class="scope-band" aria-label="审计范围">
+      <div><small>数据集</small><strong id="scope-datasets">--</strong></div>
+      <div><small>相机视角</small><strong id="scope-cameras">--</strong></div>
+      <div><small>增强策略</small><strong id="scope-transforms">--</strong></div>
+      <div><small>审计样例</small><strong id="scope-samples">--</strong></div>
+      <div><small>单样本变换上限</small><strong id="scope-max">--</strong></div>
+      <div><small>随机种子</small><strong id="scope-seed">--</strong></div>
+    </section>
+
+    <section class="control-band" aria-label="样例选择">
+      <label><span>数据集</span><select id="dataset-select"></select></label>
+      <label><span>增强策略</span><select id="transform-select"></select></label>
+      <div class="downloads">
+        <a href="config/rgb_augmentation_only.yaml" download><i data-lucide="file-down"></i>RGB-only YAML</a>
+        <a href="config/rgbd_paired_augmentation.yaml" download><i data-lucide="file-down"></i>RGB-D YAML</a>
+        <a href="augmentation_data.json" download><i data-lucide="braces"></i>JSON</a>
+      </div>
+    </section>
+
+    <section class="overview-band">
+      <div>
+        <p class="eyebrow" id="transform-family">空间遮挡</p>
+        <h1 id="transform-title">随机遮挡</h1>
+        <p id="transform-description"></p>
+      </div>
+      <div class="primary-stat"><small>策略采样概率</small><strong id="transform-probability">--</strong><span id="transform-weight">--</span></div>
+    </section>
+
+    <section class="metric-band" aria-label="增强改动统计">
+      <div><small>RGB 改动像素</small><strong id="metric-rgb">--</strong></div>
+      <div><small>版本一深度改动</small><strong id="metric-v1-depth">--</strong></div>
+      <div><small>版本二深度改动</small><strong id="metric-v2-depth">--</strong></div>
+      <div><small>配对空间掩码 IoU</small><strong id="metric-iou">--</strong></div>
+    </section>
+
+    <section class="visual-section original-section">
+      <div class="section-heading">
+        <div><p>输入基线</p><h2>原始三视角 RGB-D</h2></div>
+        <small id="frame-caption">--</small>
+      </div>
+      <div class="camera-strip"><span>Head · Gemini-335L</span><span>Left Wrist · D405</span><span>Right Wrist · D405</span></div>
+      <div class="visual-grid">
+        <figure><button class="image-button" type="button"><img id="original-rgb" alt="原始 RGB 三视角"></button><figcaption>原始 RGB</figcaption></figure>
+        <figure><button class="image-button" type="button"><img id="original-depth" alt="原始处理深度三视角"></button><figcaption>LingBot v0.5 + sensor fusion 深度</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="visual-section version-one">
+      <div class="section-heading">
+        <div><p>版本一 · 消融对照</p><h2>仅 RGB 增强</h2></div>
+        <small>任何策略都不修改深度</small>
+      </div>
+      <div class="camera-strip"><span>Head · Gemini-335L</span><span>Left Wrist · D405</span><span>Right Wrist · D405</span></div>
+      <div class="visual-grid">
+        <figure><button class="image-button" type="button"><img id="v1-rgb" alt="版本一增强 RGB 三视角"></button><figcaption>增强后的 RGB</figcaption></figure>
+        <figure><button class="image-button" type="button"><img id="v1-depth" alt="版本一未修改深度三视角"></button><figcaption>保持原值的深度</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="visual-section version-two">
+      <div class="section-heading">
+        <div><p>版本二 · 推荐训练配置</p><h2>RGB-D 物理一致增强</h2></div>
+        <small>空间遮挡同步，光度增强不改变物理深度</small>
+      </div>
+      <div class="camera-strip"><span>Head · Gemini-335L</span><span>Left Wrist · D405</span><span>Right Wrist · D405</span></div>
+      <div class="visual-grid">
+        <figure><button class="image-button" type="button"><img id="v2-rgb" alt="版本二增强 RGB 三视角"></button><figcaption>与版本一相同的增强 RGB</figcaption></figure>
+        <figure><button class="image-button" type="button"><img id="v2-depth" alt="版本二配对深度三视角"></button><figcaption id="v2-depth-caption">对应深度</figcaption></figure>
+      </div>
+      <div class="verdict" id="verdict"><i data-lucide="link-2"></i><span>--</span></div>
+    </section>
+
+    <section class="parameter-section">
+      <div class="section-heading"><div><p>固定种子审计</p><h2>三相机实际采样参数</h2></div><small>训练时由 seed + 样本键复现</small></div>
+      <div class="parameter-grid" id="parameter-grid"></div>
+    </section>
+
+    <section class="policy-section">
+      <div class="section-heading"><div><p>完整策略</p><h2>权重与 RGB-D 对应规则</h2></div><small>Identity 25%，其余各约 8.33%</small></div>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>策略</th><th>类型</th><th>权重</th><th>概率</th><th>版本一深度</th><th>版本二深度</th></tr></thead>
+          <tbody id="policy-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="method-section">
+      <div class="section-heading"><div><p>训练约束</p><h2>保持物理与时序一致</h2></div></div>
+      <ul>
+        <li>亮度、对比度、饱和度、色相、锐度、RGB 高斯噪声和 Gamma 只改变 RGB，不能对 metric depth 套用同名光度运算。</li>
+        <li>RandomMask 与 RandomBorderCutout 在版本二复用相同空间掩码，深度对应位置写入无效值 0。</li>
+        <li>增强不改变像素坐标，因此相机内参、关节状态、动作标签和 prompt 均保持不变。</li>
+        <li>一个观测时间窗应复用变换类型和空间掩码；高斯噪声可按帧变化，避免视频闪烁式的随机策略切换。</li>
+      </ul>
+    </section>
+  </main>
+
+  <dialog id="lightbox">
+    <button id="lightbox-close" class="dialog-button close" type="button" title="关闭"><i data-lucide="x"></i></button>
+    <button id="lightbox-prev" class="dialog-button prev" type="button" title="上一张"><i data-lucide="chevron-left"></i></button>
+    <img id="lightbox-image" alt="放大查看增强样例">
+    <button id="lightbox-next" class="dialog-button next" type="button" title="下一张"><i data-lucide="chevron-right"></i></button>
+    <p id="lightbox-caption"></p>
+  </dialog>
+
+  <script src="../vendor/lucide.min.js"></script>
+  <script src="augmentation_data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

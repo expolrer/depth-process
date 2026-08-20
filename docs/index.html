@@ -34,6 +34,14 @@
         <i data-lucide="scan-eye"></i>
         <span><strong>ACT 热力图对比</strong><small>完整 RGB + 方法 A/B 注意力视频</small></span>
       </button>
+      <a class="evidence-view-link" href="quality_evidence/index.html">
+        <i data-lucide="chart-no-axes-combined"></i>
+        <span><strong>深度质量证据</strong><small>无模型 · 遮挡 · 三视角 · 任务 ROI</small></span>
+      </a>
+      <a class="augmentation-view-link" href="augmentation/index.html">
+        <i data-lucide="images"></i>
+        <span><strong>RGB-D 数据增强</strong><small>RGB-only · 配对增强 · 三视角审计</small></span>
+      </a>
     </nav>
 
     <section class="control-strip" aria-label="比较控制">
@@ -173,6 +181,66 @@
         <p><i data-lucide="shield-check"></i><span><strong>“0（保留）”不是零预测误差。</strong>传感器保真融合直接复制原始有效像素，因此重叠区误差按构造为 0；该指标不衡量孔洞填充值的真实准确性。</span></p>
         <p><i data-lucide="activity"></i><span><strong>ACT 是下游代理评测。</strong>动作 MAE 越低越好，但当前结果是统一无 Prompt、Depth-only 的离线留出集预测，不等同于真机任务成功率。</span></p>
         <p><i data-lucide="scan-eye"></i><span><strong>注意力只用于解释。</strong>全零深度的 ROI lift 也可偏高，因此 ROI 集中度不能脱离动作误差和负对照单独作为方法排名依据。</span></p>
+      </div>
+    </section>
+
+    <section class="evidence-summary" aria-labelledby="evidence-summary-title">
+      <div class="extension-head">
+        <div>
+          <p class="eyebrow">Model-free depth evidence</p>
+          <h2 id="evidence-summary-title">四类深度质量证据</h2>
+          <p>5 个数据集、15 路相机视图；结果不使用注意力图或训练后的策略模型。</p>
+        </div>
+        <a class="review-link" href="quality_evidence/index.html">
+          <i data-lucide="chart-no-axes-combined"></i><span>查看完整证据</span>
+        </a>
+      </div>
+      <div class="evidence-grid">
+        <article>
+          <span>01</span><strong>无模型质量</strong>
+          <p>LingBot v0.5 的 RGB-Depth 边缘 F1 为 <b>0.437</b>，原始深度为 0.287；光流补偿时序残差由 11.24 mm 降至 <b>3.72 mm</b>。</p>
+        </article>
+        <article>
+          <span>02</span><strong>遮挡恢复</strong>
+          <p>LingBot 传感器融合在自然可观测孔洞上的恢复覆盖率为 <b>99.72%</b>，5 cm 内正确率为 <b>83.48%</b>；一致性融合误差更低但覆盖有限。</p>
+        </article>
+        <article>
+          <span>03</span><strong>三视角几何</strong>
+          <p>LingBot v0.5 的三视角主要平面 RMSE 最低，为 <b>6.90 mm</b>。由于缺少公共机器人坐标系外参，该结果是几何代理而非严格重投影误差。</p>
+        </article>
+        <article>
+          <span>04</span><strong>任务目标 ROI</strong>
+          <p>19 次抓取、38 个头部/执行腕事件视图中，LingBot 传感器融合的 ROI 覆盖率和边界完整率均为 <b>99.9%</b>，原始深度分别为 64.6% 和 61.2%。</p>
+        </article>
+      </div>
+      <p class="evidence-caveat"><i data-lucide="triangle-alert"></i><span>这些指标证明覆盖、稳定性与几何质量的变化，不等同于动作成功率；平滑度下降也可能来自过度平滑，需与边缘和传感器保真联合解读。</span></p>
+    </section>
+
+    <section class="augmentation-summary" aria-labelledby="augmentation-summary-title">
+      <div class="extension-head">
+        <div>
+          <p class="eyebrow">Independent augmentation pipeline</p>
+          <h2 id="augmentation-summary-title">两套 RGB-D 数据增强版本</h2>
+          <p>固定种子审计覆盖 5 个数据集、15 路相机和 10 种策略；每次最多选择一种变换。</p>
+        </div>
+        <a class="review-link" href="augmentation/index.html">
+          <i data-lucide="images"></i><span>查看三视角审计</span>
+        </a>
+      </div>
+      <div class="augmentation-versions">
+        <article>
+          <div><span>V1</span><strong>仅 RGB 增强</strong><small>消融对照</small></div>
+          <p>亮度、对比度、饱和度、色相、锐度、遮挡、RGB 高斯噪声和 Gamma 只修改彩色图，深度保持原值。可隔离 RGB 鲁棒性收益，但空间遮挡会制造跨模态不一致。</p>
+        </article>
+        <article class="recommended-version">
+          <div><span>V2</span><strong>RGB-D 物理一致增强</strong><small>RGB-D DataLoader 推荐</small></div>
+          <p>RandomMask 与 BorderCutout 对 RGB 和深度使用同一空间掩码；光度变换只作用 RGB，metric depth 数值不变。随机遮挡配对掩码 IoU 为 <b>1.000</b>。</p>
+        </article>
+      </div>
+      <div class="augmentation-contract">
+        <span><i data-lucide="shuffle"></i><b>采样权重</b> Identity 25%，其余 9 种各 8.33%</span>
+        <span><i data-lucide="split"></i><b>代码独立</b> 增强模块与深度提取、修复和评估脚本解耦</span>
+        <span><i data-lucide="database"></i><b>数据安全</b> 输入深度不覆盖，配置可独立启停和复现</span>
       </div>
     </section>
 

@@ -7,12 +7,14 @@ import json
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Iterable
+from typing import TYPE_CHECKING, Any, Iterable
 
 import numpy as np
-from rosbags.rosbag1 import Reader
 from rosbags.typesys import Stores, get_types_from_msg, get_typestore
 from tqdm import tqdm
+
+if TYPE_CHECKING:
+    from rosbags.rosbag1 import Reader
 
 
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
@@ -126,7 +128,7 @@ def write_pair(
     }
 
 
-def register_bag_types(reader: Reader, typestore: Any) -> None:
+def register_bag_types(reader: "Reader", typestore: Any) -> None:
     types: dict[str, Any] = {}
     for connection in reader.connections:
         definition = getattr(connection.msgdef, "data", connection.msgdef)
@@ -141,6 +143,8 @@ def extract_camera(
     max_sync_delta_ms: float,
     workers: int,
 ) -> dict[str, Any]:
+    from rosbags.rosbag1 import Reader
+
     color_topic = f"/{camera}/color/image_raw/compressed"
     depth_suffix = "image_raw/compressedDepth" if camera == "cam_h" else "image_rect_raw/compressedDepth"
     depth_topic = f"/{camera}/depth/{depth_suffix}"
@@ -251,4 +255,3 @@ def resolve_bags(inputs: Iterable[Path]) -> list[Path]:
         else:
             bags.append(item)
     return sorted({path.resolve() for path in bags})
-
