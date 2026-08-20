@@ -42,6 +42,7 @@ const state = {
 };
 
 const ROWS = ["rgb", "method-a", "method-b"];
+const VIDEO_LOAD_TIMEOUT_MS = 120000;
 
 function setHealth(status, text) {
   elements.health.dataset.state = status;
@@ -138,7 +139,10 @@ function waitForVideo(video, generation) {
       resolve();
       return;
     }
-    const timeout = window.setTimeout(() => finish(new Error("视频载入超时")), 20000);
+    const timeout = window.setTimeout(
+      () => finish(new Error("视频载入超时，请检查网络后重试")),
+      VIDEO_LOAD_TIMEOUT_MS,
+    );
     const finish = (error) => {
       window.clearTimeout(timeout);
       video.removeEventListener("loadeddata", onLoaded);

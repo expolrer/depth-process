@@ -20,6 +20,8 @@ const $ = (id) => document.getElementById(id);
 const videos = () => [$("rgb-video"), $("method-a-video"), $("method-b-video")];
 const DEPTH_CAPTION = "Metric depth · 0.2–4.0 m";
 const ATTENTION_CAPTION = "ACT Action Query → Depth Token";
+const VIDEO_LOAD_TIMEOUT_MS = 120000;
+const FRAME_LOAD_TIMEOUT_MS = 120000;
 
 function currentDataset() { return state.catalog.datasets[state.datasetIndex]; }
 function currentSelection() { return state.selections[state.view]; }
@@ -37,8 +39,12 @@ function formatTime(seconds) {
   return `${String(minutes).padStart(2, "0")}:${remainder.toFixed(3).padStart(6, "0")}`;
 }
 
-function setLoading(visible, text = "正在加载完整视频") {
+function setLoading(visible, text = "正在加载完整视频", options = {}) {
+  const { detail = "网络较慢时会继续等待，不会在 20 秒后中断", retry = false } = options;
   $("loading-text").textContent = text;
+  $("loading-detail").textContent = detail;
+  $("loading-spinner").hidden = retry;
+  $("loading-retry").hidden = !retry;
   $("loading-state").classList.toggle("hidden", !visible);
 }
 
@@ -75,7 +81,10 @@ function mediaSources(dataset) {
 function waitForMetadata(video, generation) {
   return new Promise((resolve, reject) => {
     if (video.readyState >= HTMLMediaElement.HAVE_METADATA) return resolve();
-    const timeout = window.setTimeout(() => finish(new Error("视频加载超时")), 20000);
+    const timeout = window.setTimeout(
+      () => finish(new Error("视频元数据加载超时")),
+      VIDEO_LOAD_TIMEOUT_MS,
+    );
     const finish = (error) => {
       window.clearTimeout(timeout);
       video.removeEventListener("loadedmetadata", onLoad);
@@ -94,7 +103,10 @@ function waitForMetadata(video, generation) {
 function waitForCurrentFrame(video, generation) {
   return new Promise((resolve, reject) => {
     if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA && !video.seeking) return resolve();
-    const timeout = window.setTimeout(() => finish(new Error("目标视频帧解码超时")), 20000);
+    const timeout = window.setTimeout(
+      () => finish(new Error("目标视频帧解码超时")),
+      FRAME_LOAD_TIMEOUT_MS,
+    );
     const finish = (error) => {
       window.clearTimeout(timeout);
       video.removeEventListener("loadeddata", onReady);
@@ -120,24 +132,46 @@ async function loadVideos(preserveTime = true) {
   const oldTime = preserveTime ? $("rgb-video").currentTime || 0 : 0;
   state.playing = false;
   cancelAnimationFrame(state.animationFrame);
-  setLoading(true, "正在同步三路完整视频");
+  setLoading(true, "正在载入 RGB 视频 · 0/3", {
+    detail: "优先读取 RGB，再并行载入两种深度方法，避免弱网首屏争抢带宽",
+  });
   const sources = mediaSources(currentDataset());
-  videos().forEach((video, index) => {
+  const currentVideos = videos();
+  currentVideos.forEach((video) => {
     video.pause();
-    video.src = sources[index];
+    video.removeAttribute("src");
     video.playbackRate = state.playbackRate;
     video.load();
   });
   try {
-    await Promise.all(videos().map((video) => waitForMetadata(video, generation)));
+    currentVideos[0].src = sources[0];
+    currentVideos[0].load();
+    await waitForMetadata(currentVideos[0], generation);
     if (generation !== state.generation) return;
+    setLoading(true, "正在载入对比视频 · 1/3", {
+      detail: "RGB 已就绪，正在读取方法 A 与方法 B 的视频元数据",
+    });
+    currentVideos.slice(1).forEach((video, index) => {
+      video.src = sources[index + 1];
+      video.load();
+    });
+    await Promise.all(currentVideos.slice(1).map((video) => waitForMetadata(video, generation)));
+    if (generation !== state.generation) return;
+    setLoading(true, "正在解码同步首帧 · 3/3", {
+      detail: "三路元数据已就绪，正在建立可拖动播放的同步画面",
+    });
     seekTo(Math.min(oldTime, currentDataset().durationSeconds - 1 / state.catalog.fps));
-    await Promise.all(videos().map((video) => waitForCurrentFrame(video, generation)));
+    await Promise.all(currentVideos.map((video) => waitForCurrentFrame(video, generation)));
     if (generation !== state.generation) return;
     setLoading(false);
     if (wasPlaying) await playVideos();
   } catch (error) {
-    if (generation === state.generation) setLoading(true, error.message);
+    if (generation === state.generation) {
+      setLoading(true, error.message, {
+        detail: "GitHub Pages 当前连接较慢或被中断，可以保留当前选择直接重试",
+        retry: true,
+      });
+    }
   }
 }
 
@@ -442,6 +476,7 @@ async function setView(view) {
 }
 
 function setupControls() {
+  $("loading-retry").addEventListener("click", () => loadVideos(true));
   for (const dataset of state.catalog.datasets) {
     const option = document.createElement("option");
     option.value = dataset.id;

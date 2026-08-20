@@ -326,7 +326,14 @@
     </footer>
   </main>
 
-  <div id="loading-state" class="loading-state"><span></span><b id="loading-text">正在加载完整视频目录</b></div>
+  <div id="loading-state" class="loading-state">
+    <span id="loading-spinner" aria-hidden="true"></span>
+    <div class="loading-copy">
+      <b id="loading-text">正在加载完整视频目录</b>
+      <small id="loading-detail">首次访问会从 GitHub Pages 读取视频元数据</small>
+    </div>
+    <button id="loading-retry" type="button" hidden>重新加载视频</button>
+  </div>
   <script src="vendor/lucide.min.js"></script>
   <script src="data/catalog.js"></script>
   <script src="data/attention_metrics.js"></script>
