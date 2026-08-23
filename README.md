@@ -71,6 +71,33 @@ P95 为 4.010 m。下游代理评测使用同一个无 Prompt、Depth-only ACT �
 三视角审计页位于 `docs/augmentation/`，覆盖 5 个数据集、15 路相机、10 种策略和
 150 个固定种子样例。随机遮挡的 RGB-D 配对掩码 IoU 为 **1.000**。
 
+## 机器人交互目标自动标注
+
+仓库的 `dev` 分支包含两套独立、可安装的自动标注项目：
+
+| 项目 | 技术路线 | 入口 |
+| --- | --- | --- |
+| `interaction-labeler-v1/` | GroundingDINO 候选、RGB-D/夹爪/关节排序、VLM 消歧、SAM2 双向跟踪、人工抽检 | `interaction-labeler run` |
+| `interaction-auto-labeler-v2/` | 目标描述、头部全场盘点、阶段识别、交互证据评分、跨视角关联、风险帧复核 | `auto-labeler-v2 run` |
+
+两个入口均接受原始 ROS bag、LeRobot 根目录或已提取 RGB-D 目录，并自动打开本地互动页面。
+页面允许在模型运行前画目标框、修正接触帧，也允许在模型运行后对任意帧增加修正框并重新运行
+SAM2。人工框不写入 RGB 像素，而是保存为可追踪的覆盖记录。
+
+```bash
+auto-labeler-v2 run \
+  --data /ssd/hhw/zhuomian/lerobot \
+  --format lerobot \
+  --workspace /ssd/hhw/annotations/zhuomian_v2 \
+  --task interaction-auto-labeler-v2/configs/example_task.yaml \
+  --concept-model /ssd/hhw/depth-processing/models/grounding-dino-base \
+  --vlm-model /ssd/hhw/models/internvla_a1_5/Qwen3.5-2B
+```
+
+ACT、pi0.5/OpenPI 和通用 VLA 的接入代码与防止未来信息泄漏的实验方案位于
+`training_integrations/`。默认优先把 bbox/mask 用作辅助目标定位监督；只有部署端也运行在线
+检测器时，才将目标 crop 或 ROI token 作为策略的必需输入。
+
 ## 相机处理方式
 
 - `cam_h`：Orbbec Gemini-335L。录制的深度图已经位于彩色相机光学坐标系中。

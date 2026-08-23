@@ -1,0 +1,23 @@
+name: toy_pile_pick
+instruction: Pick up the intended red plush toy from the middle pile and move it to the right side.
+target:
+  names: [red plush toy, toy]
+  attributes: [red, plush, small]
+  source_region: middle toy pile
+  destination_region: right side of table
+  negative_descriptions: [yellow toy, stationary red toys, robotic gripper]
+detector_prompt:
+  - red plush toy
+  - toy
+  - robotic gripper
+  - robot hand
+  - tabletop
+active_hand: auto
+camera_roles:
+  head: [cam_h, head, observation.images.head]
+  left_wrist: [cam_l, left_wrist, observation.images.left_wrist]
+  right_wrist: [cam_r, right_wrist, observation.images.right_wrist]
+event_detection:
+  pre_frames: 45
+  post_release_frames: 20
+  max_span: 240

@@ -10,10 +10,8 @@ from pathlib import Path
 from typing import Any
 
 import torch
-from transformers import AutoProcessor, Qwen3_5ForConditionalGeneration
-
 from qwen_vl_utils import process_vision_info
-
+from transformers import AutoProcessor, Qwen3_5ForConditionalGeneration
 
 TASK_INSTRUCTIONS = {
     "chengzhong": (
@@ -56,7 +54,9 @@ def event_hint(row: dict[str, Any]) -> str:
         if event_index == 1:
             return "This is the right-hand grasp of the same metal sleeve from the center weighing platform."
     if "dajian" in sequence:
-        return "The expected target category is the automotive sheet-metal part, not a support stand."
+        return (
+            "The expected target category is the automotive sheet-metal part, not a support stand."
+        )
     return f"This is grasp event {event_index + 1}; identify the object physically enclosed by the active gripper."
 
 
@@ -87,11 +87,14 @@ def valid_choice(choice: dict[str, Any] | None, row: dict[str, Any]) -> bool:
     for view in row["views"]:
         if view["camera"] != camera:
             continue
-        return any(int(candidate["candidate_id"]) == candidate_id for candidate in view["ranked_candidates"])
+        return any(
+            int(candidate["candidate_id"]) == candidate_id
+            for candidate in view["ranked_candidates"]
+        )
     return False
 
 
-def prompt_for(row: dict[str, Any]) -> str:
+def prompt_for(row: dict[str, Any], instruction: str | None = None) -> str:
     candidate_table = []
     for view in row["views"]:
         choices = ", ".join(
@@ -100,12 +103,12 @@ def prompt_for(row: dict[str, Any]) -> str:
         )
         candidate_table.append(f"{view['camera']}: {choices or 'no object candidates'}")
     return f"""You are reviewing an offline robot manipulation demonstration.
-Task instruction: {task_instruction(row['sequence'])}
+Task instruction: {instruction or task_instruction(row["sequence"])}
 Current event constraint: {event_hint(row)}
-Current grasp uses the {row['side']} hand.
+Current grasp uses the {row["side"]} hand.
 
 The image is a three-view collage. Candidate boxes are labeled RANK/ID and each camera has its own IDs.
-Choose the single box that contains the physical object currently enclosed or contacted by the closing {row['side']} gripper.
+Choose the single box that contains the physical object currently enclosed or contacted by the closing {row["side"]} gripper.
 Do not choose the gripper, robot hand, table, box, platform, or another same-class distractor.
 Use visible gripper contact and enclosure as primary evidence. Use the task instruction only as supporting evidence.
 
@@ -113,19 +116,27 @@ Available candidates:
 {chr(10).join(candidate_table)}
 
 Return exactly one JSON object with no markdown:
-{{"camera":"cam_h|cam_l|cam_r","candidate_id":0,"confidence":0.0,"reason":"short visual reason"}}
+{{"camera":"cam_h|cam_l|cam_r","candidate_id":0,"confidence":0.0,"reason":"用中文简述可见的夹爪接触、共同运动或遮挡证据"}}
+If no candidate is defensible, use null for camera and candidate_id and explain why in Chinese.
 """
 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--queue", type=Path, default=Path("outputs/interaction_candidates/ambiguity_queue.jsonl"))
-    parser.add_argument("--model", type=Path, default=Path("/ssd/hhw/models/internvla_a1_5/Qwen3.5-2B"))
-    parser.add_argument("--output", type=Path, default=Path("outputs/interaction_candidates/vlm_resolutions.jsonl"))
+    parser.add_argument(
+        "--queue", type=Path, default=Path("outputs/interaction_candidates/ambiguity_queue.jsonl")
+    )
+    parser.add_argument(
+        "--model", type=Path, default=Path("/ssd/hhw/models/internvla_a1_5/Qwen3.5-2B")
+    )
+    parser.add_argument(
+        "--output", type=Path, default=Path("outputs/interaction_candidates/vlm_resolutions.jsonl")
+    )
     parser.add_argument("--device", default="cuda:0")
     parser.add_argument("--max-events", type=int)
     parser.add_argument("--all-events", action="store_true")
     parser.add_argument("--event-id")
+    parser.add_argument("--instruction", help="Override the built-in task instruction.")
     parser.add_argument("--merge-existing", action="store_true")
     args = parser.parse_args()
 
@@ -152,7 +163,7 @@ def main() -> None:
                 "role": "user",
                 "content": [
                     {"type": "image", "image": image_path},
-                    {"type": "text", "text": prompt_for(row)},
+                    {"type": "text", "text": prompt_for(row, args.instruction)},
                 ],
             }
         ]
@@ -168,7 +179,9 @@ def main() -> None:
         with torch.inference_mode():
             generated = model.generate(**inputs, max_new_tokens=160, do_sample=False)
         trimmed = [output[len(source) :] for source, output in zip(inputs.input_ids, generated)]
-        response = processor.batch_decode(trimmed, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
+        response = processor.batch_decode(
+            trimmed, skip_special_tokens=True, clean_up_tokenization_spaces=False
+        )[0]
         choice = parse_json(response)
         valid = valid_choice(choice, row)
         result = {
@@ -183,14 +196,19 @@ def main() -> None:
             "status": "pending_human_review",
         }
         results.append(result)
-        print(f"[vlm] {index + 1}/{len(rows)} {row['event_id']} valid={valid} choice={choice}", flush=True)
+        print(
+            f"[vlm] {index + 1}/{len(rows)} {row['event_id']} valid={valid} choice={choice}",
+            flush=True,
+        )
 
     if args.merge_existing and args.output.exists():
         merged = {row["event_id"]: row for row in read_jsonl(args.output)}
         merged.update({row["event_id"]: row for row in results})
         results = list(merged.values())
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text("".join(json.dumps(row, ensure_ascii=False) + "\n" for row in results), encoding="utf-8")
+    args.output.write_text(
+        "".join(json.dumps(row, ensure_ascii=False) + "\n" for row in results), encoding="utf-8"
+    )
     summary = {
         "events": len(results),
         "valid_choices": sum(bool(row["valid_choice"]) for row in results),

@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+annotation-workspaces/
+outputs/
+logs/
+models/
+*.bag
+*.mp4
+*.pt
+*.pth
+*.safetensors

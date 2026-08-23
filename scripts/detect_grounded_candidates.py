@@ -9,10 +9,7 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
-import torch
 from PIL import Image, ImageDraw, ImageFont
-from transformers import AutoModelForZeroShotObjectDetection, AutoProcessor
-
 
 CAMERAS = ("cam_h", "cam_l", "cam_r")
 TASK_PROMPTS = {
@@ -69,7 +66,7 @@ def depth_stats(depth: np.ndarray, box: list[float]) -> dict[str, float | None]:
 def postprocess(
     processor: Any,
     outputs: Any,
-    input_ids: torch.Tensor,
+    input_ids: Any,
     target_size: tuple[int, int],
     box_threshold: float,
     text_threshold: float,
@@ -107,7 +104,9 @@ def text_labels(result: dict[str, Any]) -> list[str]:
     return output
 
 
-def draw_candidates(image: Image.Image, candidates: list[dict[str, Any]], title: str) -> Image.Image:
+def draw_candidates(
+    image: Image.Image, candidates: list[dict[str, Any]], title: str
+) -> Image.Image:
     output = image.copy().convert("RGB")
     draw = ImageDraw.Draw(output)
     font = ImageFont.load_default()
@@ -117,7 +116,7 @@ def draw_candidates(image: Image.Image, candidates: list[dict[str, Any]], title:
         "destination": (90, 220, 90),
     }
     for candidate in candidates:
-        x1, y1, x2, y2 = [int(round(item)) for item in candidate["box_xyxy"]]
+        x1, y1, x2, y2 = [round(item) for item in candidate["box_xyxy"]]
         color = colors[candidate["role"]]
         draw.rectangle((x1, y1, x2, y2), outline=color, width=3)
         text = f"{candidate['candidate_id']} {candidate['label']} {candidate['score']:.2f}"
@@ -131,6 +130,7 @@ def draw_candidates(image: Image.Image, candidates: list[dict[str, Any]], title:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
+    parser.add_argument("--backend", choices=("groundingdino", "sam3"), default="groundingdino")
     parser.add_argument("--model", type=Path, default=Path("models/grounding-dino-base"))
     parser.add_argument("--signals-root", type=Path, default=Path("outputs/robot_signals"))
     parser.add_argument("--extracted-root", type=Path, default=Path("outputs/extracted"))
@@ -138,19 +138,36 @@ def main() -> None:
     parser.add_argument("--device", default="cuda:0")
     parser.add_argument("--box-threshold", type=float, default=0.20)
     parser.add_argument("--text-threshold", type=float, default=0.18)
+    parser.add_argument(
+        "--prompt",
+        help="Override the sequence-specific GroundingDINO prompt with dot-separated phrases.",
+    )
     parser.add_argument("--max-events", type=int)
     parser.add_argument("--event-id")
     parser.add_argument("--frame-offset", type=int, default=0)
     parser.add_argument("--merge-existing", action="store_true")
     args = parser.parse_args()
 
-    processor = AutoProcessor.from_pretrained(args.model, local_files_only=True)
-    model = AutoModelForZeroShotObjectDetection.from_pretrained(
-        args.model,
-        local_files_only=True,
-        torch_dtype=torch.float32,
-    ).to(args.device)
-    model.eval()
+    if args.backend == "groundingdino":
+        import torch
+        from transformers import AutoModelForZeroShotObjectDetection, AutoProcessor
+
+        processor = AutoProcessor.from_pretrained(args.model, local_files_only=True)
+        model = AutoModelForZeroShotObjectDetection.from_pretrained(
+            args.model,
+            local_files_only=True,
+            torch_dtype=torch.float32,
+        ).to(args.device)
+        model.eval()
+    else:
+        from sam3.model.sam3_image_processor import Sam3Processor
+        from sam3.model_builder import build_sam3_image_model
+
+        model_kwargs = {"device": args.device}
+        if args.model.is_file():
+            model_kwargs.update({"checkpoint_path": str(args.model), "load_from_HF": False})
+        model = build_sam3_image_model(**model_kwargs)
+        processor = Sam3Processor(model)
 
     summary = json.loads((args.signals_root / "summary.json").read_text(encoding="utf-8"))
     index_path = args.output_root / "candidate_index.jsonl"
@@ -175,36 +192,66 @@ def main() -> None:
                 continue
             for camera in CAMERAS:
                 camera_events = read_jsonl(args.signals_root / sequence / camera / "events.jsonl")
-                matches = [item for item in camera_events if item["kind"] == event["kind"] and item["side"] == event["side"]]
+                matches = [
+                    item
+                    for item in camera_events
+                    if item["kind"] == event["kind"] and item["side"] == event["side"]
+                ]
                 if not matches:
                     continue
-                mapped = min(matches, key=lambda item: abs(int(item["timestamp_ns"]) - int(event["timestamp_ns"])))
+                mapped = min(
+                    matches,
+                    key=lambda item: abs(int(item["timestamp_ns"]) - int(event["timestamp_ns"])),
+                )
                 manifest = read_jsonl(args.extracted_root / sequence / camera / "manifest.jsonl")
-                frame_index = max(0, min(len(manifest) - 1, int(mapped["frame_index"]) + args.frame_offset))
+                frame_index = max(
+                    0, min(len(manifest) - 1, int(mapped["frame_index"]) + args.frame_offset)
+                )
                 frame = manifest[frame_index]
                 rgb_path = Path(frame["rgb_path"])
-                depth_path = Path(frame.get("depth_aligned_rgb_mm_path", frame["depth_raw_mm_path"]))
-                pil_image = Image.open(rgb_path).convert("RGB")
-                prompt = task_prompt(sequence)
-                inputs = processor(images=pil_image, text=prompt, return_tensors="pt")
-                input_ids = inputs["input_ids"]
-                inputs = {key: value.to(args.device) if hasattr(value, "to") else value for key, value in inputs.items()}
-                with torch.inference_mode():
-                    outputs = model(**inputs)
-                result = postprocess(
-                    processor,
-                    outputs,
-                    input_ids,
-                    (pil_image.height, pil_image.width),
-                    args.box_threshold,
-                    args.text_threshold,
+                depth_path = Path(
+                    frame.get("depth_aligned_rgb_mm_path", frame["depth_raw_mm_path"])
                 )
-                boxes = result["boxes"].detach().cpu().tolist()
-                scores = result["scores"].detach().float().cpu().tolist()
-                labels = text_labels(result)
+                pil_image = Image.open(rgb_path).convert("RGB")
+                prompt = args.prompt or task_prompt(sequence)
+                if args.backend == "groundingdino":
+                    inputs = processor(images=pil_image, text=prompt, return_tensors="pt")
+                    input_ids = inputs["input_ids"]
+                    inputs = {
+                        key: value.to(args.device) if hasattr(value, "to") else value
+                        for key, value in inputs.items()
+                    }
+                    with torch.inference_mode():
+                        outputs = model(**inputs)
+                    result = postprocess(
+                        processor,
+                        outputs,
+                        input_ids,
+                        (pil_image.height, pil_image.width),
+                        args.box_threshold,
+                        args.text_threshold,
+                    )
+                    boxes = result["boxes"].detach().cpu().tolist()
+                    scores = result["scores"].detach().float().cpu().tolist()
+                    labels = text_labels(result)
+                else:
+                    state = processor.set_image(pil_image)
+                    boxes, scores, labels = [], [], []
+                    phrases = [phrase.strip() for phrase in prompt.split(".") if phrase.strip()]
+                    for phrase in phrases:
+                        output = processor.set_text_prompt(state=state, prompt=phrase)
+                        phrase_boxes = output["boxes"].detach().float().cpu().tolist()
+                        phrase_scores = output["scores"].detach().float().cpu().tolist()
+                        for box, score in zip(phrase_boxes, phrase_scores):
+                            if float(score) >= args.box_threshold:
+                                boxes.append(box)
+                                scores.append(float(score))
+                                labels.append(phrase)
                 depth = np.asarray(Image.open(depth_path))
                 candidates: list[dict[str, Any]] = []
-                for candidate_index, (box, score, label_text) in enumerate(zip(boxes, scores, labels)):
+                for candidate_index, (box, score, label_text) in enumerate(
+                    zip(boxes, scores, labels)
+                ):
                     candidate = {
                         "candidate_id": candidate_index,
                         "label": label_text,
@@ -252,6 +299,7 @@ def main() -> None:
     )
     report = {
         "schema": "grounded_robot_candidates_v1",
+        "backend": args.backend,
         "model": str(args.model),
         "events": len({row["event_id"] for row in rows}),
         "camera_frames": len(rows),

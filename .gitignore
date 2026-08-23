@@ -24,6 +24,9 @@ __pycache__/
 /wheelhouse/
 /external/
 /checkpoints/
+**/annotation-workspaces/
+**/pipeline_status.json
+**/annotations.local.json
 
 # Legacy duplicate entry points; canonical copies live under scripts/
 /build_video_viewer.py
