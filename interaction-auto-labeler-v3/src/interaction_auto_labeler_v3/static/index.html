@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>机器人交互自动标注 V3</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/v3.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>机器人交互自动标注 V3</h1>
+      <p id="dataset-meta">正在读取数据集</p>
+    </div>
+    <div class="top-actions">
+      <span class="status" id="pipeline-status">空闲</span>
+      <button id="refresh" title="刷新">刷新</button>
+      <button id="edit-task">编辑目标</button>
+      <button id="run-pipeline" class="primary">开始自动处理</button>
+      <button id="export-json">导出 JSON</button>
+    </div>
+  </header>
+
+  <div class="workspace">
+    <aside class="event-list" aria-label="抓取动作列表">
+      <div class="list-toolbar">
+        <input id="search" type="search" placeholder="筛选动作">
+        <select id="filter">
+          <option value="all">全部</option>
+          <option value="review">需要复核</option>
+          <option value="manual">已有人工框</option>
+        </select>
+      </div>
+      <div id="events"></div>
+    </aside>
+
+    <main>
+      <section class="v3-dashboard" aria-label="V3 质量概览">
+        <div class="v3-summary-head">
+          <div>
+            <h2>自动化质量门控</h2>
+            <p id="v3-version">等待 V3 结果</p>
+          </div>
+          <span id="v3-state" class="v3-state">准备中</span>
+        </div>
+        <div id="v3-metrics" class="v3-metrics"></div>
+        <div id="v3-quality" class="v3-quality"></div>
+      </section>
+
+      <section class="event-header">
+        <div>
+          <h2 id="event-title">未选择动作</h2>
+          <p id="instruction"></p>
+        </div>
+        <div class="stage-control" id="stage-control"></div>
+      </section>
+
+      <section class="views" id="views"></section>
+
+      <section class="inspection-band">
+        <div>
+          <h3>当前帧</h3>
+          <span id="frame-readout">0 / 0</span>
+        </div>
+        <input id="frame-slider" type="range" min="0" max="0" value="0">
+        <div class="frame-actions">
+          <button id="previous-frame" title="上一帧" aria-label="上一帧">&#8592;</button>
+          <button id="next-frame" title="下一帧" aria-label="下一帧">&#8594;</button>
+          <button id="set-contact">设为接触帧</button>
+          <button id="delete-box" class="danger">删除人工框</button>
+        </div>
+      </section>
+
+      <section class="candidate-table">
+        <div class="section-head">
+          <h3>候选与人工覆盖</h3>
+          <span id="selection-summary"></span>
+        </div>
+        <div id="review-advice" class="review-advice" hidden></div>
+        <div id="candidates"></div>
+      </section>
+    </main>
+  </div>
+  <dialog id="task-dialog">
+    <form id="task-form">
+      <div class="dialog-head">
+        <h2>目标与任务描述</h2>
+        <button type="button" id="close-task" title="关闭" aria-label="关闭">&#10005;</button>
+      </div>
+      <label>动作指令<textarea id="task-instruction" rows="3" required></textarea></label>
+      <div class="task-grid">
+        <label>目标名称<textarea id="target-names" rows="4" required></textarea></label>
+        <label>外观与属性<textarea id="target-attributes" rows="4"></textarea></label>
+        <label>起始区域<input id="source-region" type="text"></label>
+        <label>放置区域<input id="destination-region" type="text"></label>
+        <label>排除描述<textarea id="negative-descriptions" rows="4"></textarea></label>
+        <label>参考图路径<textarea id="exemplar-images" rows="4"></textarea></label>
+      </div>
+      <label>检测提示词<textarea id="detector-prompt" rows="4" required></textarea></label>
+      <div class="dialog-actions">
+        <button type="button" id="cancel-task">取消</button>
+        <button type="submit" class="primary">保存目标配置</button>
+      </div>
+    </form>
+  </dialog>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <script src="/app.js"></script>
+  <script src="/v3.js"></script>
+</body>
+</html>

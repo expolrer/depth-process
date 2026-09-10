@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/expolrer/depth-process/schemas/calibrated_geometry_manifest_v1.schema.json",
+  "title": "Calibrated geometry manifest row v1",
+  "type": "object",
+  "required": [
+    "episode_id",
+    "frame_index",
+    "camera",
+    "depth_path",
+    "mask_path",
+    "intrinsics",
+    "world_from_camera"
+  ],
+  "properties": {
+    "episode_id": {"type": ["string", "integer"]},
+    "frame_index": {"type": "integer", "minimum": 0},
+    "camera": {"type": "string", "minLength": 1},
+    "depth_path": {"type": "string", "minLength": 1},
+    "mask_path": {"type": "string", "minLength": 1},
+    "depth_scale_m": {"type": "number", "exclusiveMinimum": 0, "default": 0.001},
+    "intrinsics": {
+      "oneOf": [
+        {"type": "string"},
+        {
+          "type": "object",
+          "required": ["fx", "fy", "cx", "cy", "width", "height"],
+          "properties": {
+            "fx": {"type": "number", "exclusiveMinimum": 0},
+            "fy": {"type": "number", "exclusiveMinimum": 0},
+            "cx": {"type": "number"},
+            "cy": {"type": "number"},
+            "width": {"type": "integer", "minimum": 1},
+            "height": {"type": "integer", "minimum": 1}
+          }
+        }
+      ]
+    },
+    "world_from_camera": {
+      "oneOf": [
+        {"type": "string"},
+        {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": {
+            "type": "array",
+            "minItems": 4,
+            "maxItems": 4,
+            "items": {"type": "number"}
+          }
+        }
+      ]
+    },
+    "minimum_points": {"type": "integer", "minimum": 3, "default": 10},
+    "voxel_size_m": {"type": "number", "exclusiveMinimum": 0, "default": 0.005}
+  }
+}

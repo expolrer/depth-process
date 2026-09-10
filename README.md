@@ -73,16 +73,22 @@ P95 为 4.010 m。下游代理评测使用同一个无 Prompt、Depth-only ACT �
 
 ## 机器人交互目标自动标注
 
-仓库的 `dev` 分支包含两套独立、可安装的自动标注项目：
+仓库包含三套独立、可安装的自动标注项目：
 
 | 项目 | 技术路线 | 入口 |
 | --- | --- | --- |
 | `interaction-labeler-v1/` | GroundingDINO 候选、RGB-D/夹爪/关节排序、VLM 消歧、SAM2 双向跟踪、人工抽检 | `interaction-labeler run` |
 | `interaction-auto-labeler-v2/` | 目标描述、头部全场盘点、阶段识别、交互证据评分、跨视角关联、风险帧复核 | `auto-labeler-v2 run` |
+| `interaction-auto-labeler-v3/` | 事件图与 LeRobot v3、分层边界/语言、可靠度/GVL/异常、动态 FK/6D、纠错蒸馏和 ACT/π0.5 消融 | `auto-labeler-v3 run` |
 
-两个入口均接受原始 ROS bag、LeRobot 根目录或已提取 RGB-D 目录，并自动打开本地互动页面。
+三个入口均接受原始 ROS bag、LeRobot 根目录或已提取 RGB-D 目录，并自动打开本地互动页面。
 页面允许在模型运行前画目标框、修正接触帧，也允许在模型运行后对任意帧增加修正框并重新运行
 SAM2。人工框不写入 RGB 像素，而是保存为可追踪的覆盖记录。
+
+V3 同样接受三类输入，并保持 V1/V2 不变。它把自动结果写成逐 episode 统一事件图，所有人工修改
+另存为追加式纠错日志；未经过金标校准、缺少 GVL 进度响应或多模态异常检查的结果会进入复核，
+缺少三维标定时不生成几何真值。完整命令与 P0-P4 验收边界见
+[`interaction-auto-labeler-v3/README.md`](interaction-auto-labeler-v3/README.md)。
 
 ```bash
 auto-labeler-v2 run \

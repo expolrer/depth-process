@@ -1,0 +1,65 @@
+name: toy_pile_v3
+instruction: Pick up the intended red plush toy from the middle pile and move it to the right side.
+target:
+  names: [red plush toy, toy]
+  attributes: [red, plush, small]
+  source_region: middle toy pile
+  destination_region: right side of table
+  source_box_xyxy: null
+  destination_box_xyxy: null
+  negative_descriptions: [yellow toy, robot gripper, stationary red toys]
+  exemplar_images: []
+detector_prompt: [red plush toy, toy, robotic gripper, tabletop]
+active_hand: auto
+camera_roles:
+  head: [cam_h, head, observation.images.head]
+  left_wrist: [cam_l, left_wrist, observation.images.left_wrist]
+  right_wrist: [cam_r, right_wrist, observation.images.right_wrist]
+event_detection:
+  pre_frames: 45
+  post_release_frames: 20
+  max_span: 240
+v2:
+  detector_backend: grounded-sam2
+  inventory_stride: 10
+  ambiguity_margin: 0.08
+  cross_view_mode: soft
+  calibration: null
+  weights:
+    contact: 0.30
+    co_motion: 0.25
+    start_end_displacement: 0.20
+    source_destination: 0.10
+    descriptor_match: 0.10
+    cross_view: 0.05
+  review:
+    max_area_jump: 2.5
+    min_track_visibility: 0.80
+    max_projection_error_px: 18.0
+v3:
+  dataset_id: toy_pile
+  dataset_version: v3.0.0
+  event_graph_schema: embodied_event_graph_v1
+  temporal:
+    enabled: true
+    # 可选。每个 episode 一个 NPZ，时间维必须一致；支持 scene、visual、object、eef、
+    # joint、action、gripper、force、pause 和 timestamps。
+    modalities_npz_root: null
+  reliability:
+    # 在金标集拟合后填写 isotonic calibrator JSON。为空时报告明确标记 uncalibrated。
+    calibrator: null
+    accept_threshold: 0.80
+  gvl:
+    enabled: true
+    # 可选。文件名 episode-000000.json；缺失响应的 episode 强制进入复核。
+    responses_root: null
+    sample_count: 12
+  geometry:
+    # 只有提供相机内参、手眼标定、URDF 和逐帧关节角后才能改为 calibrated。
+    mode: disabled
+    # calibrated 模式下填写逐帧 depth/mask/intrinsics/world_from_camera JSONL。
+    manifest: null
+    export_point_clouds: false
+  quality:
+    reject_non_finite: true
+    minimum_evidence_coverage: 0.50

@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/expolrer/depth-process/schemas/embodied_event_graph_v1.schema.json",
+  "title": "Embodied Event Graph v1",
+  "type": "object",
+  "required": [
+    "schema",
+    "dataset_id",
+    "dataset_version",
+    "episode_id",
+    "frame_count",
+    "fps",
+    "entities",
+    "observations",
+    "segments",
+    "events",
+    "language",
+    "lineage"
+  ],
+  "properties": {
+    "schema": {"const": "embodied_event_graph_v1"},
+    "dataset_id": {"type": "string", "minLength": 1},
+    "dataset_version": {"type": "string", "minLength": 1},
+    "episode_id": {"type": "string", "minLength": 1},
+    "frame_count": {"type": "integer", "minimum": 1},
+    "fps": {"type": "number", "exclusiveMinimum": 0},
+    "modalities": {"type": "object"},
+    "entities": {"type": "array", "items": {"$ref": "#/$defs/entity"}},
+    "observations": {"type": "array", "items": {"$ref": "#/$defs/observation"}},
+    "segments": {"type": "array", "items": {"$ref": "#/$defs/segment"}},
+    "events": {"type": "array", "items": {"$ref": "#/$defs/event"}},
+    "language": {"type": "array", "items": {"$ref": "#/$defs/language"}},
+    "lineage": {"type": "object"}
+  },
+  "$defs": {
+    "span": {
+      "type": "object",
+      "required": ["start_frame", "end_frame"],
+      "properties": {
+        "start_frame": {"type": "integer", "minimum": 0},
+        "end_frame": {"type": "integer", "minimum": 0}
+      }
+    },
+    "entity": {
+      "type": "object",
+      "required": ["entity_id", "category", "names", "attributes"],
+      "properties": {
+        "entity_id": {"type": "string"},
+        "category": {"type": "string"},
+        "names": {"type": "array", "items": {"type": "string"}},
+        "attributes": {"type": "object"}
+      }
+    },
+    "observation": {
+      "type": "object",
+      "required": ["observation_id", "entity_id", "camera", "frame_index", "visible", "confidence"],
+      "properties": {
+        "observation_id": {"type": "string"},
+        "entity_id": {"type": "string"},
+        "camera": {"type": "string"},
+        "frame_index": {"type": "integer", "minimum": 0},
+        "bbox_xyxy": {
+          "oneOf": [
+            {"type": "null"},
+            {"type": "array", "items": {"type": "number"}, "minItems": 4, "maxItems": 4}
+          ]
+        },
+        "visible": {"type": "boolean"},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1}
+      }
+    },
+    "segment": {
+      "type": "object",
+      "required": ["segment_id", "level", "span", "label", "confidence"],
+      "properties": {
+        "segment_id": {"type": "string"},
+        "level": {"enum": ["task", "subtask", "event", "phase"]},
+        "span": {"$ref": "#/$defs/span"},
+        "label": {"type": "string"},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1}
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["kind", "source", "score", "details"],
+      "properties": {
+        "kind": {"type": "string"},
+        "source": {"type": "string"},
+        "score": {"type": "number", "minimum": 0, "maximum": 1},
+        "frame_index": {"type": ["integer", "null"], "minimum": 0},
+        "details": {"type": "object"}
+      }
+    },
+    "event": {
+      "type": "object",
+      "required": ["event_id", "event_type", "span", "confidence", "review_state", "evidence", "observation_ids"],
+      "properties": {
+        "event_id": {"type": "string"},
+        "event_type": {"type": "string"},
+        "span": {"$ref": "#/$defs/span"},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+        "review_state": {"enum": ["auto", "review", "approved", "rejected"]},
+        "evidence": {"type": "array", "items": {"$ref": "#/$defs/evidence"}},
+        "observation_ids": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "language": {
+      "type": "object",
+      "required": ["language_id", "level", "text", "span", "source", "confidence", "review_state"],
+      "properties": {
+        "language_id": {"type": "string"},
+        "level": {"enum": ["task", "subtask", "event"]},
+        "text": {"type": "string", "minLength": 1},
+        "span": {"$ref": "#/$defs/span"},
+        "source": {"type": "string"},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+        "review_state": {"enum": ["auto", "review", "approved", "rejected"]}
+      }
+    }
+  }
+}

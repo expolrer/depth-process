@@ -1,0 +1,22 @@
+.v3-dashboard {
+  margin-bottom: 16px;
+  padding: 13px;
+  background: #fff;
+  border-top: 3px solid #245a73;
+  border-bottom: 1px solid var(--line);
+}
+.v3-summary-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.v3-summary-head h2 { margin: 0; font-size: 15px; }
+.v3-summary-head p { margin: 4px 0 0; color: var(--muted); font-size: 11px; }
+.v3-state { padding: 5px 8px; border: 1px solid #aac0ca; border-radius: 5px; color: #245a73; font-size: 11px; }
+.v3-metrics { display: grid; grid-template-columns: repeat(5, minmax(90px, 1fr)); gap: 1px; margin-top: 12px; background: var(--line); border: 1px solid var(--line); }
+.v3-metric { min-width: 0; padding: 9px 10px; background: #fff; }
+.v3-metric strong { display: block; font-size: 17px; }
+.v3-metric span { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; overflow-wrap: anywhere; }
+.v3-quality { margin-top: 9px; color: var(--muted); font-size: 11px; line-height: 1.5; }
+.v3-quality .warning { color: #a36312; }
+@media (max-width: 820px) {
+  .v3-metrics { grid-template-columns: repeat(2, minmax(90px, 1fr)); }
+  .v3-metric:last-child { grid-column: 1 / -1; }
+  .v3-summary-head { flex-direction: column; }
+}
