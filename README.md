@@ -18,6 +18,19 @@
 7 种深度处理方法，并对比对应的无 Prompt ACT 热力图、动作误差和执行腕目标 ROI 指标。
 页面静态资源位于 `docs/`，GitHub Pages 发布源应设置为 `main` 分支的 `/docs` 目录。
 
+## RoboTwin RGB-D 策略基准
+
+RoboTwin 主数据集上的六种策略架构正在使用相同任务种子和每项 100 回合评测协议运行。
+当前快照已完成 10/36 个“架构 x 任务”评测：RGB + joint 的 A0 六项已完成；
+点云 DP3 的 A4 已完成 `pick_dual_bottles`、`place_a2b_left` 和 `place_a2b_right`，
+成功率分别为 61%、41% 和 47%；Action DiT 的 A5 已完成 `place_a2b_left`，成功率为 0%。
+A1/A2 共 12 个 30k 权重已完成训练并进入评测队列。服务器项目调度器现在只使用 GPU4、GPU5、GPU6。
+
+[查看实时快照](docs/robotwin_benchmark/ROBOTWIN_BENCHMARK_STATUS.md) ·
+[下载机器可读 JSON](docs/robotwin_benchmark/robotwin_benchmark_status.json)
+
+这些数字是当前中间结果。A1-A5 全部使用相同种子完成 100 回合评测前，不据此给出最终架构排名。
+
 ## 项目指标总览
 
 全量深度统计覆盖 5 个数据集、15 路相机流、14,731 个 RGB-D 相机帧和
