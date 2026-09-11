@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-11T14:24:20+08:00",
+  "generated_at": "2026-09-11T14:41:10+08:00",
   "root": "/ssd/depth-model",
   "resource_policy": {
     "project_gpus": [
@@ -37,12 +37,13 @@
     "evaluated": 10,
     "trained_eval_pending": 13,
     "pending": 10,
-    "training": 3
+    "training": 1,
+    "evaluating": 2
   },
   "workers": {
-    "gpu4": "2026-09-11T14:23:25+08:00 WAITING_EXISTING gpu=4 task=A4-train-handover_mic pid=3812073",
-    "gpu5": "2026-09-11T14:23:25+08:00 WAITING_EXISTING gpu=5 task=A4-train-stack_blocks_two pid=1836128",
-    "gpu6": "2026-09-11T14:23:25+08:00 WAITING_EXISTING gpu=6 task=A4-train-pick_diverse_bottles pid=733881"
+    "gpu4": "2026-09-11T14:38:54+08:00 RUNNING gpu=4 task=A4-eval-handover_mic attempt=1",
+    "gpu5": "2026-09-11T14:40:54+08:00 WAITING_EXISTING gpu=5 task=A4-train-stack_blocks_two pid=1836128",
+    "gpu6": "2026-09-11T14:39:54+08:00 RUNNING gpu=6 task=A4-eval-pick_diverse_bottles attempt=1"
   },
   "results": [
     {
@@ -256,10 +257,10 @@
     {
       "variant": "A4",
       "task": "handover_mic",
-      "stage": "training",
+      "stage": "evaluating",
       "success_rate": null,
       "checkpoint_available": false,
-      "status": "2026-09-11T11:14:20+08:00 TRAINING gpu=4 epochs=3000"
+      "status": "2026-09-11T14:38:54+08:00 EVALUATING gpu=4 rollouts=100"
     },
     {
       "variant": "A4",
@@ -280,10 +281,10 @@
     {
       "variant": "A4",
       "task": "pick_diverse_bottles",
-      "stage": "training",
+      "stage": "evaluating",
       "success_rate": null,
       "checkpoint_available": false,
-      "status": "2026-09-11T12:29:08+08:00 TRAINING gpu=6 epochs=3000"
+      "status": "2026-09-11T14:39:54+08:00 EVALUATING gpu=6 rollouts=100"
     },
     {
       "variant": "A5",

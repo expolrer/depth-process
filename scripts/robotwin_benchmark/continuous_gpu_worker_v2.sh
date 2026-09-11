@@ -21,6 +21,14 @@ set_status() {
   printf '%s %s\n' "$(stamp)" "$*" | tee "$status"
 }
 
+pid_is_active() {
+  local pid="$1"
+  local state
+  [[ -r "/proc/$pid/stat" ]] || return 1
+  state="$(awk '{print $3}' "/proc/$pid/stat")"
+  [[ "$state" != Z ]]
+}
+
 run_retry() {
   local label="$1"
   shift
@@ -124,13 +132,13 @@ phase2_jobs=(
   'pipeline|A3|pick_diverse_bottles|depth_master_clutter'
 )
 
-while kill -0 "$initial_wrapper_pid" 2>/dev/null; do
+while pid_is_active "$initial_wrapper_pid"; do
   set_status "WAITING_EXISTING gpu=$gpu task=A4-train-$initial_a4_task pid=$initial_wrapper_pid"
   sleep 60
 done
 
 if kill -0 "$old_worker_pid" 2>/dev/null; then
-  kill -TERM "$old_worker_pid" 2>/dev/null || true
+  kill -KILL "$old_worker_pid" 2>/dev/null || true
 fi
 
 while ! run_retry "A4-eval-$initial_a4_task" bash "$root/scripts/run_a4_eval.sh" \
