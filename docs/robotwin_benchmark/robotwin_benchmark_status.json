@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-11T14:41:10+08:00",
+  "generated_at": "2026-09-11T14:44:41+08:00",
   "root": "/ssd/depth-model",
   "resource_policy": {
     "project_gpus": [
@@ -42,7 +42,7 @@
   },
   "workers": {
     "gpu4": "2026-09-11T14:38:54+08:00 RUNNING gpu=4 task=A4-eval-handover_mic attempt=1",
-    "gpu5": "2026-09-11T14:40:54+08:00 WAITING_EXISTING gpu=5 task=A4-train-stack_blocks_two pid=1836128",
+    "gpu5": "2026-09-11T14:43:54+08:00 WAITING_EXISTING gpu=5 task=A4-train-stack_blocks_two pid=1836128",
     "gpu6": "2026-09-11T14:39:54+08:00 RUNNING gpu=6 task=A4-eval-pick_diverse_bottles attempt=1"
   },
   "results": [

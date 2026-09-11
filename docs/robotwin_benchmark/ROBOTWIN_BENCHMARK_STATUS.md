@@ -1,6 +1,6 @@
 # RoboTwin RGB-D Benchmark Status
 
-Snapshot: `2026-09-11T14:41:10+08:00`
+Snapshot: `2026-09-11T14:44:41+08:00`
 
 This is a live experiment snapshot. Success rates are published only after a full 100-rollout evaluation completes.
 
@@ -36,7 +36,7 @@ This is a live experiment snapshot. Success rates are published only after a ful
 ## Active Workers
 
 - **GPU4**: `2026-09-11T14:38:54+08:00 RUNNING gpu=4 task=A4-eval-handover_mic attempt=1`
-- **GPU5**: `2026-09-11T14:40:54+08:00 WAITING_EXISTING gpu=5 task=A4-train-stack_blocks_two pid=1836128`
+- **GPU5**: `2026-09-11T14:43:54+08:00 WAITING_EXISTING gpu=5 task=A4-train-stack_blocks_two pid=1836128`
 - **GPU6**: `2026-09-11T14:39:54+08:00 RUNNING gpu=6 task=A4-eval-pick_diverse_bottles attempt=1`
 
 ## Interpretation
