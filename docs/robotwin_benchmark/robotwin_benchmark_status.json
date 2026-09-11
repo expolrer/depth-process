@@ -1,0 +1,337 @@
+{
+  "generated_at": "2026-09-11T14:24:20+08:00",
+  "root": "/ssd/depth-model",
+  "resource_policy": {
+    "project_gpus": [
+      4,
+      5,
+      6
+    ],
+    "excluded_gpus": [
+      0,
+      1,
+      2,
+      3,
+      7
+    ],
+    "sapien_gpu_isolation": true
+  },
+  "variants": {
+    "A0": "RGB + joint ACT baseline",
+    "A1": "RGB-D four-channel early concatenation",
+    "A2": "RGB ResNet + depth CNN + joint, token-level late fusion",
+    "A3": "RGB encoder + LingBot-Depth/ViT depth tokens",
+    "A4": "Fused point cloud + DP3",
+    "A5": "RGB tokens + depth tokens + joint-conditioned action DiT"
+  },
+  "tasks": [
+    "pick_dual_bottles",
+    "stack_blocks_two",
+    "handover_mic",
+    "place_a2b_left",
+    "place_a2b_right",
+    "pick_diverse_bottles"
+  ],
+  "summary": {
+    "total": 36,
+    "evaluated": 10,
+    "trained_eval_pending": 13,
+    "pending": 10,
+    "training": 3
+  },
+  "workers": {
+    "gpu4": "2026-09-11T14:23:25+08:00 WAITING_EXISTING gpu=4 task=A4-train-handover_mic pid=3812073",
+    "gpu5": "2026-09-11T14:23:25+08:00 WAITING_EXISTING gpu=5 task=A4-train-stack_blocks_two pid=1836128",
+    "gpu6": "2026-09-11T14:23:25+08:00 WAITING_EXISTING gpu=6 task=A4-train-pick_diverse_bottles pid=733881"
+  },
+  "results": [
+    {
+      "variant": "A0",
+      "task": "pick_dual_bottles",
+      "stage": "evaluated",
+      "success_rate": 0.28,
+      "checkpoint_available": false,
+      "status": "2026-09-10T21:58:35+08:00 COMPLETE success_rate=0.28 result=/ssd/depth-model/repos/RoboTwin/eval_result/pick_dual_bottles/ACT/depth_master_clean/A0-seed0/2026-09-10 14:13:54/_result.txt"
+    },
+    {
+      "variant": "A0",
+      "task": "stack_blocks_two",
+      "stage": "evaluated",
+      "success_rate": 0.35,
+      "checkpoint_available": false,
+      "status": "2026-09-11T10:45:25+08:00 COMPLETE success_rate=0.35 result=/ssd/depth-model/repos/RoboTwin/eval_result/stack_blocks_two/ACT/depth_master_clean/A0-seed0/2026-09-10 22:28:35/_result.txt"
+    },
+    {
+      "variant": "A0",
+      "task": "handover_mic",
+      "stage": "evaluated",
+      "success_rate": 0.89,
+      "checkpoint_available": false,
+      "status": "2026-09-10T20:42:48+08:00 COMPLETE success_rate=0.89 result=/ssd/depth-model/repos/RoboTwin/eval_result/handover_mic/ACT/depth_master_clean/A0-seed0/2026-09-10 14:13:53/_result.txt"
+    },
+    {
+      "variant": "A0",
+      "task": "place_a2b_left",
+      "stage": "evaluated",
+      "success_rate": 0.0,
+      "checkpoint_available": false,
+      "status": "2026-09-10T22:19:19+08:00 COMPLETE success_rate=0.0 result=/ssd/depth-model/repos/RoboTwin/eval_result/place_a2b_left/ACT/depth_master_clean/A0-seed0/2026-09-10 14:13:54/_result.txt"
+    },
+    {
+      "variant": "A0",
+      "task": "place_a2b_right",
+      "stage": "evaluated",
+      "success_rate": 0.02,
+      "checkpoint_available": false,
+      "status": "2026-09-11T06:28:04+08:00 COMPLETE success_rate=0.02 result=/ssd/depth-model/repos/RoboTwin/eval_result/place_a2b_right/ACT/depth_master_clean/A0-seed0/2026-09-10 22:17:30/_result.txt"
+    },
+    {
+      "variant": "A0",
+      "task": "pick_diverse_bottles",
+      "stage": "evaluated",
+      "success_rate": 0.05,
+      "checkpoint_available": false,
+      "status": "2026-09-11T07:07:35+08:00 COMPLETE success_rate=0.05 result=/ssd/depth-model/repos/RoboTwin/eval_result/pick_diverse_bottles/ACT/depth_master_clutter/A0-seed0/2026-09-10 22:17:30/_result.txt"
+    },
+    {
+      "variant": "A1",
+      "task": "pick_dual_bottles",
+      "stage": "trained_eval_pending",
+      "success_rate": null,
+      "checkpoint_available": true,
+      "status": "2026-09-10T22:30:42+08:00 TRAINED eval_pending"
+    },
+    {
+      "variant": "A1",
+      "task": "stack_blocks_two",
+      "stage": "trained_eval_pending",
+      "success_rate": null,
+      "checkpoint_available": true,
+      "status": "2026-09-10T23:23:29+08:00 TRAINED eval_pending"
+    },
+    {
+      "variant": "A1",
+      "task": "handover_mic",
+      "stage": "trained_eval_pending",
+      "success_rate": null,
+      "checkpoint_available": true,
+      "status": "2026-09-10T22:44:01+08:00 TRAINED eval_pending"
+    },
+    {
+      "variant": "A1",
+      "task": "place_a2b_left",
+      "stage": "trained_eval_pending",
+      "success_rate": null,
+      "checkpoint_available": true,
+      "status": "2026-09-10T22:57:12+08:00 TRAINED eval_pending"
+    },
+    {
+      "variant": "A1",
+      "task": "place_a2b_right",
+      "stage": "trained_eval_pending",
+      "success_rate": null,
+      "checkpoint_available": true,
+      "status": "2026-09-10T23:10:21+08:00 TRAINED eval_pending"
+    },
+    {
+      "variant": "A1",
+      "task": "pick_diverse_bottles",
+      "stage": "trained_eval_pending",
+      "success_rate": null,
+      "checkpoint_available": true,
+      "status": "2026-09-10T23:36:31+08:00 TRAINED eval_pending"
+    },
+    {
+      "variant": "A2",
+      "task": "pick_dual_bottles",
+      "stage": "trained_eval_pending",
+      "success_rate": null,
+      "checkpoint_available": true,
+      "status": "2026-09-10T22:31:39+08:00 TRAINED eval_pending"
+    },
+    {
+      "variant": "A2",
+      "task": "stack_blocks_two",
+      "stage": "trained_eval_pending",
+      "success_rate": null,
+      "checkpoint_available": true,
+      "status": "2026-09-10T23:30:35+08:00 TRAINED eval_pending"
+    },
+    {
+      "variant": "A2",
+      "task": "handover_mic",
+      "stage": "trained_eval_pending",
+      "success_rate": null,
+      "checkpoint_available": true,
+      "status": "2026-09-10T22:47:07+08:00 TRAINED eval_pending"
+    },
+    {
+      "variant": "A2",
+      "task": "place_a2b_left",
+      "stage": "trained_eval_pending",
+      "success_rate": null,
+      "checkpoint_available": true,
+      "status": "2026-09-10T23:01:27+08:00 TRAINED eval_pending"
+    },
+    {
+      "variant": "A2",
+      "task": "place_a2b_right",
+      "stage": "trained_eval_pending",
+      "success_rate": null,
+      "checkpoint_available": true,
+      "status": "2026-09-10T23:16:14+08:00 TRAINED eval_pending"
+    },
+    {
+      "variant": "A2",
+      "task": "pick_diverse_bottles",
+      "stage": "trained_eval_pending",
+      "success_rate": null,
+      "checkpoint_available": true,
+      "status": "2026-09-10T23:44:54+08:00 TRAINED eval_pending"
+    },
+    {
+      "variant": "A3",
+      "task": "pick_dual_bottles",
+      "stage": "pending",
+      "success_rate": null,
+      "checkpoint_available": false,
+      "status": "not_started"
+    },
+    {
+      "variant": "A3",
+      "task": "stack_blocks_two",
+      "stage": "pending",
+      "success_rate": null,
+      "checkpoint_available": false,
+      "status": "not_started"
+    },
+    {
+      "variant": "A3",
+      "task": "handover_mic",
+      "stage": "pending",
+      "success_rate": null,
+      "checkpoint_available": false,
+      "status": "not_started"
+    },
+    {
+      "variant": "A3",
+      "task": "place_a2b_left",
+      "stage": "pending",
+      "success_rate": null,
+      "checkpoint_available": false,
+      "status": "not_started"
+    },
+    {
+      "variant": "A3",
+      "task": "place_a2b_right",
+      "stage": "pending",
+      "success_rate": null,
+      "checkpoint_available": false,
+      "status": "not_started"
+    },
+    {
+      "variant": "A3",
+      "task": "pick_diverse_bottles",
+      "stage": "pending",
+      "success_rate": null,
+      "checkpoint_available": false,
+      "status": "not_started"
+    },
+    {
+      "variant": "A4",
+      "task": "pick_dual_bottles",
+      "stage": "evaluated",
+      "success_rate": 0.61,
+      "checkpoint_available": true,
+      "status": "2026-09-11T11:14:20+08:00 COMPLETE success_rate=0.61 result=/ssd/depth-model/repos/RoboTwin/eval_result/pick_dual_bottles/DP3/depth_master_clean/depth_master_clean/2026-09-11 07:59:15/_result.txt"
+    },
+    {
+      "variant": "A4",
+      "task": "stack_blocks_two",
+      "stage": "training",
+      "success_rate": null,
+      "checkpoint_available": false,
+      "status": "2026-09-11T10:45:25+08:00 TRAINING gpu=5 epochs=3000"
+    },
+    {
+      "variant": "A4",
+      "task": "handover_mic",
+      "stage": "training",
+      "success_rate": null,
+      "checkpoint_available": false,
+      "status": "2026-09-11T11:14:20+08:00 TRAINING gpu=4 epochs=3000"
+    },
+    {
+      "variant": "A4",
+      "task": "place_a2b_left",
+      "stage": "evaluated",
+      "success_rate": 0.41,
+      "checkpoint_available": true,
+      "status": "2026-09-11T03:43:14+08:00 COMPLETE success_rate=0.41 result=/ssd/depth-model/repos/RoboTwin/eval_result/place_a2b_left/DP3/depth_master_clean/depth_master_clean/2026-09-11 00:05:47/_result.txt"
+    },
+    {
+      "variant": "A4",
+      "task": "place_a2b_right",
+      "stage": "evaluated",
+      "success_rate": 0.47,
+      "checkpoint_available": true,
+      "status": "2026-09-11T12:29:08+08:00 COMPLETE success_rate=0.47 result=/ssd/depth-model/repos/RoboTwin/eval_result/place_a2b_right/DP3/depth_master_clean/depth_master_clean/2026-09-11 08:53:26/_result.txt"
+    },
+    {
+      "variant": "A4",
+      "task": "pick_diverse_bottles",
+      "stage": "training",
+      "success_rate": null,
+      "checkpoint_available": false,
+      "status": "2026-09-11T12:29:08+08:00 TRAINING gpu=6 epochs=3000"
+    },
+    {
+      "variant": "A5",
+      "task": "pick_dual_bottles",
+      "stage": "pending",
+      "success_rate": null,
+      "checkpoint_available": false,
+      "status": "not_started"
+    },
+    {
+      "variant": "A5",
+      "task": "stack_blocks_two",
+      "stage": "pending",
+      "success_rate": null,
+      "checkpoint_available": false,
+      "status": "not_started"
+    },
+    {
+      "variant": "A5",
+      "task": "handover_mic",
+      "stage": "pending",
+      "success_rate": null,
+      "checkpoint_available": false,
+      "status": "not_started"
+    },
+    {
+      "variant": "A5",
+      "task": "place_a2b_left",
+      "stage": "evaluated",
+      "success_rate": 0.0,
+      "checkpoint_available": true,
+      "status": "2026-09-11T08:57:32+08:00 COMPLETE success_rate=0.0 result=/ssd/depth-model/repos/RoboTwin/eval_result/place_a2b_left/DepthPolicy/depth_master_clean/A5-seed0/2026-09-11 03:58:14/_result.txt"
+    },
+    {
+      "variant": "A5",
+      "task": "place_a2b_right",
+      "stage": "pending",
+      "success_rate": null,
+      "checkpoint_available": false,
+      "status": "not_started"
+    },
+    {
+      "variant": "A5",
+      "task": "pick_diverse_bottles",
+      "stage": "trained_eval_pending",
+      "success_rate": null,
+      "checkpoint_available": true,
+      "status": "2026-09-11T14:24:07+08:00 TRAINED eval_pending previous_eval_interrupted_by_gpu_policy_change"
+    }
+  ]
+}
