@@ -31,6 +31,12 @@ case "$platform" in
     ;;
 esac
 "$python" "$repo/scripts/workflow_guard.py" train "$variant" "$task"
+read -r epochs batch_size train_seed < <("$python" -c '
+import json, sys
+plan = json.load(open(sys.argv[1], encoding="utf-8"))
+stage = next(item for item in plan["stages"] if item["id"] == plan["current_stage"])
+print(stage["train_epochs"], stage["batch_size"], stage["train_seed"])
+' "$repo/execution_plan.json")
 mkdir -p "$output"
 CUDA_VISIBLE_DEVICES="$gpu" TORCH_HOME="$root/models/torch" \
   "$python" "$repo/train.py" \
@@ -40,6 +46,9 @@ CUDA_VISIBLE_DEVICES="$gpu" TORCH_HOME="$root/models/torch" \
   --project-root "$root" \
   --official-act-root "$root/repos/RoboTwin/policy/ACT" \
   --output "$output" \
+  --epochs "$epochs" \
+  --batch-size "$batch_size" \
+  --seed "$train_seed" \
   --lingbot-repo "$root/repos/lingbot-depth" \
   --lingbot-checkpoint "$root/models/lingbot-depth-v0.5/model.pt" \
   --lingbot-vendor "$root/repos/depth-processing-vendor" \

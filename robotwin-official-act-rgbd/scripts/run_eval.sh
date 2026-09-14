@@ -12,7 +12,7 @@ config="$3"
 gpu="$4"
 checkpoint_dir="$5"
 seed_file="$6"
-rollouts="${7:-100}"
+requested_rollouts="${7:-}"
 platform="${OFFICIAL_ACT_PLATFORM:-server56_h100}"
 root="${DEPTH_MODEL_ROOT:-/ssd/hhw/depth-model}"
 robotwin="$root/repos/RoboTwin"
@@ -31,6 +31,17 @@ fi
 test -s "$checkpoint_dir/policy_best.ckpt"
 test -s "$seed_file"
 "$python" "$root/repos/official-act-rgbd/scripts/workflow_guard.py" eval "$variant" "$task"
+planned_rollouts=$("$python" -c '
+import json, sys
+plan = json.load(open(sys.argv[1], encoding="utf-8"))
+stage = next(item for item in plan["stages"] if item["id"] == plan["current_stage"])
+print(stage["eval_episodes"])
+' "$root/repos/official-act-rgbd/execution_plan.json")
+if [[ -n "$requested_rollouts" && "$requested_rollouts" != "$planned_rollouts" ]]; then
+  printf 'Requested rollouts %s do not match planned rollouts %s\n' "$requested_rollouts" "$planned_rollouts" >&2
+  exit 2
+fi
+rollouts="$planned_rollouts"
 "$python" "$root/repos/official-act-rgbd/scripts/artifact_manifest.py" verify "$checkpoint_dir"
 cd "$robotwin"
 common_env=(CUDA_VISIBLE_DEVICES="$gpu" TORCH_HOME="$root/models/torch" PYTHONPATH="$python_path:${PYTHONPATH:-}")

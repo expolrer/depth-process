@@ -30,9 +30,10 @@ batch 1 在线评测。普通 `ACT0-5/7` 的正式评测准入线为 16GB 显存
 [查看机器可读状态机](robotwin-official-act-rgbd/execution_plan.json) ·
 [查看架构定义](robotwin-official-act-rgbd/ARCHITECTURE_ZH.md)
 
-当前严格阶段是 `P0_BASELINE`：只允许三个 sentinel 任务的 `ACT0_RGB` 训练与评测。启动脚本会执行
-workflow guard，提前运行 ACT1-ACT7 会被拒绝。计划、实验矩阵、seed 或门槛的任何修改都必须先
-提交 Git，再部署对应 commit；训练产物没有 manifest 或 SHA256 不一致时，评测脚本同样会拒绝启动。
+当前严格阶段已改为 `Q0_RAPID_DEPTH_CHECK`：只在 `stack_blocks_two` 上并行训练 500 epochs 的
+`ACT0_RGB` 与 `ACT1_EARLY_RGBD`，再用相同 30-seed 子集快速评测。ACT1 只增加 metric depth
+第 4 通道，本轮不输入 validity，也不做 zero/shuffle 或噪声/修复深度。该结果只判断是否值得继续，
+不能替代后续 2000-epoch、100-episode 确认。workflow guard 会拒绝计划外架构、任务和预算。
 
 ## RoboTwin RGB-D 策略基准（旧 FairACT 探索记录）
 

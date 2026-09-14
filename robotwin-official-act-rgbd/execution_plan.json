@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "source_of_truth": "EXECUTION_PLAN_ZH.md",
-  "current_stage": "P0_BASELINE",
+  "current_stage": "Q0_RAPID_DEPTH_CHECK",
   "platforms": {
     "server56_h100": {
       "gpu_model": "NVIDIA H100 80GB HBM3",
@@ -34,12 +34,12 @@
     "checkpoint_transport": "cpu-loadable-pytorch-state-dict"
   },
   "stages": [
-    {"id": "P0_BASELINE", "status": "active", "variants": ["ACT0_RGB"], "tasks": ["stack_blocks_two", "handover_mic", "pick_diverse_bottles"], "actions": ["train", "eval"]},
-    {"id": "P1_PRIMARY_SCREEN", "status": "blocked_by_previous", "variants": ["ACT1_EARLY_RGBD", "ACT2_DEPTH_CNN", "ACT4_XYZMAP", "ACT5_POINT_TOKENS"], "tasks": ["stack_blocks_two", "handover_mic", "pick_diverse_bottles"], "actions": ["train", "eval"]},
+    {"id": "Q0_RAPID_DEPTH_CHECK", "status": "active", "variants": ["ACT0_RGB", "ACT1_EARLY_RGBD"], "tasks": ["stack_blocks_two"], "actions": ["train", "eval"], "train_epochs": 500, "batch_size": 8, "train_seed": 0, "eval_episodes": 30, "use_validity_mask": false, "run_depth_counterfactuals": false},
+    {"id": "Q1_CONFIRM_DEPTH_EFFECT", "status": "blocked_by_previous", "variants": ["ACT0_RGB", "ACT1_EARLY_RGBD"], "tasks": ["stack_blocks_two"], "actions": ["train", "eval"], "train_epochs": 2000, "batch_size": 8, "train_seed": 0, "eval_episodes": 100, "use_validity_mask": false, "run_depth_counterfactuals": false},
+    {"id": "P1_PRIMARY_SCREEN", "status": "blocked_by_previous", "variants": ["ACT2_DEPTH_CNN", "ACT4_XYZMAP", "ACT5_POINT_TOKENS"], "tasks": ["stack_blocks_two", "handover_mic", "pick_diverse_bottles"], "actions": ["train", "eval"]},
     {"id": "P2_EXTENDED_SCREEN", "status": "blocked_by_previous", "variants": ["ACT3_DEPTH_RESNET", "ACT6_LINGBOT_DEPTH", "ACT7_DEPTH_TRANSFORMER"], "tasks": ["stack_blocks_two", "handover_mic", "pick_diverse_bottles"], "actions": ["train", "eval"]},
-    {"id": "P3_CLEAN_GT", "status": "blocked_by_previous", "variants": [], "tasks": ["stack_blocks_two", "handover_mic", "pick_diverse_bottles"], "actions": ["train", "eval"]},
-    {"id": "P4_ROBUSTNESS", "status": "blocked_by_previous", "variants": [], "tasks": ["stack_blocks_two", "handover_mic", "pick_diverse_bottles"], "actions": ["train", "eval"]},
-    {"id": "P5_ALL_TASKS", "status": "blocked_by_previous", "variants": [], "tasks": ["pick_dual_bottles", "stack_blocks_two", "handover_mic", "place_a2b_left", "place_a2b_right", "pick_diverse_bottles"], "actions": ["train", "eval"]},
-    {"id": "P6_VLA_TRANSFER", "status": "blocked_by_previous", "variants": [], "tasks": [], "actions": ["train", "eval"]}
+    {"id": "P3_MULTI_TASK", "status": "blocked_by_previous", "variants": [], "tasks": ["pick_dual_bottles", "stack_blocks_two", "handover_mic", "place_a2b_left", "place_a2b_right", "pick_diverse_bottles"], "actions": ["train", "eval"]},
+    {"id": "P4_DEPTH_VALIDITY_ROBUSTNESS", "status": "blocked_by_previous", "variants": [], "tasks": ["stack_blocks_two", "handover_mic", "pick_diverse_bottles"], "actions": ["train", "eval"]},
+    {"id": "P5_VLA_TRANSFER", "status": "blocked_by_previous", "variants": [], "tasks": [], "actions": ["train", "eval"]}
   ]
 }

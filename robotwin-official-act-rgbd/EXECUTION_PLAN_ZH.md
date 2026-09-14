@@ -45,35 +45,50 @@ FP32 推理；若后续启用 FP16/BF16，必须另建精度一致性实验，�
 若代码目录不是 Git checkout，部署时必须把对应的 40 位 Git commit 写入项目根目录 `.source_commit`；
 缺少该标记时 artifact 导出会失败，禁止产生无法追溯源码的正式 checkpoint。
 
-## 4. 严格状态机
+## 4. 当前快速验证：Q0
 
-1. `P0_BASELINE`：在三个 sentinel 任务训练和 100-seed 评测 `ACT0_RGB`，建立受控官方基线。
-2. `P1_PRIMARY_SCREEN`：按固定预算比较 `ACT1/2/4/5`；20-seed 只用于淘汰，晋级者完成 100-seed。
-3. `P2_EXTENDED_SCREEN`：仅在 P1 没有明确赢家或容量诊断需要时比较 `ACT3/6/7`。
-4. `P3_CLEAN_GT`：一至两个胜出前端使用 clean GT Depth，三训练 seed、每 seed 100 episodes。
-5. `P4_ROBUSTNESS`：同一 GT master 派生 clean/noisy/processed，完成 train/deploy 交叉矩阵。
-6. `P5_ALL_TASKS`：扩展到六任务，并做 zero/shuffle depth 与跨视角反事实。
-7. `P6_VLA_TRANSFER`：只有小模型胜出架构才迁移到 PI0.5、InternVLA 或 LingBot-VLA。
+当前目标收缩为尽快回答：在官方 ACT 中直接加入深度图后，任务成功率是否出现值得继续投入的变化。
 
-阶段晋级必须提交上一阶段的汇总 JSON、成功率 Wilson 95% 区间、异常动作统计和原始日志索引。
-当前阶段为 `P0_BASELINE`。`scripts/workflow_guard.py` 会拒绝当前阶段以外的正式训练和评测。
+- 任务只用对深度误差敏感的 `stack_blocks_two/depth_master_clean`。
+- 对照只用 `ACT0_RGB` 与 `ACT1_EARLY_RGBD`；两者使用同一数据、划分、相机顺序和训练 seed。
+- `ACT1` 将归一化 metric depth 作为每个相机的第 4 通道，不输入 validity mask。
+- 两个模型均训练 500 epochs、batch 8、seed 0，并行运行以缩短墙钟时间。
+- AutoDL 4090 D 使用同一份固定 seed，先各评测 30 episodes。
+- 本轮不做 zero/shuffle depth、不做噪声/处理深度、不做三训练 seed，也不比较其他深度编码器。
 
-## 5. 每个实验的固定顺序
+30 episodes 只提供方向性证据，不作为最终论文结论。若成功率差值绝对值达到 10 个百分点且两者没有
+异常动作差异，则进入 2000 epochs + 100 episodes 的同任务确认；若两者成功率都低于 10%，先排查
+训练与部署管线；其余情况直接扩大评测，不能宣称深度有效或无效。
+
+## 5. 后续严格状态机
+
+1. `Q0_RAPID_DEPTH_CHECK`：当前阶段，500 epochs、30 episodes 比较 `ACT0` 与无 validity 的 `ACT1`。
+2. `Q1_CONFIRM_DEPTH_EFFECT`：同一对照扩展为 2000 epochs、100 episodes，确认方向性结果。
+3. `P1_PRIMARY_SCREEN`：确认值得继续后，再按固定预算比较 `ACT2/4/5`。
+4. `P2_EXTENDED_SCREEN`：仅在 P1 没有明确赢家或容量诊断需要时比较 `ACT3/6/7`。
+5. `P3_MULTI_TASK`：胜出前端扩展到其他任务和三训练 seed。
+6. `P4_DEPTH_VALIDITY_ROBUSTNESS`：最后再验证 validity、zero/shuffle、clean/noisy/processed 交叉矩阵。
+7. `P5_VLA_TRANSFER`：只有小模型胜出架构才迁移到 PI0.5、InternVLA 或 LingBot-VLA。
+
+阶段晋级必须先提交上一阶段的结果和原始日志索引。当前阶段为 `Q0_RAPID_DEPTH_CHECK`；
+`scripts/workflow_guard.py` 会拒绝其他架构或任务，启动脚本会从计划读取 500 epochs 和 30 episodes。
+
+## 6. 每个实验的固定顺序
 
 1. Git 工作区干净，记录 commit；运行 `scripts/preflight.sh` 与 parity/data contract 检查。
 2. 从 `experiment_matrix.json` 选择唯一实验 ID，固定 task/config/train seed/eval seed。
 3. 56 H100 训练；validation 只用于按完整 frame grid 的 prior-action L1 选 `policy_best.ckpt`。
 4. 生成并验证 artifact manifest，再传输到 AutoDL 4090 D；传输后再次验证。
-5. AutoDL 4090 D 运行 20-rollout 资源和管线预检；峰值显存必须低于 21.6GB，且无控制器异常风暴。
-6. 使用冻结的 100-seed 列表正式评测；同一对比组必须使用同一环境 commit 和 seed 顺序。
+5. Q0 将 30 episodes 同时作为方向性评测与资源检查；峰值显存必须低于 21.6GB，且无控制器异常风暴。
+6. Q1 及之后使用冻结的 100-seed 列表；同一对比组必须使用同一环境 commit 和 seed 顺序。
 7. 汇总成功率、Wilson 区间、阶段成功率、动作越界/跳变、运行时和峰值显存，提交 Git。
 8. 只有阶段门槛通过后，才把 `execution_plan.json` 的下一阶段标为 active 并提交 Git。
 
-## 6. 禁止项
+## 7. 禁止项
 
-- 禁止在 `ACT0` 完整基线前用深度架构结果下结论。
+- 禁止把 Q0 的 30-episode 结果写成最终“深度有效/无效”结论。
 - 禁止把旧 FairACT checkpoint 或 smoke 结果混入 OfficialACTRGBD 主表。
 - 禁止用不同数据、相机顺序、评测 seed 或 checkpoint 选择规则比较架构。
 - 禁止把 attention map、训练 loss 或 20-rollout smoke 当作任务成功率证据。
-- 禁止在没有清单校验和资源预检时直接启动 100-seed 正式评测。
+- 禁止在 Q0 阶段加入 validity、深度反事实、噪声/修复方法或其他编码器，避免扩大变量。
 - 禁止直接修改运行中的服务器副本；所有计划或代码变更先提交 Git，再部署对应 commit。

@@ -3,11 +3,20 @@
 > 本文件保留架构筛选细节。跨机器执行、硬件准入、产物校验和严格状态机以
 > `EXECUTION_PLAN_ZH.md` 和 `execution_plan.json` 为唯一准则。
 
-## P0：官方基线校准
+## Q0：立即验证加入深度是否改变表现
 
-先只运行受控版 `ACT0_RGB`，任务为 `stack_blocks_two`、`handover_mic` 和
-`pick_diverse_bottles/depth_master_clutter`。训练配置使用官方 2000 epochs、batch 8、固定学习率，
-评测使用已有同一份 100-seed 列表。
+只在 `stack_blocks_two/depth_master_clean` 上比较 `ACT0_RGB` 和 `ACT1_EARLY_RGBD`。`ACT1` 只把
+metric depth 作为第 4 个图像通道，不输入 validity。两者各训练 500 epochs、batch 8、seed 0，
+然后在 AutoDL 4090 D 上使用同一份 30-seed 子集评测。本轮明确推迟 validity、zero/shuffle、
+噪声/修复深度、三训练 seed 和其他编码器；先得到“加深度是否值得继续”的方向性结果。
+
+若差值达到 10 个百分点，继续做 2000 epochs + 100 episodes 确认；否则按唯一计划中的规则扩大
+样本或排查管线。Q0 结果不能直接作为最终深度有效性结论。
+
+## Q1：同任务完整确认
+
+Q0 后只对 `stack_blocks_two` 的 `ACT0_RGB` 与 `ACT1_EARLY_RGBD` 延长到官方 2000 epochs，
+评测使用同一份 100-seed 列表。多任务扩展放到架构方向得到确认之后。
 
 代码 parity 已经要求模型初始化逐参数一致。既有官方复现结果 stack 35%、handover 89%、clutter
 5% 作为历史参照。受控版修复为训练和部署都使用 `head-left-right`，而旧官方流程训练配置为
@@ -18,14 +27,12 @@
 
 通过 P0 后，优先顺序为：
 
-1. `ACT1_EARLY_RGBD`
-2. `ACT2_DEPTH_CNN`
-3. `ACT4_XYZMAP`
-4. `ACT5_POINT_TOKENS`
+1. `ACT2_DEPTH_CNN`
+2. `ACT4_XYZMAP`
+3. `ACT5_POINT_TOKENS`
 
 每个模型先做 500 epochs 和 20 个固定 seed 的筛选，但这批结果只用于排除完全失败的实现。通过者再
-完成 2000 epochs 和 100 rollouts。所有候选同时运行 `zero_depth` 与 `shuffle_views`；没有真实深度
-依赖的候选不晋级。
+完成 2000 epochs 和 100 rollouts。validity 和深度反事实统一推迟到 P4，不阻塞当前快速验证。
 
 ## P2：扩展架构
 
@@ -51,7 +58,7 @@ prior-action L1、深度 zero/shuffle 降幅、ROI 几何误差与三视角一�
 - 当前 GPU4-7 的 FairACT 作业不被新仓库中断。
 - 新训练只有在 `official_act_rgbd_preflight.json` 为 passed 后才能入队。
 - GPU0 永远禁止 SAPIEN 或训练进程。
-- P0 的三个任务应并行而不是同一 GPU 串行，结束后立即做 100-seed 评测。
+- Q0 的 ACT0/ACT1 应在不同 H100 上并行训练，结束后转移到 4090 D 顺序完成 30-episode 评测。
 - 新队列先进入 prepared 状态；旧队列自然结束或用户明确切换后再启动。
 - H100 负责正式训练，AutoDL 消费级 GPU 负责只读在线评测；训练产物必须通过 SHA256 清单验收。
 - 56 的物理 GPU0 禁令不适用于 H100/AutoDL 单卡实例中的逻辑 `cuda:0`。

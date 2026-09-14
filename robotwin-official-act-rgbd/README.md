@@ -9,7 +9,8 @@ RoboTwin ACT 动作模型不变时，不同深度表示与视觉融合方式是�
 
 旧的 `FairACT B0-B4` 结果保留为探索性证据，不再作为架构结论。新实验统一以官方 ACT 的
 `DETRVAE + action CVAE + Transformer encoder/decoder + 50-step action chunk` 为核心，深度实验
-只替换每个相机的视觉骨干。任何深度模型都必须先通过 `ACT0` 官方 RGB 基线复现门槛。
+只替换每个相机的视觉骨干。快速阶段让 `ACT0` 与 `ACT1` 使用相同预算并行训练，先获得加深度后的
+方向性变化；完整复现与深度有效性验证随后执行。
 
 ## 架构矩阵
 
@@ -40,6 +41,10 @@ Transformer、损失和动作头均无需改写。门控残差只决定深度增
 - RGB 数据增强、深度噪声和深度修复在架构筛选阶段全部关闭。
 
 ## 实验阶段
+
+当前立即执行 `Q0_RAPID_DEPTH_CHECK`：只在 `stack_blocks_two` 上比较 500-epoch 的 `ACT0_RGB` 与
+无 validity mask 的 `ACT1_EARLY_RGBD`，随后在同一 30-seed 子集上评测。本阶段不做深度反事实、
+噪声或处理方法，只回答“直接加入 metric depth 是否值得继续”。30 episodes 不作为最终结论。
 
 1. `P0_UPSTREAM_PARITY`：锁定未经修改的 RoboTwin ACT 源码，并引用已有的三项官方复现结果。
    代码级 parity 检查要求 `ACT0` 与官方模型 state-dict key、shape 和初始参数逐元素一致。

@@ -56,6 +56,18 @@
     "shuffle_depth",
     "shuffle_views"
   ],
+  "rapid_depth_check": {
+    "stage": "Q0_RAPID_DEPTH_CHECK",
+    "task": "stack_blocks_two",
+    "task_config": "depth_master_clean",
+    "variants": ["ACT0_RGB", "ACT1_EARLY_RGBD"],
+    "train_epochs": 500,
+    "batch_size": 8,
+    "train_seed": 0,
+    "eval_episodes": 30,
+    "use_validity_mask": false,
+    "counterfactuals_deferred": true
+  },
   "promotion_gates": {
     "official_source_and_parameter_parity": true,
     "historical_success_rates_are_reference_only": true,
@@ -66,7 +78,7 @@
     },
     "minimum_eval_episodes": 100,
     "minimum_random_seeds": 3,
-    "requires_depth_counterfactual_dependency": true,
+    "requires_depth_counterfactual_dependency": "deferred_until_P4_DEPTH_VALIDITY_ROBUSTNESS",
     "checkpoint_metric": "full_validation_prior_action_l1"
   }
 }

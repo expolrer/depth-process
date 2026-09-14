@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-09-14T21:30:00+08:00",
-  "state": "prepared_not_launched",
-  "current_stage": "P0_BASELINE",
+  "updated_at": "2026-09-15T00:35:00+08:00",
+  "state": "rapid_depth_check_prepared_not_launched",
+  "current_stage": "Q0_RAPID_DEPTH_CHECK",
   "authoritative_plan": "EXECUTION_PLAN_ZH.md + execution_plan.json",
   "server_repo": "/ssd/hhw/depth-model/repos/official-act-rgbd",
   "integration": {
@@ -23,6 +23,6 @@
     "artifact_sha256_contract": "enabled",
     "workflow_stage_guard": "enabled"
   },
-  "next_gate": "train_and_evaluate_ACT0_RGB_on_three_sentinel_tasks",
+  "next_gate": "parallel_train_ACT0_RGB_and_ACT1_EARLY_RGBD_on_stack_blocks_two_then_30_episode_eval",
   "legacy_fairact": "running_to_completion_exploratory_only"
 }
