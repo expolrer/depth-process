@@ -29,20 +29,19 @@ RGB backbone features + z + joint state
 将 ImageNet 归一化 RGB 与 `clip(depth_m, 0, 2) / 2` 拼接。ResNet18 第一层由 3 通道扩为
 4 通道，新增深度卷积核初始化为 0，因此初始化时输出与 RGB 骨干一致，之后由训练学习深度增量。
 
-### ACT2：Depth CNN 后融合
+### ACT2：共享双流 ResNet18
 
-深度和 validity mask 经过五层 stride-2 CNN，形成与 RGB layer4 相同的空间网格。以 RGB token
-为 Query、Depth token 为 Key/Value 做 cross-attention，再通过零偏置门控残差写回 RGB token。
-这是首选的速度/表达能力折中。
+三个视角共享一个 RGB ResNet18，并共享一个单通道 Depth ResNet18。以 RGB token 为 Query、Depth
+token 为 Key/Value 做 cross-attention，再通过门控残差写回 RGB token。本轮只输入 clean metric depth。
 
-### ACT3：Depth ResNet 后融合
+### ACT3：逐视角六分支 ResNet18
 
-深度分支采用与 RGB 分支同层级的 ResNet18。它检验 ACT2 的表现是否受轻量 CNN 容量限制。
-深度通道由 ImageNet `conv1` 三通道均值初始化，validity 通道初始化为 0。
+头部、左腕、右腕分别使用独立 RGB ResNet18 和独立单通道 Depth ResNet18，共六个视觉分支。
+显式相机 one-hot 只用于把官方相机循环路由到正确分支，不作为几何输入参与特征学习。
 
 ### ACT4：XYZ 点图
 
-使用相机内参把 metric depth 反投影为 `(x, y, z)`，与 validity 一起输入几何 CNN。XYZ 点图
+使用相机内参把 metric depth 反投影为 `(x, y, z)` 并输入几何 CNN。XYZ 点图
 保留像素邻接关系，更适合堆叠、插入和接触边界等精细几何任务。
 
 ### ACT5：Point Tokens
@@ -58,7 +57,7 @@ token 交叉注意力。噪声/修复实验必须由对应版本的深度重新�
 
 ### ACT7：Depth Transformer
 
-用 stride-32 patch embedding 将 depth + validity 转为与 RGB 相同的空间 token，经小型
+用 stride-32 patch embedding 将 clean metric depth 转为与 RGB 相同的空间 token，经小型
 Transformer encoder 后融合。它是“Transformer 处理深度”的对照，不改用 action DiT；
 action DiT 会同时改变动作生成器，不能用于第一轮单变量比较。
 
@@ -83,7 +82,5 @@ deploy depth: clean | noisy | processed
 
 ## 4. 推荐迭代顺序
 
-优先训练 `ACT0 -> ACT1 -> ACT2 -> ACT4 -> ACT5`。`ACT3` 用来判断深度分支容量影响，
-`ACT7` 用来判断全局 token 建模是否必要，`ACT6` 因计算和存储成本最高放在最后。每一阶段只让
-通过校准门槛的候选进入下一阶段，避免直接展开 8 架构 x 6 任务 x 3 噪声 x 3 种子的巨大矩阵。
-
+当前先让八种架构在同一份 `stack_blocks_two/depth_master_clean` 上完成相同预算训练。该轮只筛选
+架构，不引入 validity、噪声或深度修复变量；胜出架构再进入多任务与 clean/noisy/processed 实验。

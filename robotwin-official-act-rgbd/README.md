@@ -97,5 +97,6 @@ UPSTREAM_LOCK.json
 视频和任务峰值余量，不进入正式结果队列。完整硬件表、跨机器 artifact 契约、阶段门槛和命令顺序见
 `EXECUTION_PLAN_ZH.md`。
 
-平台编号规则不能混用：56 H100 服务器默认只准物理 GPU4-7，GPU0 永久禁用；AutoDL 4090 D
-单卡实例允许使用逻辑 `cuda:0`。分别设置 `OFFICIAL_ACT_PLATFORM=server56_h100|autodl_4090d`。
+平台编号规则不能混用：本轮 56 H100 的 GPU4-7 为长期 worker，GPU0/2/3 只获准运行到北京时间
+2026-09-15 07:00，GPU1 不使用；AutoDL 4090 D 单卡实例允许使用逻辑 `cuda:0`。
+分别设置 `OFFICIAL_ACT_PLATFORM=server56_h100|autodl_4090d`。
