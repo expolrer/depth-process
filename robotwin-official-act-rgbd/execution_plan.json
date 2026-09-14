@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "source_of_truth": "EXECUTION_PLAN_ZH.md",
+  "current_stage": "P0_BASELINE",
+  "platforms": {
+    "server56": {
+      "roles": ["develop", "data", "smoke", "train_when_authorized"],
+      "default_allowed_physical_gpus": [4, 5, 6, 7],
+      "forbidden_physical_gpus": [0],
+      "temporary_gpus_require_explicit_window": [2, 3]
+    },
+    "h100": {
+      "roles": ["train", "validate", "export"],
+      "allowed_logical_gpus": [0, 1, 2, 3, 4, 5, 6, 7]
+    },
+    "autodl": {
+      "roles": ["preflight_eval", "eval"],
+      "allowed_logical_gpus": [0, 1, 2, 3, 4, 5, 6, 7],
+      "batch_size": 1,
+      "parallel_envs": 1,
+      "inference_dtype": "float32"
+    }
+  },
+  "evaluation_admission": {
+    "ACT0_TO_ACT5_AND_ACT7": {"minimum_vram_gib": 16, "minimum_ram_gib": 32, "minimum_ssd_free_gib": 100},
+    "ACT6_LINGBOT_DEPTH": {"minimum_vram_gib": 24, "minimum_ram_gib": 64, "minimum_ssd_free_gib": 150},
+    "resource_smoke_rollouts": 20,
+    "resource_peak_vram_fraction_max": 0.9,
+    "formal_rollouts": 100
+  },
+  "artifact_contract": {
+    "required": ["policy_best.ckpt", "policy_last.ckpt", "dataset_stats.pkl", "config.json", "metrics.jsonl"],
+    "manifest": "artifact_manifest.json",
+    "hash": "sha256",
+    "checkpoint_transport": "cpu-loadable-pytorch-state-dict"
+  },
+  "stages": [
+    {"id": "P0_BASELINE", "status": "active", "variants": ["ACT0_RGB"], "tasks": ["stack_blocks_two", "handover_mic", "pick_diverse_bottles"], "actions": ["train", "eval"]},
+    {"id": "P1_PRIMARY_SCREEN", "status": "blocked_by_previous", "variants": ["ACT1_EARLY_RGBD", "ACT2_DEPTH_CNN", "ACT4_XYZMAP", "ACT5_POINT_TOKENS"], "tasks": ["stack_blocks_two", "handover_mic", "pick_diverse_bottles"], "actions": ["train", "eval"]},
+    {"id": "P2_EXTENDED_SCREEN", "status": "blocked_by_previous", "variants": ["ACT3_DEPTH_RESNET", "ACT6_LINGBOT_DEPTH", "ACT7_DEPTH_TRANSFORMER"], "tasks": ["stack_blocks_two", "handover_mic", "pick_diverse_bottles"], "actions": ["train", "eval"]},
+    {"id": "P3_CLEAN_GT", "status": "blocked_by_previous", "variants": [], "tasks": ["stack_blocks_two", "handover_mic", "pick_diverse_bottles"], "actions": ["train", "eval"]},
+    {"id": "P4_ROBUSTNESS", "status": "blocked_by_previous", "variants": [], "tasks": ["stack_blocks_two", "handover_mic", "pick_diverse_bottles"], "actions": ["train", "eval"]},
+    {"id": "P5_ALL_TASKS", "status": "blocked_by_previous", "variants": [], "tasks": ["pick_dual_bottles", "stack_blocks_two", "handover_mic", "place_a2b_left", "place_a2b_right", "pick_diverse_bottles"], "actions": ["train", "eval"]},
+    {"id": "P6_VLA_TRANSFER", "status": "blocked_by_previous", "variants": [], "tasks": [], "actions": ["train", "eval"]}
+  ]
+}
+

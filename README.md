@@ -18,7 +18,23 @@
 7 种深度处理方法，并对比对应的无 Prompt ACT 热力图、动作误差和执行腕目标 ROI 指标。
 页面静态资源位于 `docs/`，GitHub Pages 发布源应设置为 `main` 分支的 `/docs` 目录。
 
-## RoboTwin RGB-D 策略基准
+## Official ACT RGB-D 重构计划（当前唯一执行路线）
+
+RoboTwin 策略实验已经重构为“官方 ACT 动作核心不变，只替换 RGB-D/几何视觉前端”的受控基准。
+正式训练可使用 H100，checkpoint 通过 SHA256 验收后转移到 AutoDL 消费级 NVIDIA GPU 做单环境、
+batch 1 在线评测。普通 `ACT0-5/7` 的正式评测准入线为 16GB 显存，
+`ACT6_LINGBOT_DEPTH` 为 24GB；为了在同一环境覆盖全部架构，推荐统一使用 24GB。
+
+[查看项目 README](robotwin-official-act-rgbd/README.md) ·
+[查看唯一执行计划](robotwin-official-act-rgbd/EXECUTION_PLAN_ZH.md) ·
+[查看机器可读状态机](robotwin-official-act-rgbd/execution_plan.json) ·
+[查看架构定义](robotwin-official-act-rgbd/ARCHITECTURE_ZH.md)
+
+当前严格阶段是 `P0_BASELINE`：只允许三个 sentinel 任务的 `ACT0_RGB` 训练与评测。启动脚本会执行
+workflow guard，提前运行 ACT1-ACT7 会被拒绝。计划、实验矩阵、seed 或门槛的任何修改都必须先
+提交 Git，再部署对应 commit；训练产物没有 manifest 或 SHA256 不一致时，评测脚本同样会拒绝启动。
+
+## RoboTwin RGB-D 策略基准（旧 FairACT 探索记录）
 
 RoboTwin 主数据集上的六种策略架构正在使用相同任务种子和每项 100 回合评测协议运行。
 当前快照已完成 10/36 个“架构 x 任务”评测：RGB + joint 的 A0 六项已完成；
@@ -29,7 +45,8 @@ A1/A2 共 12 个 30k 权重已完成训练并进入评测队列。服务器项�
 [查看实时快照](docs/robotwin_benchmark/ROBOTWIN_BENCHMARK_STATUS.md) ·
 [下载机器可读 JSON](docs/robotwin_benchmark/robotwin_benchmark_status.json)
 
-这些数字是当前中间结果。A1-A5 全部使用相同种子完成 100 回合评测前，不据此给出最终架构排名。
+这些数字是旧 FairACT 管线的中间探索记录，不再作为架构结论，也不进入 OfficialACTRGBD 主结果表。
+后续训练和评测只能按照上方重构计划推进。
 
 ## 项目指标总览
 

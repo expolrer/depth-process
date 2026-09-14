@@ -1,0 +1,35 @@
+task_name: null
+policy_name: OfficialACTRGBD
+task_config: null
+ckpt_setting: null
+instruction_type: unseen
+seed: 0
+test_num: 100
+
+variant: ACT0_RGB
+checkpoint: null
+device: cuda:0
+official_act_root: /ssd/hhw/depth-model/repos/RoboTwin/policy/ACT
+action_dim: 14
+chunk_size: 50
+temporal_agg: false
+hidden_dim: 512
+dim_feedforward: 3200
+position_embedding: sine
+lr_backbone: 0.00001
+weight_decay: 0.0001
+lr: 0.00001
+masks: false
+dilation: false
+backbone: resnet18
+nheads: 8
+enc_layers: 4
+dec_layers: 7
+pre_norm: false
+dropout: 0.1
+camera_names:
+  - cam_high
+  - cam_left_wrist
+  - cam_right_wrist
+lingbot_repo: /ssd/hhw/depth-model/repos/lingbot-depth
+lingbot_checkpoint: /ssd/hhw/depth-model/models/lingbot-depth-v0.5/model.pt

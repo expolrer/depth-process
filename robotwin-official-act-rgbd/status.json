@@ -1,0 +1,28 @@
+{
+  "updated_at": "2026-09-14T21:30:00+08:00",
+  "state": "prepared_not_launched",
+  "current_stage": "P0_BASELINE",
+  "authoritative_plan": "EXECUTION_PLAN_ZH.md + execution_plan.json",
+  "server_repo": "/ssd/hhw/depth-model/repos/official-act-rgbd",
+  "integration": {
+    "robotwin": "/ssd/hhw/depth-model/repos/RoboTwin/policy/OfficialACTRGBD",
+    "robotwin_a3": "/ssd/hhw/depth-model/repos/RoboTwin-A3/policy/OfficialACTRGBD"
+  },
+  "checks": {
+    "upstream_sha256": "passed",
+    "act0_parameter_parity": "passed",
+    "frontend_contract_act0_to_act5_act7": "passed",
+    "lingbot_frontend_dp3": "passed",
+    "lingbot_frontend_a3_eval": "passed",
+    "official_data_contract": "passed",
+    "full_resolution_depth_cnn_backward": "passed",
+    "act0_train_validate_checkpoint_cli": "passed",
+    "robotwin_policy_import": "passed",
+    "robotwin_a3_lingbot_policy_import": "passed",
+    "platform_aware_gpu_guard": "server56_physical_gpu0_forbidden_h100_and_autodl_logical_gpu0_allowed",
+    "artifact_sha256_contract": "enabled",
+    "workflow_stage_guard": "enabled"
+  },
+  "next_gate": "train_and_evaluate_ACT0_RGB_on_three_sentinel_tasks",
+  "legacy_fairact": "running_to_completion_exploratory_only"
+}

@@ -1,0 +1,14 @@
+{
+  "source": "/ssd/hhw/depth-model/repos/RoboTwin/policy/ACT",
+  "captured_at": "2026-09-14",
+  "files": {
+    "detr/models/detr_vae.py": "f85748ba7808a078f58392ba31cb9fd7a9af7baae54331aabc0c9d8f1119c48d",
+    "detr/models/backbone.py": "f80959464dfbae89f1517bbce8c8181a116e5569637e50290d49756f871f4f93",
+    "detr/models/transformer.py": "837506820a3c564896d9d694681b9a803c14e6ec30081ec9336f493158c06f4b",
+    "act_policy.py": "9034cc5c0f435b7a459d2ee72c1e0f303a65a5df918268eb46a2d23af3ed3e4a",
+    "utils.py": "8cf6bb444a26019da93b9879a5ea4527dee38ad5b75efa752ef6e1c588083bee",
+    "process_data.py": "acea5e4d1c549ece49be8ad3512041094094af4310698245708b9fefd37f9a14"
+  },
+  "policy": "ACT0 must be built by the locked upstream constructor without replacing any module."
+}
+

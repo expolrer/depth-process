@@ -1,0 +1,72 @@
+{
+  "project": "official-act-rgbd",
+  "status": "prepared_not_launched",
+  "baseline": "ACT0_RGB",
+  "canonical_camera_order": [
+    "head_camera",
+    "left_camera",
+    "right_camera"
+  ],
+  "official_core": {
+    "resolution_hw": [480, 640],
+    "action_dim": 14,
+    "chunk_size": 50,
+    "hidden_dim": 512,
+    "dim_feedforward": 3200,
+    "encoder_layers": 4,
+    "decoder_layers": 7,
+    "heads": 8,
+    "kl_weight": 10.0,
+    "position_embedding": "sine",
+    "temporal_aggregation": false,
+    "learning_rate": 1e-5,
+    "backbone_learning_rate": 1e-5,
+    "weight_decay": 1e-4
+  },
+  "architectures": [
+    {"id": "ACT0_RGB", "geometry": "none", "fusion": "official_rgb_only", "phase": 0},
+    {"id": "ACT1_EARLY_RGBD", "geometry": "metric_z", "fusion": "early_concat_4ch", "phase": 1},
+    {"id": "ACT2_DEPTH_CNN", "geometry": "metric_z_validity", "fusion": "gated_cross_attention", "phase": 1},
+    {"id": "ACT3_DEPTH_RESNET", "geometry": "metric_z_validity", "fusion": "gated_cross_attention", "phase": 2},
+    {"id": "ACT4_XYZMAP", "geometry": "camera_xyz_validity", "fusion": "gated_cross_attention", "phase": 1},
+    {"id": "ACT5_POINT_TOKENS", "geometry": "unordered_xyz_validity", "fusion": "gated_cross_attention", "phase": 1},
+    {"id": "ACT6_LINGBOT_DEPTH", "geometry": "lingbot_depth_v0.5", "fusion": "frozen_encoder_adapter", "phase": 2},
+    {"id": "ACT7_DEPTH_TRANSFORMER", "geometry": "metric_z_validity", "fusion": "gated_cross_attention", "phase": 2}
+  ],
+  "sentinel_tasks": [
+    "stack_blocks_two",
+    "handover_mic",
+    "pick_diverse_bottles"
+  ],
+  "full_tasks": [
+    "pick_dual_bottles",
+    "stack_blocks_two",
+    "handover_mic",
+    "place_a2b_left",
+    "place_a2b_right",
+    "pick_diverse_bottles"
+  ],
+  "depth_train_deploy_values": [
+    "clean_gt",
+    "noisy_medium",
+    "processed"
+  ],
+  "counterfactuals": [
+    "zero_depth",
+    "shuffle_depth",
+    "shuffle_views"
+  ],
+  "promotion_gates": {
+    "official_source_and_parameter_parity": true,
+    "historical_success_rates_are_reference_only": true,
+    "historical_reference_success_rate": {
+      "stack_blocks_two": 0.35,
+      "handover_mic": 0.89,
+      "pick_diverse_bottles": 0.05
+    },
+    "minimum_eval_episodes": 100,
+    "minimum_random_seeds": 3,
+    "requires_depth_counterfactual_dependency": true,
+    "checkpoint_metric": "full_validation_prior_action_l1"
+  }
+}
