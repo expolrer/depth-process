@@ -42,9 +42,10 @@ Transformer、损失和动作头均无需改写。门控残差只决定深度增
 
 ## 实验阶段
 
-当前立即执行 `Q0_EIGHT_ARCH_CLEAN_DEPTH_SCREEN`：八种架构均在同一份
-`stack_blocks_two/depth_master_clean` 数据上训练 500 epochs，batch size 8、seed 0。所有深度方案只输入
-clean metric depth，不输入 validity mask。本阶段不做深度反事实、
+当前执行 `Q0_OFFICIAL6000_TRAIN_THEN_EVAL`：八种架构均在同一份
+`stack_blocks_two/depth_master_clean` 数据上按官方 ACT 预算训练 6000 epochs，batch size 8、seed 0，
+每个 epoch 验证并按验证总 loss 选择 `policy_best.ckpt`。所有深度方案只输入 clean metric depth，
+不输入 validity mask。训练全部完成后自动使用官方 temporal aggregation 和同一组 100 seeds 评测。
 噪声或处理方法，只回答“直接加入 metric depth 是否值得继续”。30 episodes 不作为最终结论。
 
 1. `P0_UPSTREAM_PARITY`：锁定未经修改的 RoboTwin ACT 源码，并引用已有的三项官方复现结果。
@@ -97,6 +98,6 @@ UPSTREAM_LOCK.json
 视频和任务峰值余量，不进入正式结果队列。完整硬件表、跨机器 artifact 契约、阶段门槛和命令顺序见
 `EXECUTION_PLAN_ZH.md`。
 
-平台编号规则不能混用：本轮 56 H100 的 GPU4-7 为长期 worker，GPU0/2/3 只获准运行到北京时间
-2026-09-15 07:00，GPU1 不使用；AutoDL 4090 D 单卡实例允许使用逻辑 `cuda:0`。
+平台编号规则不能混用：本轮 56 H100 的 GPU0-3 为长期训练/评测 worker，GPU5-7 只获准运行到
+北京时间 2026-09-15 07:00，GPU4 不安排本项目；AutoDL 4090 D 单卡实例允许使用逻辑 `cuda:0`。
 分别设置 `OFFICIAL_ACT_PLATFORM=server56_h100|autodl_4090d`。

@@ -1,6 +1,6 @@
 {
   "project": "official-act-rgbd",
-  "status": "training_clean_depth_screen",
+  "status": "official6000_training_then_evaluation",
   "baseline": "ACT0_RGB",
   "canonical_camera_order": [
     "head_camera",
@@ -57,13 +57,16 @@
     "shuffle_views"
   ],
   "clean_depth_architecture_screen": {
-    "stage": "Q0_EIGHT_ARCH_CLEAN_DEPTH_SCREEN",
+    "stage": "Q0_OFFICIAL6000_TRAIN_THEN_EVAL",
     "task": "stack_blocks_two",
     "task_config": "depth_master_clean",
     "variants": ["ACT0_RGB", "ACT1_EARLY_RGBD", "ACT2_DUAL_SHARED", "ACT3_DUAL_PER_VIEW", "ACT4_XYZMAP", "ACT5_POINT_TOKENS", "ACT6_LINGBOT_DEPTH", "ACT7_DEPTH_TRANSFORMER"],
-    "train_epochs": 500,
+    "train_epochs": 6000,
     "batch_size": 8,
     "train_seed": 0,
+    "validate_every": 1,
+    "eval_episodes": 100,
+    "temporal_aggregation": true,
     "use_validity_mask": false,
     "counterfactuals_deferred": true
   },

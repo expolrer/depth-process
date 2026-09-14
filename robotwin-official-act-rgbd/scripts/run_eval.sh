@@ -18,7 +18,7 @@ root="${DEPTH_MODEL_ROOT:-/ssd/hhw/depth-model}"
 robotwin="$root/repos/RoboTwin"
 python="$root/envs/robotwin/bin/python"
 isolation="$root/runtime/sapien-gpu-isolation/libsapien_gpu_redirect.so"
-setting="${variant}-controlled-seed0"
+setting="${variant}-official6000-seed0"
 runtime_env=(XFORMERS_DISABLED=1)
 python_path=".:$root/repos/official-act-rgbd"
 if [[ "$variant" == "ACT6_LINGBOT_DEPTH" ]]; then
@@ -47,7 +47,7 @@ cd "$robotwin"
 common_env=(CUDA_VISIBLE_DEVICES="$gpu" TORCH_HOME="$root/models/torch" PYTHONPATH="$python_path:${PYTHONPATH:-}")
 case "$platform" in
   server56_h100|server56)
-    [[ "$gpu" =~ ^[4-7]$ ]] || { printf 'server56 formal jobs require physical GPU4-7; GPU0 is forbidden\n' >&2; exit 2; }
+    [[ "$gpu" =~ ^[0-3]$ ]] || { printf 'server56 official6000 evaluation requires physical GPU0-3\n' >&2; exit 2; }
     test -r "$isolation"
     platform_env=(ROBOTWIN_PHYSICAL_GPU="$gpu" ROBOTWIN_DRM_RENDER_INDEX="$((128 + gpu))" LD_PRELOAD="$isolation")
     ;;
@@ -71,4 +71,5 @@ env "${common_env[@]}" "${platform_env[@]}" "${runtime_env[@]}" "$python" script
   --checkpoint "$checkpoint_dir/policy_best.ckpt" \
   --seed 0 \
   --seed_list_path "$seed_file" \
+  --temporal_agg true \
   --test_num "$rollouts"

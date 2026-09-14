@@ -23,9 +23,9 @@ output="$root/experiments/OfficialACTRGBD/$variant/$task/$suffix"
 
 case "$platform" in
   server56_h100|server56)
-    if [[ "$gpu" =~ ^[4-7]$ ]]; then
+    if [[ "$gpu" =~ ^[0-3]$ ]]; then
       :
-    elif [[ "$gpu" =~ ^(0|2|3)$ ]] && [[ -n "${OFFICIAL_ACT_TEMP_GPU_DEADLINE_EPOCH:-}" ]] && (( $(date +%s) < OFFICIAL_ACT_TEMP_GPU_DEADLINE_EPOCH )); then
+    elif [[ "$gpu" =~ ^[5-7]$ ]] && [[ -n "${OFFICIAL_ACT_TEMP_GPU_DEADLINE_EPOCH:-}" ]] && (( $(date +%s) < OFFICIAL_ACT_TEMP_GPU_DEADLINE_EPOCH )); then
       :
     else
       printf 'GPU %s is outside the approved long-term or explicit temporary window\n' "$gpu" >&2
@@ -62,4 +62,5 @@ CUDA_VISIBLE_DEVICES="$gpu" TORCH_HOME="$root/models/torch" \
   --lingbot-checkpoint "$root/models/lingbot-depth-v0.5/model.pt" \
   --lingbot-vendor "$root/repos/depth-processing-vendor" \
   --device cuda
+"$python" "$repo/scripts/finalize_training_artifacts.py" "$output" --expected-epochs "$epochs"
 "$python" "$repo/scripts/artifact_manifest.py" create "$output" --repo "$repo"

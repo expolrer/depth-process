@@ -22,7 +22,7 @@ CUDA_VISIBLE_DEVICES=2 TORCH_HOME="$root/models/torch" \
   --device cuda
 
 test -s "$output/policy_best.ckpt"
-test -s "$output/policy_last.ckpt"
+test -s "$output/training_last.pt"
 test -s "$output/training_last.pt"
 test -s "$output/dataset_stats.pkl"
 test -s "$output/metrics.jsonl"

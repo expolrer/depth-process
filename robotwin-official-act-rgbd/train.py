@@ -89,20 +89,16 @@ def validate(policy, loader, device: torch.device) -> dict[str, float]:
     from official_act_rgbd.data import move_batch
 
     policy.eval()
-    totals = {"posterior_l1": 0.0, "posterior_kl": 0.0, "prior_l1": 0.0}
+    totals = {"posterior_loss": 0.0, "posterior_l1": 0.0, "posterior_kl": 0.0}
     samples = 0
     for host_batch in loader:
         batch = move_batch(host_batch, device)
         posterior = policy_call(policy, batch, training=True)
-        prior_prediction = policy_call(policy, batch, training=False)
         target = batch["action"][:, : policy.model.num_queries]
-        valid = (~batch["is_pad"][:, : policy.model.num_queries]).unsqueeze(-1)
-        valid_elements = valid.sum().clamp_min(1) * target.shape[-1]
-        prior_l1 = ((prior_prediction - target).abs() * valid).sum() / valid_elements
         batch_size = int(target.shape[0])
+        totals["posterior_loss"] += float(posterior["loss"]) * batch_size
         totals["posterior_l1"] += float(posterior["l1"]) * batch_size
         totals["posterior_kl"] += float(posterior["kl"]) * batch_size
-        totals["prior_l1"] += float(prior_l1) * batch_size
         samples += batch_size
     if samples == 0:
         return {key: math.nan for key in totals}
@@ -116,7 +112,11 @@ def save_training_state(path, policy, optimizer, epoch, best, args, split) -> No
             "policy": policy.state_dict(),
             "optimizer": optimizer.state_dict(),
             "epoch": epoch,
-            "best_validation_prior_l1": best,
+            "best_validation_loss": best,
+            "python_random_state": random.getstate(),
+            "numpy_random_state": np.random.get_state(),
+            "torch_random_state": torch.get_rng_state(),
+            "cuda_random_state_all": torch.cuda.get_rng_state_all() if torch.cuda.is_available() else None,
             "args": jsonable_args(args),
             "split": split,
         },
@@ -200,7 +200,7 @@ def main() -> None:
             "split": split,
             "max_action_len": max_action_len,
             "official_model_config": model_config,
-            "checkpoint_selection": "full_validation_prior_action_l1",
+            "checkpoint_selection": "official_random_episode_validation_total_loss",
         }
     )
     (args.output / "config.json").write_text(
@@ -222,8 +222,7 @@ def main() -> None:
     )
     validation_dataset = OfficialAlignedRGBDDataset(
         episode_ids=split["validation"],
-        sample_mode="frame_grid",
-        frames_per_episode=args.validation_frames,
+        sample_mode="episode_random",
         **common_dataset,
     )
     loader_options = {
@@ -238,7 +237,12 @@ def main() -> None:
         generator=torch.Generator().manual_seed(args.seed),
         **loader_options,
     )
-    validation_loader = DataLoader(validation_dataset, shuffle=False, **loader_options)
+    validation_loader = DataLoader(
+        validation_dataset,
+        shuffle=True,
+        generator=torch.Generator().manual_seed(args.seed + 1),
+        **loader_options,
+    )
 
     policy, optimizer = build_policy_and_optimizer(
         model_config,
@@ -256,7 +260,15 @@ def main() -> None:
         policy.load_state_dict(state["policy"])
         optimizer.load_state_dict(state["optimizer"])
         start_epoch = int(state["epoch"])
-        best = float(state.get("best_validation_prior_l1", math.inf))
+        best = float(state.get("best_validation_loss", state.get("best_validation_prior_l1", math.inf)))
+        if "python_random_state" in state:
+            random.setstate(state["python_random_state"])
+        if "numpy_random_state" in state:
+            np.random.set_state(state["numpy_random_state"])
+        if "torch_random_state" in state:
+            torch.set_rng_state(state["torch_random_state"])
+        if device.type == "cuda" and state.get("cuda_random_state_all") is not None:
+            torch.cuda.set_rng_state_all(state["cuda_random_state_all"])
 
     metrics_path = args.output / "metrics.jsonl"
     started = time.time()
@@ -270,6 +282,19 @@ def main() -> None:
     signal.signal(signal.SIGTERM, request_graceful_stop)
     signal.signal(signal.SIGINT, request_graceful_stop)
     for epoch in range(start_epoch + 1, args.epochs + 1):
+        record = {
+            "epoch": epoch,
+            "updates": epoch * len(train_loader),
+            "elapsed_seconds": time.time() - started,
+        }
+        should_validate = epoch == 1 or epoch % args.validate_every == 0 or epoch == args.epochs
+        if should_validate:
+            validation = validate(policy, validation_loader, device)
+            record.update({f"validation_{key}": value for key, value in validation.items()})
+            if validation["posterior_loss"] < best:
+                best = validation["posterior_loss"]
+                save_policy(args.output / "policy_best.ckpt", policy)
+
         policy.train()
         aggregate = {"loss": 0.0, "l1": 0.0, "kl": 0.0}
         batches = 0
@@ -285,33 +310,21 @@ def main() -> None:
                 aggregate[key] += float(result[key].detach())
             batches += 1
 
-        record = {
-            "epoch": epoch,
-            "updates": epoch * len(train_loader),
+        record.update({
             "train_loss": aggregate["loss"] / max(batches, 1),
             "train_l1": aggregate["l1"] / max(batches, 1),
             "train_kl": aggregate["kl"] / max(batches, 1),
             "elapsed_seconds": time.time() - started,
-        }
+        })
         gate = policy.gate_summary()
         if gate is not None:
             record["depth_gate_mean"] = gate
-
-        should_validate = epoch == 1 or epoch % args.validate_every == 0 or epoch == args.epochs
-        if should_validate:
-            validation = validate(policy, validation_loader, device)
-            record.update({f"validation_{key}": value for key, value in validation.items()})
-            if validation["prior_l1"] < best:
-                best = validation["prior_l1"]
-                save_policy(args.output / "policy_best.ckpt", policy)
 
         with metrics_path.open("a", encoding="utf-8") as stream:
             stream.write(json.dumps(record) + "\n")
         print(json.dumps(record), flush=True)
 
         if epoch % args.save_every == 0 or epoch == args.epochs or stop_requested:
-            save_policy(args.output / f"policy_epoch_{epoch:04d}.ckpt", policy)
-            save_policy(args.output / "policy_last.ckpt", policy)
             save_training_state(training_state_path, policy, optimizer, epoch, best, args, split)
         if stop_requested:
             print(json.dumps({"event": "graceful_stop_saved", "epoch": epoch}), flush=True)

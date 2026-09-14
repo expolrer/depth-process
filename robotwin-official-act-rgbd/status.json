@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-09-15T01:27:25+08:00",
-  "state": "eight_arch_clean_depth_training_running",
-  "current_stage": "Q0_EIGHT_ARCH_CLEAN_DEPTH_SCREEN",
+  "updated_at": "2026-09-15T01:50:00+08:00",
+  "state": "official6000_restart_preparing",
+  "current_stage": "Q0_OFFICIAL6000_TRAIN_THEN_EVAL",
   "authoritative_plan": "EXECUTION_PLAN_ZH.md + execution_plan.json",
   "server_repo": "/ssd/hhw/depth-model/repos/official-act-rgbd",
   "integration": {
@@ -19,10 +19,10 @@
     "act0_train_validate_checkpoint_cli": "passed",
     "robotwin_policy_import": "passed",
     "robotwin_a3_lingbot_policy_import": "passed",
-    "platform_aware_gpu_guard": "server56_gpu4_to_7_long_gpu0_2_3_until_2026_09_15_0700_gpu1_unused",
+    "platform_aware_gpu_guard": "server56_gpu0_to_3_long_gpu5_to_7_until_2026_09_15_0700_gpu4_unused",
     "artifact_sha256_contract": "enabled",
     "workflow_stage_guard": "enabled"
   },
-  "next_gate": "complete_all_eight_clean500_trainings_then_compare_validation_prior_l1",
+  "next_gate": "complete_all_eight_official6000_trainings_then_auto_start_100_seed_official_evaluation",
   "legacy_fairact": "stopped_for_official_act_clean8_screen"
 }

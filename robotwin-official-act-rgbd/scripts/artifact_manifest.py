@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 
-REQUIRED = ("policy_best.ckpt", "policy_last.ckpt", "dataset_stats.pkl", "config.json", "metrics.jsonl")
+REQUIRED = ("policy_best.ckpt", "dataset_stats.pkl", "config.json", "metrics.jsonl", "training_complete.json")
 MANIFEST = "artifact_manifest.json"
 
 
@@ -46,7 +46,7 @@ def create(directory: Path, repo: Path) -> None:
         for name in REQUIRED
     }
     payload = {
-        "schema_version": 1,
+        "schema_version": 2,
         "created_at": datetime.now(timezone.utc).isoformat(),
         "source_commit": source_commit(repo),
         "files": files,

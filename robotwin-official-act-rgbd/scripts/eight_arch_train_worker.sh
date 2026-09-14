@@ -12,11 +12,11 @@ preferred="$3"
 deadline="${4:-0}"
 root="${DEPTH_MODEL_ROOT:-/ssd/hhw/depth-model}"
 repo="$root/repos/official-act-rgbd"
-queue="$root/scheduler/official_act_clean8"
-target_epochs=500
+queue="$root/scheduler/official_act_official6000"
+target_epochs=6000
 task=stack_blocks_two
 task_config=depth_master_clean
-suffix=clean500_seed0
+suffix=official6000_seed0
 variants=(
   ACT0_RGB
   ACT1_EARLY_RGBD
@@ -32,12 +32,12 @@ mkdir -p "$queue/claims" "$queue/done" "$queue/logs"
 
 is_complete() {
   local variant="$1"
-  local state="$root/experiments/OfficialACTRGBD/$variant/$task/$suffix/training_last.pt"
-  [[ -s "$state" ]] || return 1
-  "$root/envs/aloha/bin/python" - "$state" "$target_epochs" <<'PY'
-import sys, torch
-state = torch.load(sys.argv[1], map_location="cpu")
-raise SystemExit(0 if int(state.get("epoch", 0)) >= int(sys.argv[2]) else 1)
+  local marker="$root/experiments/OfficialACTRGBD/$variant/$task/$suffix/training_complete.json"
+  [[ -s "$marker" ]] || return 1
+  "$root/envs/aloha/bin/python" - "$marker" "$target_epochs" <<'PY'
+import json, sys
+state = json.load(open(sys.argv[1], encoding="utf-8"))
+raise SystemExit(0 if state.get("status") == "complete" and int(state.get("epoch", 0)) >= int(sys.argv[2]) else 1)
 PY
 }
 

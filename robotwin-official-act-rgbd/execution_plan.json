@@ -1,14 +1,14 @@
 {
   "schema_version": 1,
   "source_of_truth": "EXECUTION_PLAN_ZH.md",
-  "current_stage": "Q0_EIGHT_ARCH_CLEAN_DEPTH_SCREEN",
+  "current_stage": "Q0_OFFICIAL6000_TRAIN_THEN_EVAL",
   "platforms": {
     "server56_h100": {
       "gpu_model": "NVIDIA H100 80GB HBM3",
       "roles": ["develop", "data", "smoke", "train", "validate", "export"],
-      "default_allowed_physical_gpus": [4, 5, 6, 7],
-      "forbidden_physical_gpus": [1],
-      "temporary_gpus_require_explicit_window": [0, 2, 3],
+      "default_allowed_physical_gpus": [0, 1, 2, 3],
+      "forbidden_physical_gpus": [4],
+      "temporary_gpus_require_explicit_window": [5, 6, 7],
       "temporary_window_beijing_end": "2026-09-15T07:00:00+08:00"
     },
     "autodl_4090d": {
@@ -29,13 +29,14 @@
     "formal_rollouts": 100
   },
   "artifact_contract": {
-    "required": ["policy_best.ckpt", "policy_last.ckpt", "dataset_stats.pkl", "config.json", "metrics.jsonl"],
+    "required": ["policy_best.ckpt", "dataset_stats.pkl", "config.json", "metrics.jsonl", "training_complete.json"],
+    "checkpoint_retention": "training_last_during_training_policy_best_only_after_completion",
     "manifest": "artifact_manifest.json",
     "hash": "sha256",
     "checkpoint_transport": "cpu-loadable-pytorch-state-dict"
   },
   "stages": [
-    {"id": "Q0_EIGHT_ARCH_CLEAN_DEPTH_SCREEN", "status": "active", "variants": ["ACT0_RGB", "ACT1_EARLY_RGBD", "ACT2_DUAL_SHARED", "ACT3_DUAL_PER_VIEW", "ACT4_XYZMAP", "ACT5_POINT_TOKENS", "ACT6_LINGBOT_DEPTH", "ACT7_DEPTH_TRANSFORMER"], "tasks": ["stack_blocks_two"], "task_config": "depth_master_clean", "actions": ["train"], "train_epochs": 500, "batch_size": 8, "train_seed": 0, "save_every": 25, "validate_every": 25, "use_validity_mask": false, "run_depth_counterfactuals": false},
+    {"id": "Q0_OFFICIAL6000_TRAIN_THEN_EVAL", "status": "active", "variants": ["ACT0_RGB", "ACT1_EARLY_RGBD", "ACT2_DUAL_SHARED", "ACT3_DUAL_PER_VIEW", "ACT4_XYZMAP", "ACT5_POINT_TOKENS", "ACT6_LINGBOT_DEPTH", "ACT7_DEPTH_TRANSFORMER"], "tasks": ["stack_blocks_two"], "task_config": "depth_master_clean", "actions": ["train", "eval"], "train_epochs": 6000, "batch_size": 8, "train_seed": 0, "save_every": 100, "validate_every": 1, "eval_episodes": 100, "temporal_aggregation": true, "use_validity_mask": false, "run_depth_counterfactuals": false},
     {"id": "Q1_CONFIRM_DEPTH_EFFECT", "status": "blocked_by_previous", "variants": ["ACT0_RGB", "ACT1_EARLY_RGBD"], "tasks": ["stack_blocks_two"], "actions": ["train", "eval"], "train_epochs": 2000, "batch_size": 8, "train_seed": 0, "eval_episodes": 100, "use_validity_mask": false, "run_depth_counterfactuals": false},
     {"id": "P1_PRIMARY_SCREEN", "status": "blocked_by_previous", "variants": ["ACT2_DUAL_SHARED", "ACT3_DUAL_PER_VIEW", "ACT4_XYZMAP", "ACT5_POINT_TOKENS"], "tasks": ["stack_blocks_two", "handover_mic", "pick_diverse_bottles"], "actions": ["train", "eval"]},
     {"id": "P2_EXTENDED_SCREEN", "status": "blocked_by_previous", "variants": ["ACT6_LINGBOT_DEPTH", "ACT7_DEPTH_TRANSFORMER"], "tasks": ["stack_blocks_two", "handover_mic", "pick_diverse_bottles"], "actions": ["train", "eval"]},

@@ -13,7 +13,7 @@ bash -n "$repo/scripts/run_eval.sh"
 
 scratch=$(mktemp -d /tmp/official-act-artifact-test.XXXXXX)
 trap 'rm -rf -- "$scratch"' EXIT
-for name in policy_best.ckpt policy_last.ckpt dataset_stats.pkl config.json metrics.jsonl; do
+for name in policy_best.ckpt dataset_stats.pkl config.json metrics.jsonl training_complete.json; do
   printf 'test-%s\n' "$name" > "$scratch/$name"
 done
 "$python" "$repo/scripts/artifact_manifest.py" create "$scratch" --repo "$repo"

@@ -3,11 +3,11 @@
 > 本文件保留架构筛选细节。跨机器执行、硬件准入、产物校验和严格状态机以
 > `EXECUTION_PLAN_ZH.md` 和 `execution_plan.json` 为唯一准则。
 
-## Q0：八架构 clean-depth 同场景筛选
+## Q0：八架构官方6000轮训练与评测
 
-只在 `stack_blocks_two/depth_master_clean` 上训练 ACT0-ACT7 八种架构。全部使用 500 epochs、batch 8、
-seed 0 和同一数据划分。ACT0 是官方 RGB + joint；其余七种只使用 clean metric depth，不输入 validity。
-本轮明确推迟在线评测、zero/shuffle、噪声/修复深度和三训练 seed。
+只在 `stack_blocks_two/depth_master_clean` 上训练 ACT0-ACT7 八种架构。全部使用官方 6000 epochs、
+batch 8、seed 0、逐 epoch 随机验证和同一数据划分。训练全部完成后立即以官方 temporal aggregation
+在同一100-seed列表上评测。ACT0 是官方 RGB + joint；其余七种只使用 clean metric depth。
 
 若差值达到 10 个百分点，继续做 2000 epochs + 100 episodes 确认；否则按唯一计划中的规则扩大
 样本或排查管线。Q0 结果不能直接作为最终深度有效性结论。
@@ -54,9 +54,9 @@ prior-action L1、深度 zero/shuffle 降幅、ROI 几何误差与三视角一�
 
 ## GPU 队列原则
 
-- GPU4-7 运行长期共享队列；任一架构完成后自动领取剩余架构。
+- GPU0-3 运行长期共享训练队列；任一架构完成后自动领取剩余架构，全部完成后切换评测队列。
 - 新训练只有在 `official_act_rgbd_preflight.json` 为 passed 后才能入队。
-- GPU0/2/3 只在北京时间 2026-09-15 07:00 前参与训练，到时保存并退出；GPU1 不使用。
+- GPU5-7 只在北京时间 2026-09-15 07:00 前参与训练，到时保存并退出；GPU4不使用。
 - 所有训练目录包含 `training_last.pt`，重复启动同一实验会自动续训。
 - H100 负责正式训练，AutoDL 消费级 GPU 负责只读在线评测；训练产物必须通过 SHA256 清单验收。
 - 56 的物理 GPU0 禁令不适用于 H100/AutoDL 单卡实例中的逻辑 `cuda:0`。
