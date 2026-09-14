@@ -43,6 +43,9 @@ H100 每次正式训练结束后，输出目录必须至少含有：
 `python scripts/artifact_manifest.py verify CHECKPOINT_DIR`。任一文件缺失、大小不符或 SHA256 不一致，
 `run_eval.sh` 会拒绝评测。评测只读 checkpoint，不得原地覆盖训练产物。
 
+若代码目录不是 Git checkout，部署时必须把对应的 40 位 Git commit 写入项目根目录 `.source_commit`；
+缺少该标记时 artifact 导出会失败，禁止产生无法追溯源码的正式 checkpoint。
+
 ## 4. 严格状态机
 
 1. `P0_BASELINE`：在三个 sentinel 任务训练和 100-seed 评测 `ACT0_RGB`，建立受控官方基线。
@@ -75,4 +78,3 @@ H100 每次正式训练结束后，输出目录必须至少含有：
 - 禁止把 attention map、训练 loss 或 20-rollout smoke 当作任务成功率证据。
 - 禁止在没有清单校验和资源预检时直接启动 100-seed 正式评测。
 - 禁止直接修改运行中的服务器副本；所有计划或代码变更先提交 Git，再部署对应 commit。
-

@@ -7,4 +7,4 @@ artifacts/
 checkpoints/
 results/
 *.tmp
-
+.source_commit

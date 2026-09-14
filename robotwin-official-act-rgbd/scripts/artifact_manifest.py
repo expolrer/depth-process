@@ -27,7 +27,14 @@ def source_commit(repo: Path) -> str:
             ["git", "-C", str(repo), "rev-parse", "HEAD"], text=True, stderr=subprocess.DEVNULL
         ).strip()
     except (OSError, subprocess.CalledProcessError):
-        return "uncommitted-or-unknown"
+        marker = repo / ".source_commit"
+        if marker.is_file():
+            value = marker.read_text(encoding="utf-8").strip()
+            if len(value) == 40 and all(character in "0123456789abcdef" for character in value.lower()):
+                return value
+        raise SystemExit(
+            f"cannot determine source commit for {repo}; deploy from Git or create {marker} with the deployed commit"
+        )
 
 
 def create(directory: Path, repo: Path) -> None:
@@ -85,4 +92,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
