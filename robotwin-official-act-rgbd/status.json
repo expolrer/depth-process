@@ -19,7 +19,7 @@
     "act0_train_validate_checkpoint_cli": "passed",
     "robotwin_policy_import": "passed",
     "robotwin_a3_lingbot_policy_import": "passed",
-    "platform_aware_gpu_guard": "server56_physical_gpu0_forbidden_h100_and_autodl_logical_gpu0_allowed",
+    "platform_aware_gpu_guard": "server56_h100_physical_gpu0_forbidden_autodl_4090d_logical_gpu0_allowed",
     "artifact_sha256_contract": "enabled",
     "workflow_stage_guard": "enabled"
   },

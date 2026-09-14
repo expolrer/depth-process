@@ -85,11 +85,11 @@ UPSTREAM_LOCK.json
 
 ## 训练与评测机器
 
-正式训练可以放在 H100，checkpoint 转移到 AutoDL 消费级 NVIDIA GPU 评测。普通 `ACT0-5/7`
+正式训练固定在 56 服务器的 H100 上，checkpoint 转移到 AutoDL RTX 4090 D 评测。普通 `ACT0-5/7`
 正式评测最低按 16GB 显存准入，`ACT6_LINGBOT_DEPTH` 最低按 24GB 准入；为统一全部架构，推荐
 直接使用 24GB。当前 56 服务器 SAPIEN 评测单进程实测约 7.0-7.6 GiB，但 8GB 没有足够的渲染、
 视频和任务峰值余量，不进入正式结果队列。完整硬件表、跨机器 artifact 契约、阶段门槛和命令顺序见
 `EXECUTION_PLAN_ZH.md`。
 
-平台编号规则不能混用：56 服务器默认只准物理 GPU4-7，GPU0 永久禁用；H100 训练机和 AutoDL
-单卡实例允许使用逻辑 `cuda:0`。分别设置 `OFFICIAL_ACT_PLATFORM=server56|h100|autodl`。
+平台编号规则不能混用：56 H100 服务器默认只准物理 GPU4-7，GPU0 永久禁用；AutoDL 4090 D
+单卡实例允许使用逻辑 `cuda:0`。分别设置 `OFFICIAL_ACT_PLATFORM=server56_h100|autodl_4090d`。

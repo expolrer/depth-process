@@ -8,11 +8,10 @@ JSON 负责约束脚本。任何实验不得跳阶段；若需要改变架构、
 
 | 环境 | 允许工作 | GPU 规则 |
 | --- | --- | --- |
-| 56 服务器 | 数据生成、开发、短验证；经授权后也可训练 | 默认只使用物理 GPU4-7；物理 GPU0 永久禁用；GPU2-3 只在用户明确给出的时间窗内使用 |
-| H100 训练机 | 正式训练、validation、导出 checkpoint | 允许逻辑 `cuda:0`；单架构单卡训练，多个独立任务才并行多卡 |
-| AutoDL 评测机 | RoboTwin 单环境、batch 1、固定 seed 在线推理 | 单卡实例的逻辑 `cuda:0` 合法；不得在评测机继续训练或改变权重 |
+| 56 H100 服务器 | 数据生成、开发、正式训练、validation、导出 checkpoint | 默认只使用物理 GPU4-7；物理 GPU0 永久禁用；GPU2-3 只在用户明确给出的时间窗内使用 |
+| AutoDL RTX 4090 D | RoboTwin 单环境、batch 1、固定 seed 在线推理 | 24GB 显存；单卡实例的逻辑 `cuda:0` 合法；不得在评测机继续训练或改变权重 |
 
-H100 训练、消费级 GPU 评测是可行的。checkpoint 只保存标准 PyTorch `state_dict`，加载时先映射到
+56 H100 训练、AutoDL 4090 D 评测是可行的。checkpoint 只保存标准 PyTorch `state_dict`，加载时先映射到
 CPU；不得把 CUDA graph、优化器 CUDA tensor 或 H100 专属 FP8 权重作为部署依赖。正式评测固定
 FP32 推理；若后续启用 FP16/BF16，必须另建精度一致性实验，不能替换主结果。
 
@@ -26,13 +25,13 @@ FP32 推理；若后续启用 FP16/BF16，必须另建精度一致性实验，�
 | `ACT0-5/7` | NVIDIA CUDA GPU，16 GiB VRAM；8 vCPU；32 GiB RAM；100 GiB 可用 SSD | 24 GiB VRAM；16 vCPU；64 GiB RAM；200 GiB SSD | 单环境、batch 1；16GB 需先通过 20-rollout 显存预检 |
 | `ACT6_LINGBOT_DEPTH` | 24 GiB VRAM；16 vCPU；64 GiB RAM；150 GiB 可用 SSD | 24 GiB 或更高；64 GiB RAM；250 GiB SSD | 同时加载 SAPIEN、ACT、ViT-L/14 与 xFormers，16GB 不进入正式队列 |
 
-8GB 显卡不作为本项目正式评测设备。普通架构可选择 16GB 消费卡；为了让全部 ACT0-7 使用同一台
-机器并减少环境分叉，优先租 24GB 卡。租机前还需确认 Linux、NVIDIA 驱动、Vulkan/EGL、CUDA
+8GB 显卡不作为本项目正式评测设备。普通架构可选择 16GB 消费卡；当前指定的 RTX 4090 D 具有
+24GB 显存，满足全部 ACT0-7 的项目准入线。租机前还需确认 Linux、NVIDIA 驱动、Vulkan/EGL、CUDA
 与容器内 SAPIEN 可用，而不只看显存数字。
 
 ## 3. 跨机器产物契约
 
-H100 每次正式训练结束后，输出目录必须至少含有：
+56 H100 每次正式训练结束后，输出目录必须至少含有：
 
 - `policy_best.ckpt`、`policy_last.ckpt`；
 - `dataset_stats.pkl`、`config.json`、`metrics.jsonl`；
@@ -63,9 +62,9 @@ H100 每次正式训练结束后，输出目录必须至少含有：
 
 1. Git 工作区干净，记录 commit；运行 `scripts/preflight.sh` 与 parity/data contract 检查。
 2. 从 `experiment_matrix.json` 选择唯一实验 ID，固定 task/config/train seed/eval seed。
-3. H100 训练；validation 只用于按完整 frame grid 的 prior-action L1 选 `policy_best.ckpt`。
-4. 生成并验证 artifact manifest，再传输到 AutoDL；传输后再次验证。
-5. AutoDL 运行 20-rollout 资源和管线预检；峰值显存应低于总显存的 90%，且无控制器异常风暴。
+3. 56 H100 训练；validation 只用于按完整 frame grid 的 prior-action L1 选 `policy_best.ckpt`。
+4. 生成并验证 artifact manifest，再传输到 AutoDL 4090 D；传输后再次验证。
+5. AutoDL 4090 D 运行 20-rollout 资源和管线预检；峰值显存必须低于 21.6GB，且无控制器异常风暴。
 6. 使用冻结的 100-seed 列表正式评测；同一对比组必须使用同一环境 commit 和 seed 顺序。
 7. 汇总成功率、Wilson 区间、阶段成功率、动作越界/跳变、运行时和峰值显存，提交 Git。
 8. 只有阶段门槛通过后，才把 `execution_plan.json` 的下一阶段标为 active 并提交 Git。

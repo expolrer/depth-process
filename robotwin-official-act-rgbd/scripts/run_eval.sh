@@ -13,7 +13,7 @@ gpu="$4"
 checkpoint_dir="$5"
 seed_file="$6"
 rollouts="${7:-100}"
-platform="${OFFICIAL_ACT_PLATFORM:-server56}"
+platform="${OFFICIAL_ACT_PLATFORM:-server56_h100}"
 root="${DEPTH_MODEL_ROOT:-/ssd/hhw/depth-model}"
 robotwin="$root/repos/RoboTwin"
 python="$root/envs/robotwin/bin/python"
@@ -35,17 +35,17 @@ test -s "$seed_file"
 cd "$robotwin"
 common_env=(CUDA_VISIBLE_DEVICES="$gpu" TORCH_HOME="$root/models/torch" PYTHONPATH="$python_path:${PYTHONPATH:-}")
 case "$platform" in
-  server56)
+  server56_h100|server56)
     [[ "$gpu" =~ ^[4-7]$ ]] || { printf 'server56 formal jobs require physical GPU4-7; GPU0 is forbidden\n' >&2; exit 2; }
     test -r "$isolation"
     platform_env=(ROBOTWIN_PHYSICAL_GPU="$gpu" ROBOTWIN_DRM_RENDER_INDEX="$((128 + gpu))" LD_PRELOAD="$isolation")
     ;;
-  autodl)
-    [[ "$gpu" =~ ^[0-7]$ ]] || { printf 'autodl logical GPU must be 0-7\n' >&2; exit 2; }
+  autodl_4090d|autodl)
+    [[ "$gpu" =~ ^[0-7]$ ]] || { printf 'autodl 4090D logical GPU must be 0-7\n' >&2; exit 2; }
     platform_env=(ROBOTWIN_PHYSICAL_GPU="$gpu")
     ;;
   *)
-    printf 'Evaluation platform must be server56 or autodl, got %s\n' "$platform" >&2
+    printf 'Evaluation platform must be server56_h100 or autodl_4090d, got %s\n' "$platform" >&2
     exit 2
     ;;
 esac

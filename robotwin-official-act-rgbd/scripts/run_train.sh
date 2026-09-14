@@ -11,7 +11,7 @@ task="$2"
 config="$3"
 gpu="$4"
 suffix="${5:-seed0}"
-platform="${OFFICIAL_ACT_PLATFORM:-server56}"
+platform="${OFFICIAL_ACT_PLATFORM:-server56_h100}"
 root="${DEPTH_MODEL_ROOT:-/ssd/hhw/depth-model}"
 repo="$root/repos/official-act-rgbd"
 if [[ "$variant" == "ACT6_LINGBOT_DEPTH" ]]; then
@@ -22,14 +22,11 @@ fi
 output="$root/experiments/OfficialACTRGBD/$variant/$task/$suffix"
 
 case "$platform" in
-  server56)
-    [[ "$gpu" =~ ^[4-7]$ ]] || { printf 'server56 formal jobs require physical GPU4-7; GPU0 is forbidden\n' >&2; exit 2; }
-    ;;
-  h100)
-    [[ "$gpu" =~ ^[0-7]$ ]] || { printf 'h100 logical GPU must be 0-7\n' >&2; exit 2; }
+  server56_h100|server56)
+    [[ "$gpu" =~ ^[4-7]$ ]] || { printf 'server56 H100 formal jobs require physical GPU4-7; GPU0 is forbidden\n' >&2; exit 2; }
     ;;
   *)
-    printf 'Training platform must be server56 or h100, got %s\n' "$platform" >&2
+    printf 'Training platform must be server56_h100, got %s\n' "$platform" >&2
     exit 2
     ;;
 esac

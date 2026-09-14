@@ -21,7 +21,7 @@
 ## Official ACT RGB-D 重构计划（当前唯一执行路线）
 
 RoboTwin 策略实验已经重构为“官方 ACT 动作核心不变，只替换 RGB-D/几何视觉前端”的受控基准。
-正式训练可使用 H100，checkpoint 通过 SHA256 验收后转移到 AutoDL 消费级 NVIDIA GPU 做单环境、
+正式训练固定使用 56 服务器的 H100，checkpoint 通过 SHA256 验收后转移到 AutoDL RTX 4090 D 做单环境、
 batch 1 在线评测。普通 `ACT0-5/7` 的正式评测准入线为 16GB 显存，
 `ACT6_LINGBOT_DEPTH` 为 24GB；为了在同一环境覆盖全部架构，推荐统一使用 24GB。
 
