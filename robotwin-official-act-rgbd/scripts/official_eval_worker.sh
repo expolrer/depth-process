@@ -34,9 +34,20 @@ claim_one() {
   return 1
 }
 
+all_done() {
+  local candidate
+  for candidate in "${variants[@]}"; do
+    [[ -e "$queue/done/$candidate" ]] || return 1
+  done
+}
+
 while true; do
   variant="$(claim_one || true)"
   if [[ -z "$variant" ]]; then
+    if all_done; then
+      printf '%s GPU%s all official evaluations complete; worker exits\n' "$(date --iso-8601=seconds)" "$gpu"
+      exit 0
+    fi
     sleep 300
     continue
   fi

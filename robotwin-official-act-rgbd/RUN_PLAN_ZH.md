@@ -60,3 +60,18 @@ prior-action L1、深度 zero/shuffle 降幅、ROI 几何误差与三视角一�
 - 所有训练目录包含 `training_last.pt`，重复启动同一实验会自动续训。
 - H100 负责正式训练，AutoDL 消费级 GPU 负责只读在线评测；训练产物必须通过 SHA256 清单验收。
 - 56 的物理 GPU0 禁令不适用于 H100/AutoDL 单卡实例中的逻辑 `cuda:0`。
+
+## Q0 后继：官方 π0.5 RGB 基线
+
+只有 ACT0-ACT7 的 8 个 `training_complete.json` 和 8 个官方 100-rollout 评测完成标记全部存在，且
+ACT 训练/评测进程均已退出，才启动 `stack_blocks_two` 的 π0.5 全参微调。数据严格使用 RoboTwin
+官方转换链：原始 HDF5 提取三视角 RGB、joint、action 和 prompt，再转换为 LeRobot；转换结果必须
+拒绝任何 depth feature。
+
+- 上游配置：`pi05_aloha_full_base`
+- 训练设备：56 服务器物理 GPU0-3，JAX FSDP 四卡
+- 预算：官方 20,000 steps，global batch 64，seed 0
+- 基础权重：本地 `pi05_base/params`，不访问公网
+- 全参判据：`freeze_filter=Nothing`
+- 续训：每 1,000 steps 保存，异常退出后从最新 checkpoint 自动恢复
+- 实验名：`pi05_stack_blocks_two_rgb_full_seed0`
