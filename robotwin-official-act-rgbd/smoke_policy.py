@@ -23,9 +23,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--variants",
         nargs="+",
-        default=["ACT0_RGB", "ACT2_DEPTH_CNN", "ACT4_XYZMAP", "ACT5_POINT_TOKENS", "ACT7_DEPTH_TRANSFORMER"],
+        default=["ACT0_RGB", "ACT1_EARLY_RGBD", "ACT2_DUAL_SHARED", "ACT3_DUAL_PER_VIEW", "ACT4_XYZMAP", "ACT5_POINT_TOKENS", "ACT7_DEPTH_TRANSFORMER"],
     )
-    parser.add_argument("--backward-variant", default="ACT2_DEPTH_CNN")
+    parser.add_argument("--backward-variant", default="ACT2_DUAL_SHARED")
+    parser.add_argument("--lingbot-repo", type=Path, default=Path("/ssd/hhw/depth-model/repos/lingbot-depth"))
+    parser.add_argument("--lingbot-checkpoint", type=Path, default=Path("/ssd/hhw/depth-model/models/lingbot-depth-v0.5/model.pt"))
+    parser.add_argument("--lingbot-vendor", type=Path, default=Path("/ssd/hhw/depth-model/repos/depth-processing-vendor"))
     parser.add_argument("--output", type=Path)
     return parser.parse_args()
 
@@ -44,7 +47,13 @@ def main() -> None:
     for variant in args.variants:
         get_variant(variant)
         torch.manual_seed(11)
-        policy = OfficialACTRGBDPolicy(DEFAULT_MODEL_CONFIG, variant).to(device)
+        policy = OfficialACTRGBDPolicy(
+            DEFAULT_MODEL_CONFIG,
+            variant,
+            lingbot_repo=args.lingbot_repo,
+            lingbot_checkpoint=args.lingbot_checkpoint,
+            lingbot_vendor=args.lingbot_vendor,
+        ).to(device)
         policy.train()
         image = torch.rand(1, 3, 3, args.height, args.width, device=device)
         depth = torch.rand(1, 3, 1, args.height, args.width, device=device) * 1.5 + 0.1

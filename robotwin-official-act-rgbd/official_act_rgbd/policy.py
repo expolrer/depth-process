@@ -120,6 +120,12 @@ class OfficialACTRGBDPolicy(nn.Module):
 
         if self.spec.frontend == "early":
             return torch.cat((normalized_rgb, depth_m / self.max_depth_m), dim=2)
+        if self.spec.frontend == "per_view_depth_resnet":
+            camera_count = image.shape[1]
+            camera_ids = torch.eye(camera_count, device=image.device, dtype=image.dtype)
+            camera_ids = camera_ids.view(1, camera_count, camera_count, 1, 1)
+            camera_ids = camera_ids.expand(image.shape[0], -1, -1, image.shape[-2], image.shape[-1])
+            return torch.cat((normalized_rgb, depth_m / self.max_depth_m, camera_ids), dim=2)
         if self.spec.requires_xyz:
             if xyz_map_m is None:
                 raise ValueError(f"{self.variant} requires xyz_map_m")
@@ -132,10 +138,10 @@ class OfficialACTRGBDPolicy(nn.Module):
                 ),
                 dim=2,
             )
-            return torch.cat((normalized_rgb, xyz_scaled, validity), dim=2)
+            return torch.cat((normalized_rgb, xyz_scaled), dim=2)
         if self.spec.frontend == "lingbot":
-            return torch.cat((normalized_rgb, depth_m, validity), dim=2)
-        return torch.cat((normalized_rgb, depth_m / self.max_depth_m, validity), dim=2)
+            return torch.cat((normalized_rgb, depth_m), dim=2)
+        return torch.cat((normalized_rgb, depth_m / self.max_depth_m), dim=2)
 
     def forward(
         self,

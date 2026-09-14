@@ -19,7 +19,7 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=Path("/ssd/hhw/depth-model/repos/RoboTwin/policy/ACT"),
     )
-    parser.add_argument("--variant", default="ACT2_DEPTH_CNN")
+    parser.add_argument("--variant", default="ACT2_DUAL_SHARED")
     parser.add_argument("--task", default="stack_blocks_two")
     parser.add_argument("--task-config", default="depth_master_clean")
     parser.add_argument("--device", default="cuda")
@@ -51,7 +51,12 @@ def main() -> None:
     batch = move_batch(next(iter(DataLoader(dataset, batch_size=1))), torch.device(args.device))
     torch.manual_seed(23)
     policy, optimizer = build_policy_and_optimizer(
-        DEFAULT_MODEL_CONFIG, args.variant, device=args.device
+        DEFAULT_MODEL_CONFIG,
+        args.variant,
+        device=args.device,
+        lingbot_repo=args.project_root / "repos/lingbot-depth",
+        lingbot_checkpoint=args.project_root / "models/lingbot-depth-v0.5/model.pt",
+        lingbot_vendor=args.project_root / "repos/depth-processing-vendor",
     )
     policy.train()
     optimizer.zero_grad(set_to_none=True)
@@ -100,4 +105,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

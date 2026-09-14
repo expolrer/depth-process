@@ -82,7 +82,7 @@ class StridedGeometryCNN(nn.Module):
 
 
 class DepthResNetEncoder(nn.Module):
-    def __init__(self, official_rgb_joiner: nn.Module, in_channels: int = 2) -> None:
+    def __init__(self, official_rgb_joiner: nn.Module, in_channels: int = 1) -> None:
         super().__init__()
         cloned = copy.deepcopy(official_rgb_joiner)
         _replace_geometry_conv(cloned, in_channels)
@@ -134,11 +134,9 @@ class PointTokenEncoder(nn.Module):
             nn.Conv2d(256, dim, 1),
         )
 
-    def forward(self, values: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+    def forward(self, values: torch.Tensor) -> torch.Tensor:
         sampled = F.adaptive_avg_pool2d(values, self.grid_hw)
-        tokens = self.point_mlp(sampled).flatten(2).transpose(1, 2)
-        quality = F.adaptive_avg_pool2d(values[:, -1:], self.grid_hw).flatten(2).transpose(1, 2)
-        return tokens, quality
+        return self.point_mlp(sampled).flatten(2).transpose(1, 2)
 
 
 class LingBotFeatureEncoder(nn.Module):
@@ -186,7 +184,9 @@ class LingBotFeatureEncoder(nn.Module):
                 apply_mask=False,
                 use_fp16=True,
             )
-        return self.adapter(features.float().to(self.adapter.weight.dtype))
+        # LingBot returns inference tensors; clone before the trainable adapter.
+        features = features.float().to(self.adapter.weight.dtype).clone()
+        return self.adapter(features)
 
 
 class GatedCrossAttention(nn.Module):
@@ -241,16 +241,14 @@ class FusionJoiner(nn.Module):
         self.mode = mode
         self.num_channels = int(rgb_joiner.num_channels)
         self.fusion = GatedCrossAttention(self.num_channels)
-        if mode == "depth_cnn":
-            self.geometry_encoder: nn.Module | None = StridedGeometryCNN(2, self.num_channels)
-        elif mode == "depth_resnet":
-            self.geometry_encoder = DepthResNetEncoder(rgb_joiner, 2)
+        if mode == "depth_resnet":
+            self.geometry_encoder: nn.Module | None = DepthResNetEncoder(rgb_joiner, 1)
         elif mode == "xyz_cnn":
-            self.geometry_encoder = StridedGeometryCNN(4, self.num_channels)
+            self.geometry_encoder = StridedGeometryCNN(3, self.num_channels)
         elif mode == "point_tokens":
-            self.geometry_encoder = PointTokenEncoder(4, self.num_channels)
+            self.geometry_encoder = PointTokenEncoder(3, self.num_channels)
         elif mode == "depth_transformer":
-            self.geometry_encoder = DepthTransformerEncoder(2, self.num_channels)
+            self.geometry_encoder = DepthTransformerEncoder(1, self.num_channels)
         elif mode == "lingbot":
             if lingbot_repo is None or lingbot_checkpoint is None:
                 raise ValueError("ACT6_LINGBOT_DEPTH requires lingbot_repo and lingbot_checkpoint")
@@ -270,31 +268,32 @@ class FusionJoiner(nn.Module):
         position = positions[-1]
         target_hw = rgb_feature.shape[-2:]
 
-        if self.mode in {"depth_cnn", "depth_resnet"}:
-            geometry_input = packed[:, 3:5]
+        if self.mode == "depth_resnet":
+            geometry_input = packed[:, 3:4]
             geometry_feature = self.geometry_encoder(geometry_input)
             geometry_feature = F.interpolate(geometry_feature, target_hw, mode="bilinear", align_corners=False)
             geometry_tokens = geometry_feature.flatten(2).transpose(1, 2)
-            quality = F.adaptive_avg_pool2d(geometry_input[:, 1:2], target_hw).flatten(2).transpose(1, 2)
         elif self.mode == "xyz_cnn":
-            geometry_input = packed[:, 3:7]
+            geometry_input = packed[:, 3:6]
             geometry_feature = self.geometry_encoder(geometry_input)
             geometry_feature = F.interpolate(geometry_feature, target_hw, mode="bilinear", align_corners=False)
             geometry_tokens = geometry_feature.flatten(2).transpose(1, 2)
-            quality = F.adaptive_avg_pool2d(geometry_input[:, 3:4], target_hw).flatten(2).transpose(1, 2)
         elif self.mode == "point_tokens":
-            geometry_tokens, quality = self.geometry_encoder(packed[:, 3:7])
+            geometry_tokens = self.geometry_encoder(packed[:, 3:6])
         elif self.mode == "depth_transformer":
-            geometry_input = packed[:, 3:5]
+            geometry_input = packed[:, 3:4]
             geometry_feature = self.geometry_encoder(geometry_input, target_hw, position)
             geometry_tokens = geometry_feature.flatten(2).transpose(1, 2)
-            quality = F.adaptive_avg_pool2d(geometry_input[:, 1:2], target_hw).flatten(2).transpose(1, 2)
         else:
-            geometry_input = packed[:, 3:5]
-            geometry_feature = self.geometry_encoder(rgb, geometry_input[:, :1])
+            geometry_input = packed[:, 3:4]
+            geometry_feature = self.geometry_encoder(rgb, geometry_input)
             geometry_feature = F.interpolate(geometry_feature, target_hw, mode="bilinear", align_corners=False)
             geometry_tokens = geometry_feature.flatten(2).transpose(1, 2)
-            quality = F.adaptive_avg_pool2d(geometry_input[:, 1:2], target_hw).flatten(2).transpose(1, 2)
+
+        quality = torch.ones(
+            geometry_tokens.shape[0], geometry_tokens.shape[1], 1,
+            device=geometry_tokens.device, dtype=geometry_tokens.dtype,
+        )
 
         fused = self.fusion(rgb_feature, geometry_tokens, quality)
         return [fused], [position]
@@ -302,6 +301,32 @@ class FusionJoiner(nn.Module):
     def gate_summary(self) -> float | None:
         gate = self.fusion.last_gate
         return None if gate is None else float(gate.mean().cpu())
+
+
+class PerViewFusionJoiner(nn.Module):
+    """Route each camera to its own RGB ResNet18 and Depth ResNet18 pair."""
+
+    def __init__(self, official_rgb_joiner: nn.Module, camera_count: int = 3) -> None:
+        super().__init__()
+        self.num_channels = int(official_rgb_joiner.num_channels)
+        self.camera_count = camera_count
+        self.views = nn.ModuleList(
+            FusionJoiner(copy.deepcopy(official_rgb_joiner), "depth_resnet")
+            for _ in range(camera_count)
+        )
+
+    def forward(self, packed: torch.Tensor) -> tuple[list[torch.Tensor], list[torch.Tensor]]:
+        if packed.shape[1] != 4 + self.camera_count:
+            raise ValueError(
+                f"Per-view frontend expected {4 + self.camera_count} channels, got {packed.shape[1]}"
+            )
+        camera_id = int(packed[:, 4:].mean(dim=(0, 2, 3)).argmax().item())
+        return self.views[camera_id](packed[:, :4])
+
+    def gate_summary(self) -> float | None:
+        gates = [view.gate_summary() for view in self.views]
+        values = [gate for gate in gates if gate is not None]
+        return None if not values else sum(values) / len(values)
 
 
 def install_frontend(
@@ -319,6 +344,10 @@ def install_frontend(
     official_joiner = model.backbones[0]
     if spec.frontend == "early":
         _replace_first_conv(official_joiner, spec.packed_channels, depth_weight="zero")
+        return model
+
+    if spec.frontend == "per_view_depth_resnet":
+        model.backbones[0] = PerViewFusionJoiner(official_joiner)
         return model
 
     model.backbones[0] = FusionJoiner(

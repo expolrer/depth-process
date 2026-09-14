@@ -8,12 +8,8 @@ bash -n "$repo/scripts/run_train.sh"
 bash -n "$repo/scripts/run_eval.sh"
 "$python" -c "import json, pathlib; [json.loads(p.read_text()) for p in pathlib.Path('$repo').glob('*.json')]; print('JSON_OK')"
 "$python" "$repo/scripts/workflow_guard.py" train ACT0_RGB stack_blocks_two
-if "$python" "$repo/scripts/workflow_guard.py" train ACT2_DEPTH_CNN stack_blocks_two; then
-  printf 'workflow guard failed to reject an out-of-stage variant\n' >&2
-  exit 1
-else
-  printf 'WORKFLOW_REJECTION_OK\n'
-fi
+"$python" "$repo/scripts/workflow_guard.py" train ACT2_DUAL_SHARED stack_blocks_two
+"$python" "$repo/scripts/workflow_guard.py" train ACT3_DUAL_PER_VIEW stack_blocks_two
 
 scratch=$(mktemp -d /tmp/official-act-artifact-test.XXXXXX)
 trap 'rm -rf -- "$scratch"' EXIT

@@ -1,6 +1,6 @@
 {
   "project": "official-act-rgbd",
-  "status": "prepared_not_launched",
+  "status": "training_clean_depth_screen",
   "baseline": "ACT0_RGB",
   "canonical_camera_order": [
     "head_camera",
@@ -26,12 +26,12 @@
   "architectures": [
     {"id": "ACT0_RGB", "geometry": "none", "fusion": "official_rgb_only", "phase": 0},
     {"id": "ACT1_EARLY_RGBD", "geometry": "metric_z", "fusion": "early_concat_4ch", "phase": 1},
-    {"id": "ACT2_DEPTH_CNN", "geometry": "metric_z_validity", "fusion": "gated_cross_attention", "phase": 1},
-    {"id": "ACT3_DEPTH_RESNET", "geometry": "metric_z_validity", "fusion": "gated_cross_attention", "phase": 2},
-    {"id": "ACT4_XYZMAP", "geometry": "camera_xyz_validity", "fusion": "gated_cross_attention", "phase": 1},
-    {"id": "ACT5_POINT_TOKENS", "geometry": "unordered_xyz_validity", "fusion": "gated_cross_attention", "phase": 1},
+    {"id": "ACT2_DUAL_SHARED", "geometry": "metric_z", "fusion": "shared_rgb_resnet18_plus_shared_depth_resnet18", "phase": 1},
+    {"id": "ACT3_DUAL_PER_VIEW", "geometry": "metric_z", "fusion": "three_rgb_resnet18_plus_three_depth_resnet18", "phase": 1},
+    {"id": "ACT4_XYZMAP", "geometry": "camera_xyz", "fusion": "gated_cross_attention", "phase": 1},
+    {"id": "ACT5_POINT_TOKENS", "geometry": "unordered_xyz", "fusion": "gated_cross_attention", "phase": 1},
     {"id": "ACT6_LINGBOT_DEPTH", "geometry": "lingbot_depth_v0.5", "fusion": "frozen_encoder_adapter", "phase": 2},
-    {"id": "ACT7_DEPTH_TRANSFORMER", "geometry": "metric_z_validity", "fusion": "gated_cross_attention", "phase": 2}
+    {"id": "ACT7_DEPTH_TRANSFORMER", "geometry": "metric_z", "fusion": "gated_cross_attention", "phase": 2}
   ],
   "sentinel_tasks": [
     "stack_blocks_two",
@@ -56,15 +56,14 @@
     "shuffle_depth",
     "shuffle_views"
   ],
-  "rapid_depth_check": {
-    "stage": "Q0_RAPID_DEPTH_CHECK",
+  "clean_depth_architecture_screen": {
+    "stage": "Q0_EIGHT_ARCH_CLEAN_DEPTH_SCREEN",
     "task": "stack_blocks_two",
     "task_config": "depth_master_clean",
-    "variants": ["ACT0_RGB", "ACT1_EARLY_RGBD"],
+    "variants": ["ACT0_RGB", "ACT1_EARLY_RGBD", "ACT2_DUAL_SHARED", "ACT3_DUAL_PER_VIEW", "ACT4_XYZMAP", "ACT5_POINT_TOKENS", "ACT6_LINGBOT_DEPTH", "ACT7_DEPTH_TRANSFORMER"],
     "train_epochs": 500,
     "batch_size": 8,
     "train_seed": 0,
-    "eval_episodes": 30,
     "use_validity_mask": false,
     "counterfactuals_deferred": true
   },

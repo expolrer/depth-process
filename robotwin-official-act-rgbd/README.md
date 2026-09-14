@@ -18,8 +18,8 @@ RoboTwin ACT 动作模型不变时，不同深度表示与视觉融合方式是�
 | --- | --- | --- | --- |
 | `ACT0_RGB` | 官方 RGB ResNet18 | 官方原样 | 唯一主基线 |
 | `ACT1_EARLY_RGBD` | RGB + metric Z 四通道早期拼接 | 官方原样 | 最低成本深度基线 |
-| `ACT2_DEPTH_CNN` | RGB ResNet18 + Depth CNN，跨注意力后融合 | 官方原样 | 轻量双流主方案 |
-| `ACT3_DEPTH_RESNET` | RGB ResNet18 + Depth ResNet18，跨注意力后融合 | 官方原样 | 同容量双流对照 |
+| `ACT2_DUAL_SHARED` | 共享 RGB ResNet18 + 共享单通道 Depth ResNet18 | 官方原样 | 公平双流主方案 |
+| `ACT3_DUAL_PER_VIEW` | 三个 RGB ResNet18 + 三个单通道 Depth ResNet18 | 官方原样 | 六分支逐视角方案 |
 | `ACT4_XYZMAP` | RGB ResNet18 + 相机坐标 XYZ 点图 | 官方原样 | 显式稠密几何 |
 | `ACT5_POINT_TOKENS` | RGB ResNet18 + 无序 XYZ point tokens | 官方原样 | 显式点云几何 |
 | `ACT6_LINGBOT_DEPTH` | RGB ResNet18 + 冻结 LingBot-Depth v0.5 tokens | 官方原样 | 预训练深度先验 |
@@ -42,8 +42,9 @@ Transformer、损失和动作头均无需改写。门控残差只决定深度增
 
 ## 实验阶段
 
-当前立即执行 `Q0_RAPID_DEPTH_CHECK`：只在 `stack_blocks_two` 上比较 500-epoch 的 `ACT0_RGB` 与
-无 validity mask 的 `ACT1_EARLY_RGBD`，随后在同一 30-seed 子集上评测。本阶段不做深度反事实、
+当前立即执行 `Q0_EIGHT_ARCH_CLEAN_DEPTH_SCREEN`：八种架构均在同一份
+`stack_blocks_two/depth_master_clean` 数据上训练 500 epochs，batch size 8、seed 0。所有深度方案只输入
+clean metric depth，不输入 validity mask。本阶段不做深度反事实、
 噪声或处理方法，只回答“直接加入 metric depth 是否值得继续”。30 episodes 不作为最终结论。
 
 1. `P0_UPSTREAM_PARITY`：锁定未经修改的 RoboTwin ACT 源码，并引用已有的三项官方复现结果。

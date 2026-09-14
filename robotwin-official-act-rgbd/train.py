@@ -6,6 +6,7 @@ import json
 import math
 import pickle
 import random
+import signal
 import sys
 import time
 from pathlib import Path
@@ -259,6 +260,15 @@ def main() -> None:
 
     metrics_path = args.output / "metrics.jsonl"
     started = time.time()
+    stop_requested = False
+
+    def request_graceful_stop(signum, _frame) -> None:
+        nonlocal stop_requested
+        stop_requested = True
+        print(json.dumps({"event": "graceful_stop_requested", "signal": signum}), flush=True)
+
+    signal.signal(signal.SIGTERM, request_graceful_stop)
+    signal.signal(signal.SIGINT, request_graceful_stop)
     for epoch in range(start_epoch + 1, args.epochs + 1):
         policy.train()
         aggregate = {"loss": 0.0, "l1": 0.0, "kl": 0.0}
@@ -299,10 +309,13 @@ def main() -> None:
             stream.write(json.dumps(record) + "\n")
         print(json.dumps(record), flush=True)
 
-        if epoch % args.save_every == 0 or epoch == args.epochs:
+        if epoch % args.save_every == 0 or epoch == args.epochs or stop_requested:
             save_policy(args.output / f"policy_epoch_{epoch:04d}.ckpt", policy)
             save_policy(args.output / "policy_last.ckpt", policy)
             save_training_state(training_state_path, policy, optimizer, epoch, best, args, split)
+        if stop_requested:
+            print(json.dumps({"event": "graceful_stop_saved", "epoch": epoch}), flush=True)
+            raise SystemExit(75)
 
 
 if __name__ == "__main__":

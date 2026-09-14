@@ -23,7 +23,14 @@ output="$root/experiments/OfficialACTRGBD/$variant/$task/$suffix"
 
 case "$platform" in
   server56_h100|server56)
-    [[ "$gpu" =~ ^[4-7]$ ]] || { printf 'server56 H100 formal jobs require physical GPU4-7; GPU0 is forbidden\n' >&2; exit 2; }
+    if [[ "$gpu" =~ ^[4-7]$ ]]; then
+      :
+    elif [[ "$gpu" =~ ^(0|2|3)$ ]] && [[ -n "${OFFICIAL_ACT_TEMP_GPU_DEADLINE_EPOCH:-}" ]] && (( $(date +%s) < OFFICIAL_ACT_TEMP_GPU_DEADLINE_EPOCH )); then
+      :
+    else
+      printf 'GPU %s is outside the approved long-term or explicit temporary window\n' "$gpu" >&2
+      exit 2
+    fi
     ;;
   *)
     printf 'Training platform must be server56_h100, got %s\n' "$platform" >&2
@@ -31,11 +38,11 @@ case "$platform" in
     ;;
 esac
 "$python" "$repo/scripts/workflow_guard.py" train "$variant" "$task"
-read -r epochs batch_size train_seed < <("$python" -c '
+read -r epochs batch_size train_seed save_every validate_every < <("$python" -c '
 import json, sys
 plan = json.load(open(sys.argv[1], encoding="utf-8"))
 stage = next(item for item in plan["stages"] if item["id"] == plan["current_stage"])
-print(stage["train_epochs"], stage["batch_size"], stage["train_seed"])
+print(stage["train_epochs"], stage["batch_size"], stage["train_seed"], stage.get("save_every", 25), stage.get("validate_every", 25))
 ' "$repo/execution_plan.json")
 mkdir -p "$output"
 CUDA_VISIBLE_DEVICES="$gpu" TORCH_HOME="$root/models/torch" \
@@ -49,6 +56,8 @@ CUDA_VISIBLE_DEVICES="$gpu" TORCH_HOME="$root/models/torch" \
   --epochs "$epochs" \
   --batch-size "$batch_size" \
   --seed "$train_seed" \
+  --save-every "$save_every" \
+  --validate-every "$validate_every" \
   --lingbot-repo "$root/repos/lingbot-depth" \
   --lingbot-checkpoint "$root/models/lingbot-depth-v0.5/model.pt" \
   --lingbot-vendor "$root/repos/depth-processing-vendor" \
