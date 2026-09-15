@@ -116,7 +116,11 @@ def main() -> None:
 
     config_module._CONFIGS_DICT[cfg.name] = cfg
     if args.mode == "norm-stats":
-        norm = load_module("robotwin_pi05_compute_norm_stats", pi05_root / "scripts/compute_norm_stats.py")
+        # DataLoader uses multiprocessing spawn, so this module must be importable
+        # by name in every child process rather than loaded under a transient name.
+        sys.path.insert(0, str(pi05_root))
+        from scripts import compute_norm_stats as norm
+
         norm.main(cfg.name)
         return
 

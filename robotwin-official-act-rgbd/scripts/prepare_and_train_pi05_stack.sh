@@ -17,7 +17,7 @@ mkdir -p "$state" "$lerobot_home"
 exec 9>"$state/worker.lock"
 flock -n 9 || { printf 'pi0.5 successor worker is already running\n'; exit 0; }
 
-export PYTHONPATH="$pi05/src:$pi05/packages/openpi-client/src"
+export PYTHONPATH="$pi05:$pi05/src:$pi05/packages/openpi-client/src"
 export HF_LEROBOT_HOME="$lerobot_home"
 export HF_HUB_OFFLINE=1
 export TRANSFORMERS_OFFLINE=1
