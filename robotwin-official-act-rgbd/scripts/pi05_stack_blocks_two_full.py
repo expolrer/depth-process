@@ -5,7 +5,9 @@ from __future__ import annotations
 
 import argparse
 import dataclasses
+import functools
 import importlib.util
+import inspect
 import json
 import os
 from pathlib import Path
@@ -116,15 +118,28 @@ def main() -> None:
 
     config_module._CONFIGS_DICT[cfg.name] = cfg
     if args.mode == "norm-stats":
-        # DataLoader uses multiprocessing spawn, so this module must be importable
-        # by name in every child process rather than loaded under a transient name.
-        sys.path.insert(0, str(pi05_root))
-        from scripts import compute_norm_stats as norm
-
-        norm.main(cfg.name)
+        # The official statistics are only over transformed state/actions. This
+        # local OpenPI helper preserves those transforms while skipping RGB
+        # decoding, which otherwise leaks decoder threads on the server dataset.
+        norm = load_module(
+            "robotwin_pi05_low_mem_norm_stats",
+            Path("/ssd/hhw/openpi-hzh/scripts/compute_norm_stats_low_mem.py"),
+        )
+        norm.main(cfg.name, direct_lerobot=True, direct_chunk_size=1024, num_workers=0)
         return
 
     train = load_module("robotwin_pi05_train", pi05_root / "scripts/train.py")
+    from openpi.training import data_loader
+
+    if "num_workers" not in inspect.signature(data_loader.create_data_loader).parameters:
+        original_create_data_loader = data_loader.create_data_loader
+
+        @functools.wraps(original_create_data_loader)
+        def create_data_loader_compat(*loader_args, num_workers=None, **loader_kwargs):
+            del num_workers
+            return original_create_data_loader(*loader_args, **loader_kwargs)
+
+        data_loader.create_data_loader = create_data_loader_compat
     train.main(cfg)
 
 
