@@ -27,7 +27,7 @@ if [[ ! -s "$state/raw_rgb_complete" ]]; then
   cd "$pi05"
   "$python" scripts/process_data.py stack_blocks_two depth_master_clean 50
   test "$(find "$raw" -mindepth 1 -maxdepth 1 -type d -name 'episode_*' | wc -l)" -eq 50
-  touch "$state/raw_rgb_complete"
+  printf 'complete\n' > "$state/raw_rgb_complete"
 fi
 
 if [[ ! -s "$state/lerobot_rgb_complete" ]]; then
@@ -56,7 +56,7 @@ if int(info.get("total_episodes", 0)) != 50:
     raise SystemExit(f"Expected 50 episodes, got {info.get('total_episodes')}")
 print("RGB-only LeRobot dataset verified", info.get("total_frames"), "frames")
 PY
-  touch "$state/lerobot_rgb_complete"
+  printf 'complete\n' > "$state/lerobot_rgb_complete"
 fi
 
 asset="$root/experiments/OfficialPi05/assets/pi05_robotwin_stack_blocks_two_full_4gpu/$repo_id/norm_stats.json"
