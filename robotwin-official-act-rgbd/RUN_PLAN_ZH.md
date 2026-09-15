@@ -84,7 +84,13 @@ prior-action L1、深度 zero/shuffle 降幅、ROI 几何误差与三视角一�
 2. GPU4-6 同时启动三个官方 100-seed RoboTwin 评测 worker；
 3. 评测 worker 只领取同时具备 `training_complete.json` 和 `artifact_manifest.json` 的架构；
 4. 七个已完成架构会先评测，ACT5 完成并生成产物后自动进入剩余评测队列；
-5. GPU0-3 保持空闲，不再由旧 coordinator 自动拉起训练或评测。
+5. GPU0 不属于本项目；GPU1-3 可在 π0.5 训练期间临时评测，并在北京时间 07:00 硬截止；
+6. 截止后 GPU1-3 保持空闲，不再由旧 coordinator 自动拉起训练或评测。
 
 所有评测仍使用官方 temporal aggregation、同一份 100-seed 列表和 SAPIEN 物理 GPU 隔离。接力
 coordinator 可重复启动但由文件锁保证单实例，训练和评测 claim 会清理死亡 worker 遗留的占用。
+
+临时评测由 `scripts/start_eval_gpu1_3_until_0700.sh` 启动。每张卡有独立 supervisor，内部仍调用
+官方 `official_eval_worker.sh -> run_eval.sh -> RoboTwin script/eval_policy.py`，使用 temporal
+aggregation 和锁定的 100-seed 列表。supervisor 在 worker 异常退出时自动重启，并通过 `timeout`
+在 07:00 向整组评测子进程发送 TERM；未完成任务不会写入 done，后继 GPU4-6 会重新领取。
