@@ -54,7 +54,7 @@ def build_config(project_root: Path, resume: bool):
         checkpoint_base_dir=str(project_root / "experiments/OfficialPi05/checkpoints"),
         seed=0,
         batch_size=64,
-        num_workers=24,
+        num_workers=2,
         num_train_steps=TRAIN_STEPS,
         save_interval=1_000,
         keep_period=5_000,
