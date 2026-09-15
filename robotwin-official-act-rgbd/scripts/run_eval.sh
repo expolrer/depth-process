@@ -47,7 +47,7 @@ cd "$robotwin"
 common_env=(CUDA_VISIBLE_DEVICES="$gpu" TORCH_HOME="$root/models/torch" PYTHONPATH="$python_path:${PYTHONPATH:-}")
 case "$platform" in
   server56_h100|server56)
-    [[ "$gpu" =~ ^[0-3]$ ]] || { printf 'server56 official6000 evaluation requires physical GPU0-3\n' >&2; exit 2; }
+    [[ "$gpu" =~ ^[0-7]$ ]] || { printf 'server56 official6000 evaluation requires physical GPU0-7\n' >&2; exit 2; }
     test -r "$isolation"
     platform_env=(ROBOTWIN_PHYSICAL_GPU="$gpu" ROBOTWIN_DRM_RENDER_INDEX="$((128 + gpu))" LD_PRELOAD="$isolation")
     ;;

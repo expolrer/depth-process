@@ -63,9 +63,9 @@ prior-action L1、深度 zero/shuffle 降幅、ROI 几何误差与三视角一�
 
 ## Q0 后继：官方 π0.5 RGB 基线
 
-按 2026-09-15 最新调度，π0.5 不再等待 ACT 评测结束：ACT5 留在 GPU2，ACT 官方评测使用 GPU0-3，
-π0.5 立即在 GPU4-7 并行启动。数据严格使用 RoboTwin 官方转换链：原始 HDF5 提取三视角 RGB、
-joint、action 和 prompt，再转换为 LeRobot；转换结果必须拒绝任何 depth feature。
+按 2026-09-15 最新调度，ACT5 已在 epoch 4708 优雅暂停并保存完整可续训状态，旧 ACT 训练 worker
+和评测 coordinator 已停止。π0.5 独占 GPU4-7 运行。数据严格使用 RoboTwin 官方转换链：原始 HDF5
+提取三视角 RGB、joint、action 和 prompt，再转换为 LeRobot；转换结果必须拒绝任何 depth feature。
 
 - 上游配置：`pi05_aloha_full_base`
 - 训练设备：56 服务器物理 GPU4-7，JAX FSDP 四卡
@@ -74,3 +74,17 @@ joint、action 和 prompt，再转换为 LeRobot；转换结果必须拒绝任�
 - 全参判据：`freeze_filter=Nothing`
 - 续训：每 1,000 steps 保存，异常退出后从最新 checkpoint 自动恢复
 - 实验名：`pi05_stack_blocks_two_rgb_full_seed0`
+
+## π0.5 完成后的接力调度
+
+`scripts/pi05_then_act5_gpu7_eval_gpu4_6.sh` 等待 π0.5 的 `training_complete.json` 明确记录
+`final_step >= 20000`，并等待 GPU4-7 上的 π0.5 进程完全释放后再执行：
+
+1. GPU7 从 `ACT5_POINT_TOKENS` 的 `training_last.pt`（epoch 4708）恢复至 6000 epochs；
+2. GPU4-6 同时启动三个官方 100-seed RoboTwin 评测 worker；
+3. 评测 worker 只领取同时具备 `training_complete.json` 和 `artifact_manifest.json` 的架构；
+4. 七个已完成架构会先评测，ACT5 完成并生成产物后自动进入剩余评测队列；
+5. GPU0-3 保持空闲，不再由旧 coordinator 自动拉起训练或评测。
+
+所有评测仍使用官方 temporal aggregation、同一份 100-seed 列表和 SAPIEN 物理 GPU 隔离。接力
+coordinator 可重复启动但由文件锁保证单实例，训练和评测 claim 会清理死亡 worker 遗留的占用。

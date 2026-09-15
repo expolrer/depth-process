@@ -20,10 +20,28 @@ variants=(ACT0_RGB ACT1_EARLY_RGBD ACT2_DUAL_SHARED ACT3_DUAL_PER_VIEW ACT4_XYZM
 mkdir -p "$queue/claims" "$queue/done" "$queue/logs"
 test "$(wc -l < "$seed_file")" -ge 100
 
+is_ready() {
+  local candidate="$1"
+  local output="$root/experiments/OfficialACTRGBD/$candidate/$task/$suffix"
+  [[ -s "$output/training_complete.json" && -s "$output/artifact_manifest.json" ]]
+}
+
+reap_stale_claims() {
+  local claim owner
+  for claim in "$queue"/claims/*; do
+    [[ -d "$claim" ]] || continue
+    owner="$(cat "$claim/worker_pid" 2>/dev/null || true)"
+    if [[ -n "$owner" ]] && ! kill -0 "$owner" 2>/dev/null; then
+      rm -rf "$claim"
+    fi
+  done
+}
+
 claim_one() {
   local candidate
   for candidate in "$preferred" "${variants[@]}"; do
     [[ -e "$queue/done/$candidate" ]] && continue
+    is_ready "$candidate" || continue
     if mkdir "$queue/claims/$candidate" 2>/dev/null; then
       printf '%s\n' "$$" > "$queue/claims/$candidate/worker_pid"
       printf '%s\n' "$gpu" > "$queue/claims/$candidate/gpu"
@@ -42,6 +60,7 @@ all_done() {
 }
 
 while true; do
+  reap_stale_claims
   variant="$(claim_one || true)"
   if [[ -z "$variant" ]]; then
     if all_done; then

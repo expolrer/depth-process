@@ -98,11 +98,15 @@ UPSTREAM_LOCK.json
 视频和任务峰值余量，不进入正式结果队列。完整硬件表、跨机器 artifact 契约、阶段门槛和命令顺序见
 `EXECUTION_PLAN_ZH.md`。
 
-平台编号规则不能混用：本轮 56 H100 的 GPU0-3 为长期训练/评测 worker，GPU5-7 只获准运行到
-北京时间 2026-09-15 07:00，GPU4 不安排本项目；AutoDL 4090 D 单卡实例允许使用逻辑 `cuda:0`。
-分别设置 `OFFICIAL_ACT_PLATFORM=server56_h100|autodl_4090d`。
+平台编号规则不能混用：当前 56 H100 的 GPU4-7 用于 π0.5 四卡训练；GPU0-3 保持空闲。
+π0.5 完成后，GPU7 续训 ACT5，GPU4-6 执行官方评测。AutoDL 4090 D 单卡实例允许使用逻辑
+`cuda:0`。分别设置 `OFFICIAL_ACT_PLATFORM=server56_h100|autodl_4090d`。
 
-`scripts/start_pi05_now_gpu4_7.sh` 会立即启动标准 RGB-only π0.5 基线，与 GPU2 上剩余的 ACT5 训练
-并行运行：使用 RoboTwin 官方 `pi05_aloha_full_base`、20,000 steps、global batch 64，在 GPU4-7
-上进行四卡 FSDP 全参微调。`scripts/prepare_and_train_pi05_stack.sh` 先按官方流程将同一批 50 条轨迹
-转换成不含深度字段的 LeRobot 数据，计算 norm stats，再以每 1,000 steps checkpoint 自动续训。
+`scripts/start_pi05_now_gpu4_7.sh` 会立即启动标准 RGB-only π0.5 基线：使用 RoboTwin 官方
+`pi05_aloha_full_base`、20,000 steps、global batch 64，在 GPU4-7 上进行四卡 FSDP 全参微调。
+`scripts/prepare_and_train_pi05_stack.sh` 先按官方流程将同一批 50 条轨迹转换成不含深度字段的
+LeRobot 数据，计算 norm stats，再以每 1,000 steps checkpoint 自动续训。
+
+当前 ACT5 已在 epoch 4708 保存完整 `training_last.pt` 后暂停。后台接力入口
+`scripts/start_post_pi05_act5_eval.sh` 会等待 π0.5 完成，再在 GPU7 续训 ACT5，同时使用 GPU4-6
+评测已经完成的架构；ACT5 完成后会自动加入评测队列。GPU0-3 不参与该接力阶段。
