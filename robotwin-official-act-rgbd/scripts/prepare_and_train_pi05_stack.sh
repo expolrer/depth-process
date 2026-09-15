@@ -74,7 +74,7 @@ while [[ ! -s "$state/training_complete.json" ]]; do
   printf '%s starts pi0.5 full fine-tuning resume=%s\n' "$(date --iso-8601=seconds)" "${resume[*]:-false}"
   set +e
   cd "$pi05"
-  env CUDA_VISIBLE_DEVICES=0,1,2,3 \
+  env CUDA_VISIBLE_DEVICES=4,5,6,7 \
     XLA_PYTHON_CLIENT_MEM_FRACTION=0.9 \
     JAX_COMPILATION_CACHE_DIR="$root/cache/jax" \
     "$python" "$repo/scripts/pi05_stack_blocks_two_full.py" train "${resume[@]}"
@@ -91,7 +91,7 @@ payload = {
     "final_step": int(sys.argv[3]),
     "full_finetune": True,
     "depth_used": False,
-    "gpus": [0, 1, 2, 3],
+    "gpus": [4, 5, 6, 7],
 }
 open(sys.argv[1], "w", encoding="utf-8").write(json.dumps(payload, indent=2) + "\n")
 PY

@@ -63,13 +63,12 @@ prior-action L1、深度 zero/shuffle 降幅、ROI 几何误差与三视角一�
 
 ## Q0 后继：官方 π0.5 RGB 基线
 
-只有 ACT0-ACT7 的 8 个 `training_complete.json` 和 8 个官方 100-rollout 评测完成标记全部存在，且
-ACT 训练/评测进程均已退出，才启动 `stack_blocks_two` 的 π0.5 全参微调。数据严格使用 RoboTwin
-官方转换链：原始 HDF5 提取三视角 RGB、joint、action 和 prompt，再转换为 LeRobot；转换结果必须
-拒绝任何 depth feature。
+按 2026-09-15 最新调度，π0.5 不再等待 ACT 评测结束：ACT5 留在 GPU2，ACT 官方评测使用 GPU0-3，
+π0.5 立即在 GPU4-7 并行启动。数据严格使用 RoboTwin 官方转换链：原始 HDF5 提取三视角 RGB、
+joint、action 和 prompt，再转换为 LeRobot；转换结果必须拒绝任何 depth feature。
 
 - 上游配置：`pi05_aloha_full_base`
-- 训练设备：56 服务器物理 GPU0-3，JAX FSDP 四卡
+- 训练设备：56 服务器物理 GPU4-7，JAX FSDP 四卡
 - 预算：官方 20,000 steps，global batch 64，seed 0
 - 基础权重：本地 `pi05_base/params`，不访问公网
 - 全参判据：`freeze_filter=Nothing`

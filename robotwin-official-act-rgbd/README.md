@@ -102,7 +102,7 @@ UPSTREAM_LOCK.json
 北京时间 2026-09-15 07:00，GPU4 不安排本项目；AutoDL 4090 D 单卡实例允许使用逻辑 `cuda:0`。
 分别设置 `OFFICIAL_ACT_PLATFORM=server56_h100|autodl_4090d`。
 
-ACT 八架构训练及官方评测结束后，`scripts/wait_act_then_pi05.sh` 会启动标准 RGB-only π0.5 基线：
-使用 RoboTwin 官方 `pi05_aloha_full_base`、20,000 steps、global batch 64，在 GPU0-3 上进行四卡
-FSDP 全参微调。`scripts/prepare_and_train_pi05_stack.sh` 先按官方流程将同一批 50 条轨迹转换成不含
-深度字段的 LeRobot 数据，计算 norm stats，再以每 1,000 steps checkpoint 自动续训。
+`scripts/start_pi05_now_gpu4_7.sh` 会立即启动标准 RGB-only π0.5 基线，与 GPU2 上剩余的 ACT5 训练
+并行运行：使用 RoboTwin 官方 `pi05_aloha_full_base`、20,000 steps、global batch 64，在 GPU4-7
+上进行四卡 FSDP 全参微调。`scripts/prepare_and_train_pi05_stack.sh` 先按官方流程将同一批 50 条轨迹
+转换成不含深度字段的 LeRobot 数据，计算 norm stats，再以每 1,000 steps checkpoint 自动续训。
