@@ -2,6 +2,19 @@
   "schema_version": 1,
   "source_of_truth": "EXECUTION_PLAN_ZH.md",
   "current_stage": "Q0_OFFICIAL6000_TRAIN_THEN_EVAL",
+  "runtime_override": {
+    "updated_at": "2026-09-16T17:30:42+08:00",
+    "active": "PI05_RGB_FULL_STACK_BLOCKS_TWO_4GPU",
+    "successor": "LINGBOT_VLA2_NATIVE_DEPTH_STACK_BLOCKS_TWO_4GPU",
+    "successor_gpus": [4, 5, 6, 7],
+    "old_post_pi05_act5_eval_coordinator": "stopped",
+    "act5_resume_epoch": 4708,
+    "lingbot_vla2_steps": 30000,
+    "lingbot_vla2_checkpoint_interval": 5000,
+    "lingbot_vla2_sensor_depth_input": false,
+    "lingbot_vla2_depth_semantics": "online MoGe plus LingBot-Depth geometry-token distillation from RGB",
+    "asset_download_host": "server6_only"
+  },
   "platforms": {
     "server56_h100": {
       "gpu_model": "NVIDIA H100 80GB HBM3",
@@ -42,6 +55,7 @@
     {"id": "P2_EXTENDED_SCREEN", "status": "blocked_by_previous", "variants": ["ACT6_LINGBOT_DEPTH", "ACT7_DEPTH_TRANSFORMER"], "tasks": ["stack_blocks_two", "handover_mic", "pick_diverse_bottles"], "actions": ["train", "eval"]},
     {"id": "P3_MULTI_TASK", "status": "blocked_by_previous", "variants": [], "tasks": ["pick_dual_bottles", "stack_blocks_two", "handover_mic", "place_a2b_left", "place_a2b_right", "pick_diverse_bottles"], "actions": ["train", "eval"]},
     {"id": "P4_DEPTH_VALIDITY_ROBUSTNESS", "status": "blocked_by_previous", "variants": [], "tasks": ["stack_blocks_two", "handover_mic", "pick_diverse_bottles"], "actions": ["train", "eval"]},
-    {"id": "P5_VLA_TRANSFER", "status": "blocked_by_previous", "variants": [], "tasks": [], "actions": ["train", "eval"]}
+    {"id": "P5_VLA_TRANSFER", "status": "blocked_by_previous", "variants": [], "tasks": [], "actions": ["train", "eval"]},
+    {"id": "P5_LINGBOT_VLA2_NATIVE_DEPTH_BASELINE", "status": "queued_after_pi05", "variants": ["LINGBOT_VLA2_OFFICIAL_NATIVE_DEPTH"], "tasks": ["stack_blocks_two"], "task_config": "depth_master_clean", "actions": ["post_train"], "train_steps": 30000, "gpus": [4, 5, 6, 7], "global_batch_size": 4, "micro_batch_size": 1, "save_steps": 5000, "resume": true, "sensor_depth_input": false}
   ]
 }

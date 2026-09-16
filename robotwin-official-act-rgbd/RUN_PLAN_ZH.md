@@ -75,22 +75,22 @@ prior-action L1、深度 zero/shuffle 降幅、ROI 几何误差与三视角一�
 - 续训：每 1,000 steps 保存，异常退出后从最新 checkpoint 自动恢复
 - 实验名：`pi05_stack_blocks_two_rgb_full_seed0`
 
-## π0.5 完成后的接力调度
+## π0.5 完成后的 LingBot-VLA 2.0 接力调度
 
-`scripts/pi05_then_act5_gpu7_eval_gpu4_6.sh` 等待 π0.5 的 `training_complete.json` 明确记录
-`final_step >= 20000`，并等待 GPU4-7 上的 π0.5 进程完全释放后再执行：
+旧的 `pi05_then_act5_gpu7_eval_gpu4_6.sh` coordinator 已停止，不再自动占用 GPU4-7。新的接力任务
+先等待 6 服务器完成官方资产下载、环境构建、约 1040 个分块传输和 SHA256 验证，再等待 π0.5 的
+20,000-step 最终 checkpoint 与进程退出，最后确认物理 GPU4-7 均无计算进程后启动：
 
-1. GPU7 从 `ACT5_POINT_TOKENS` 的 `training_last.pt`（epoch 4708）恢复至 6000 epochs；
-2. GPU4-6 同时启动三个官方 100-seed RoboTwin 评测 worker；
-3. 评测 worker 只领取同时具备 `training_complete.json` 和 `artifact_manifest.json` 的架构；
-4. 七个已完成架构会先评测，ACT5 完成并生成产物后自动进入剩余评测队列；
-5. GPU0 不属于本项目；GPU1-3 可在 π0.5 训练期间临时评测，并在北京时间 07:00 硬截止；
-6. 截止后 GPU1-3 保持空闲，不再由旧 coordinator 自动拉起训练或评测。
+1. 代码：官方 LingBot-VLA 2.0 仓库，固定到项目目录 `repos/lingbot-vla-v2`；
+2. 权重：`lingbot-vla-v2-6b`、Qwen3-VL-4B、MoGe、LingBot-Depth、DINO-Video，全部先下载到
+   6 服务器，再经本地中继上传到 56，不允许 56 直接访问公网；
+3. 环境：独立 Python 3.12 / Torch 2.8.0 / FlashAttention 2.8.3 环境，不修改旧环境；
+4. 数据：同一批 `stack_blocks_two/depth_master_clean` 的 50 条原始 RGB-D 轨迹，官方训练入口读取
+   对应三视角 RGB LeRobot、joint、action 和 prompt；任务专属 norm stats 在启动前重算；
+5. 训练：GPU4-7、FSDP2 四卡、micro batch 1、global batch 4、30,000 steps、每 5,000 steps 保存、
+   `enable_resume=true`；
+6. 语义：官方 native-depth 是 MoGe + LingBot-Depth 的在线几何 Token 蒸馏，不把原始 GT Depth
+   当作第四通道或独立输入。GT Depth 保留给后续显式深度输入消融，二者不得混写成同一实验。
 
-所有评测仍使用官方 temporal aggregation、同一份 100-seed 列表和 SAPIEN 物理 GPU 隔离。接力
-coordinator 可重复启动但由文件锁保证单实例，训练和评测 claim 会清理死亡 worker 遗留的占用。
-
-临时评测由 `scripts/start_eval_gpu1_3_until_0700.sh` 启动。每张卡有独立 supervisor，内部仍调用
-官方 `official_eval_worker.sh -> run_eval.sh -> RoboTwin script/eval_policy.py`，使用 temporal
-aggregation 和锁定的 100-seed 列表。supervisor 在 worker 异常退出时自动重启，并通过 `timeout`
-在 07:00 向整组评测子进程发送 TERM；未完成任务不会写入 done，后继 GPU4-6 会重新领取。
+ACT5 epoch 4708 的 `training_last.pt` 和未完成的官方 ACT 评测均保持不变，等 LingBot-VLA 2.0
+阶段结束后再恢复。详细路径、就绪条件、失败标记和恢复命令见 `LINGBOT_VLA2_SUCCESSOR_ZH.md`。

@@ -98,9 +98,10 @@ UPSTREAM_LOCK.json
 视频和任务峰值余量，不进入正式结果队列。完整硬件表、跨机器 artifact 契约、阶段门槛和命令顺序见
 `EXECUTION_PLAN_ZH.md`。
 
-平台编号规则不能混用：当前 56 H100 的 GPU4-7 用于 π0.5 四卡训练；GPU1-3 临时执行官方评测
-并在北京时间 07:00 停止，GPU0 上的其他训练不属于本项目。π0.5 完成后，GPU7 续训 ACT5，
-GPU4-6 执行剩余官方评测。AutoDL 4090 D 单卡实例允许使用逻辑
+平台编号规则不能混用：当前 56 H100 的 GPU4-7 用于 π0.5 四卡训练；GPU1-3 的临时评测已按
+北京时间 07:00 停止。旧的“GPU7 续训 ACT5、GPU4-6 评测”接力器已经停用；π0.5 完成后，
+GPU4-7 整体切换到 LingBot-VLA 2.0 的 `stack_blocks_two` 四卡 post-training。ACT5 和未完成评测
+保留可续状态，等待 LingBot-VLA 2.0 阶段结束后重新排队。AutoDL 4090 D 单卡实例允许使用逻辑
 `cuda:0`。分别设置 `OFFICIAL_ACT_PLATFORM=server56_h100|autodl_4090d`。
 
 `scripts/start_pi05_now_gpu4_7.sh` 会立即启动标准 RGB-only π0.5 基线：使用 RoboTwin 官方
@@ -108,6 +109,9 @@ GPU4-6 执行剩余官方评测。AutoDL 4090 D 单卡实例允许使用逻辑
 `scripts/prepare_and_train_pi05_stack.sh` 先按官方流程将同一批 50 条轨迹转换成不含深度字段的
 LeRobot 数据，计算 norm stats，再以每 1,000 steps checkpoint 自动续训。
 
-当前 ACT5 已在 epoch 4708 保存完整 `training_last.pt` 后暂停。后台接力入口
-`scripts/start_post_pi05_act5_eval.sh` 会等待 π0.5 完成，再在 GPU7 续训 ACT5，同时使用 GPU4-6
-评测已经完成的架构；ACT5 完成后会自动加入评测队列。GPU0-3 不参与该接力阶段。
+当前 ACT5 已在 epoch 4708 保存完整 `training_last.pt` 后暂停。LingBot-VLA 2.0 后继任务使用官方
+RoboTwin 配置、MoE action expert、FSDP2、三路 RGB、joint/action/prompt，以及 MoGe +
+LingBot-Depth + DINO-Video 的在线几何/未来视频蒸馏，训练 30,000 steps 并每 5,000 steps 保存。
+需要特别区分：官方 native-depth 路线从 RGB 在线生成 depth teacher targets，不直接读取传感器 GT
+Depth；原始三视角 GT Depth 数据完整保留，后续用于显式 depth-input 消融。完整资源、状态机和路径见
+[`LINGBOT_VLA2_SUCCESSOR_ZH.md`](LINGBOT_VLA2_SUCCESSOR_ZH.md)。
