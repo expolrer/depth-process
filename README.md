@@ -121,10 +121,30 @@ P95 为 4.010 m。下游代理评测使用同一个无 Prompt、Depth-only ACT �
 | `depth_anything_v2_fused` | 将 Depth-Anything-V2 相对深度逐帧标定后，与传感器深度融合 |
 | `lingbot_v05_sensor_fused` | 保留传感器原始有效像素，仅使用 LingBot 结果填补空洞 |
 | `ai_consensus_fused` | 保留传感器深度，仅在 LingBot 与 Depth-Anything 预测一致的位置填补空洞 |
+| `cdm_camera_specific` | 使用相机专属 CDM，以 RGB 和原始逆深度共同恢复物理尺度深度 |
+| `cdm_sensor_fused` | 保留量程内的传感器像素，只在孔洞/无效处使用 CDM 输出 |
 | `lingbot_cross_attention` | LingBot 深度查询到 RGB Token 的跨模态注意力热力图 |
 | `lingbot_depth_token_attention` | LingBot CLS 查询到深度 Token 的注意力热力图 |
 
 相比完全使用模型预测替换传感器深度，保留传感器有效像素的融合结果和双模型一致性结果更适合作为 VLA 训练候选数据。纯模型输出仍会保留，供分析和对比使用。
+
+### 融合方法如何工作
+
+`depth_anything_v2_fused` 不是直接把 Depth Anything V2 的相对深度当作米制深度。它先在
+原始传感器的有效、非边缘像素上鲁棒拟合 `1 / sensor_depth = scale * prior + shift`，把
+相对逆深度标定为米，再只填补传感器无效像素。若标定失败，则不填孔。
+
+`lingbot_v05_sensor_fused` 的“有效原始深度”判定来自显式规则：像素必须有限、非零且位于
+配置的相机量程内；其余像素被视为孔洞。它不是 LingBot 学出的置信度，所以无法排除仍在
+量程内的飞点或系统偏差。`cdm_sensor_fused` 也有意采用同一保真策略，便于公平比较；纯
+CDM 输出另存为 `cdm_camera_specific`。
+
+CDM 是 RGB 与受损深度的双分支 ViT：RGB 提供物体边界和语义上下文，逆深度分支保留传感器
+几何，两路特征经 DPT 解码器恢复物理尺度深度。官方权重按相机建模，D435 数据必须使用
+D435 权重，D405 数据必须使用 D405 权重。当前 5 个历史 rosbag 的 `cam_h` 是
+Gemini-335L，不能冒充 D435；因此 `config/cdm_cameras.current_d405_only.example.json`
+只启用两个 D405 腕部视角。未来头部 D435 + 双腕 D405 数据可使用
+`config/cdm_cameras.d435_d405.example.json`。
 
 ## 主要命令
 
@@ -150,6 +170,13 @@ GPU_IDS=0,6,7 BATCH_SIZE=4 scripts/run_lingbot_attention_gpus.sh
 .venv/bin/python scripts/fuse_ai_outputs.py \
   --input-root outputs/extracted --processed-root outputs/processed
 
+# 官方 CDM 仓库和权重准备完成后运行。历史数据只处理 D405 腕部视角。
+.venv/bin/python scripts/process_cdm.py \
+  --input-root outputs/extracted \
+  --output-root outputs/processed \
+  --repo /ssd/hhw/camera-depth-models/manip-as-in-sim-suite/cdm \
+  --camera-config config/cdm_cameras.current_d405_only.example.json
+
 .venv/bin/python scripts/generate_comparisons.py \
   --input-root outputs/extracted \
   --processed-root outputs/processed \
@@ -169,6 +196,11 @@ GPU_IDS=0,6,7 BATCH_SIZE=4 scripts/run_lingbot_attention_gpus.sh
 .venv/bin/python scripts/build_video_viewer.py \
   --project-root /ssd/hhw/depth-processing \
   --workers 8
+
+# 只有所选数据集的全部视角均已生成 CDM 输出时才加入页面。
+.venv/bin/python scripts/build_video_viewer.py \
+  --project-root /ssd/hhw/depth-processing \
+  --workers 8 --include-cdm
 
 python3 viewer/serve_viewer.py --host 127.0.0.1 --port 8765
 ```
@@ -199,6 +231,10 @@ seeking.
 - Depth-Anything-V2 仓库：`/ssd/hhw/Depth-Anything-V2`
 - Depth-Anything-V2-Small 权重：
   `/ssd/hhw/Depth-Anything-V2/checkpoints/depth_anything_v2_vits.pth`
+- CDM 官方仓库与 D435/D405 权重：尚未中转到 56 服务器；脚本已接入，但不能在权重缺失时伪造结果。
+
+CDM 代码仓库使用 Apache-2.0；官方 D435/D405 模型页面将权重标注为 CC BY-NC 4.0，
+因此这些权重不应直接用于商业交付，使用前需再次核对许可证。
 
 ## 测试结果说明
 
@@ -208,11 +244,12 @@ seeking.
 PYTHONPATH=. .venv/bin/python -m pytest -q tests
 ```
 
-当前测试集包含 7 个自动化测试：
+当前测试集包含 8 个自动化测试：
 
 1. `tests/test_rosbag_extract.py`：验证 RGB 与深度帧的最近时间戳配对逻辑。
 2. `tests/test_fusion.py`：验证 Depth-Anything 相对逆深度的物理尺度标定，以及传感器深度与模型预测的融合逻辑。
 3. `tests/test_augmentation.py`：5 个测试覆盖确定性采样、RGB-only 深度不变、配对空间掩码、光度变换深度不变和权重概率。
+4. `tests/test_cdm.py`：验证 CDM 逆深度提示构造、量程有效性掩码和保真融合逻辑。
 
 测试通过不代表仅凭单元测试就证明全部深度图的视觉质量完全正确。完整数据集是否有漏帧、输出尺寸是否一致、模型权重是否匹配等内容，由 `scripts/validate_outputs.py`、四类质量证据和生成的验证报告另外检查。
 

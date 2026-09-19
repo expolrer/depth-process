@@ -1,0 +1,16 @@
+{
+  "cameras": {
+    "cam_l": {
+      "model_id": "d405",
+      "checkpoint": "/ssd/hhw/camera-depth-models/checkpoints/cdm_d405.ckpt",
+      "min_depth_m": 0.07,
+      "max_depth_m": 0.50
+    },
+    "cam_r": {
+      "model_id": "d405",
+      "checkpoint": "/ssd/hhw/camera-depth-models/checkpoints/cdm_d405.ckpt",
+      "min_depth_m": 0.07,
+      "max_depth_m": 0.50
+    }
+  }
+}

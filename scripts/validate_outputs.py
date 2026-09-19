@@ -41,12 +41,18 @@ def main() -> None:
     parser.add_argument("--project-root", type=Path, required=True)
     parser.add_argument("--lingbot-checkpoint", type=Path, required=True)
     parser.add_argument("--depth-anything-checkpoint", type=Path, required=True)
+    parser.add_argument("--cdm-d435-checkpoint", type=Path)
+    parser.add_argument("--cdm-d405-checkpoint", type=Path)
+    parser.add_argument("--require-cdm", action="store_true")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
 
     extracted = args.project_root / "outputs/extracted"
     processed = args.project_root / "outputs/processed"
     comparisons = args.project_root / "outputs/comparisons"
+    methods = list(METHODS)
+    if args.require_cdm:
+        methods.extend(("cdm_camera_specific", "cdm_sensor_fused"))
     manifests = sorted(extracted.glob("*/cam_*/manifest.jsonl"))
     missing: list[str] = []
     expected_frames = 0
@@ -66,7 +72,7 @@ def main() -> None:
                 comparisons / sequence / "frames" / f"{frame_index:06d}.jpg",
             ]
             required.extend(
-                processed / sequence / method / f"{frame_index:06d}.png" for method in METHODS
+                processed / sequence / method / f"{frame_index:06d}.png" for method in methods
             )
             missing.extend(str(path) for path in required if not path.is_file())
         for row in sample_rows:
@@ -89,11 +95,21 @@ def main() -> None:
             "size_bytes": args.depth_anything_checkpoint.stat().st_size,
         },
     }
+    for name, checkpoint in {
+        "cdm_d435": args.cdm_d435_checkpoint,
+        "cdm_d405": args.cdm_d405_checkpoint,
+    }.items():
+        if checkpoint is not None:
+            model_hashes[name] = {
+                "path": str(checkpoint),
+                "sha256": sha256(checkpoint),
+                "size_bytes": checkpoint.stat().st_size,
+            }
     report = {
         "ok": not missing and expected_frames == 14731,
         "manifest_count": len(manifests),
         "expected_frames": expected_frames,
-        "methods": METHODS,
+        "methods": methods,
         "missing_count": len(missing),
         "missing_examples": missing[:100],
         "representative_output_signatures": samples,
@@ -113,6 +129,10 @@ def main() -> None:
         },
         "tests": {"pytest": "2 passed"},
     }
+    if args.require_cdm:
+        report["required_reports"]["cdm"] = (
+            args.project_root / "outputs/processed/cdm_summary.json"
+        ).is_file()
     report["ok"] = bool(report["ok"] and all(report["required_reports"].values()))
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")

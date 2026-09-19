@@ -14,8 +14,8 @@ dependencies = [
 
 [project.optional-dependencies]
 lingbot = ["torch>=2.6", "torchvision", "timm", "einops", "trimesh"]
+cdm = ["torch>=2.6", "torchvision", "timm", "einops"]
 
 [tool.ruff]
 line-length = 100
 target-version = "py310"
-

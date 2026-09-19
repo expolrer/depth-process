@@ -37,6 +37,11 @@ METHODS = (
     ("lingbot_depth_token_attention", "LingBot 深度 Token 注意力", "模型解释"),
 )
 
+CDM_METHODS = (
+    ("cdm_camera_specific", "CDM 相机专属输出", "模型预测"),
+    ("cdm_sensor_fused", "CDM 传感器融合", "传感器融合"),
+)
+
 ATTENTION_METHODS = {
     "lingbot_cross_attention",
     "lingbot_depth_token_attention",
@@ -77,6 +82,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--dataset", action="append", help="Only build matching dataset key/slug")
     parser.add_argument("--max-frames", type=int, help="Limit frames per stream for a smoke test")
     parser.add_argument("--overwrite", action="store_true")
+    parser.add_argument(
+        "--include-cdm",
+        action="store_true",
+        help="Include CDM videos after process_cdm.py has produced every selected camera stream",
+    )
     return parser.parse_args()
 
 
@@ -117,7 +127,10 @@ def processed_paths(
     return paths
 
 
-def collect_tasks(args: argparse.Namespace) -> tuple[list[VideoTask], list[dict[str, Any]]]:
+def collect_tasks(
+    args: argparse.Namespace,
+    methods: tuple[tuple[str, str, str], ...],
+) -> tuple[list[VideoTask], list[dict[str, Any]]]:
     project_root = args.project_root.resolve()
     extracted_root = project_root / "outputs" / "extracted"
     processed_root = project_root / "outputs" / "processed"
@@ -170,7 +183,7 @@ def collect_tasks(args: argparse.Namespace) -> tuple[list[VideoTask], list[dict[
                 )
             )
 
-            for method_id, _method_label, _family in METHODS:
+            for method_id, _method_label, _family in methods:
                 if method_id == "raw_aligned":
                     paths = raw_paths
                     task_kind = "depth"
@@ -445,6 +458,7 @@ def write_catalog(
     viewer_root: Path,
     datasets: list[dict[str, Any]],
     args: argparse.Namespace,
+    methods: tuple[tuple[str, str, str], ...],
 ) -> None:
     catalog = {
         "version": 1,
@@ -462,7 +476,7 @@ def write_catalog(
                 "family": family,
                 "visualization": "attention" if method_id in ATTENTION_METHODS else "depth",
             }
-            for method_id, label, family in METHODS
+            for method_id, label, family in methods
         ],
         "datasets": datasets,
     }
@@ -516,7 +530,8 @@ def main() -> int:
     args.project_root = args.project_root.resolve()
     viewer_root = (args.viewer_root or args.project_root / "viewer").resolve()
     args.viewer_root = viewer_root
-    tasks, datasets = collect_tasks(args)
+    methods = METHODS + CDM_METHODS if args.include_cdm else METHODS
+    tasks, datasets = collect_tasks(args, methods)
     print(f"Building {len(tasks)} videos for {len(datasets)} datasets with {args.workers} workers")
 
     records: list[dict[str, Any]] = []
@@ -536,7 +551,7 @@ def main() -> int:
             len(tasks),
         )
 
-    write_catalog(viewer_root, datasets, args)
+    write_catalog(viewer_root, datasets, args, methods)
     report = {
         "ok": not failures,
         "generatedAt": datetime.now(timezone.utc).isoformat(),
