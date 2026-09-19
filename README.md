@@ -171,6 +171,9 @@ GPU_IDS=0,6,7 BATCH_SIZE=4 scripts/run_lingbot_attention_gpus.sh
   --input-root outputs/extracted --processed-root outputs/processed
 
 # 官方 CDM 仓库和权重准备完成后运行。历史数据只处理 D405 腕部视角。
+uv sync --extra cdm
+uv pip install --python .venv/bin/python -e \
+  /ssd/hhw/camera-depth-models/manip-as-in-sim-suite/cdm
 .venv/bin/python scripts/process_cdm.py \
   --input-root outputs/extracted \
   --output-root outputs/processed \
