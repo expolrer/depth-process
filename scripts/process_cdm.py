@@ -89,11 +89,19 @@ def discover(input_root: Path, configured: set[str]) -> tuple[list[Task], list[s
 
 def load_state_dict(path: Path) -> dict[str, torch.Tensor]:
     payload = torch.load(path, map_location="cpu", weights_only=True)
-    if isinstance(payload, dict) and "state_dict" in payload:
+    if isinstance(payload, dict) and "model" in payload:
+        payload = payload["model"]
+    elif isinstance(payload, dict) and "state_dict" in payload:
         payload = payload["state_dict"]
     if not isinstance(payload, dict):
         raise TypeError(f"Unsupported checkpoint payload: {type(payload)!r}")
-    return {str(key).removeprefix("module."): value for key, value in payload.items()}
+    states = {}
+    for key, value in payload.items():
+        normalized = str(key).removeprefix("module.").removeprefix("pipeline.")
+        if normalized in {"_mean", "_std"}:
+            continue
+        states[normalized] = value
+    return states
 
 
 def save_depth(path: Path, depth_m: np.ndarray) -> None:
@@ -120,7 +128,10 @@ def infer_depth(model, rgb_bgr: np.ndarray, sensor_m: np.ndarray, input_size: in
     value = np.asarray(prediction, dtype=np.float32).squeeze()
     if value.shape != sensor_m.shape:
         value = cv2.resize(value, (sensor_m.shape[1], sensor_m.shape[0]), interpolation=cv2.INTER_LINEAR)
-    return value
+    metric = np.zeros_like(value, dtype=np.float32)
+    valid = np.isfinite(value) & (value > 0)
+    metric[valid] = 1.0 / value[valid]
+    return metric
 
 
 def main() -> None:
@@ -131,11 +142,18 @@ def main() -> None:
     parser.add_argument("--camera-config", type=Path, required=True)
     parser.add_argument("--encoder", default="vitl", choices=("vits", "vitb", "vitl", "vitg"))
     parser.add_argument("--input-size", type=int, default=518)
+    parser.add_argument("--cameras", nargs="+", help="Optional camera IDs to process from the config")
+    parser.add_argument("--summary-name", default="cdm_summary.json")
     parser.add_argument("--overwrite", action="store_true")
     parser.add_argument("--limit", type=int)
     args = parser.parse_args()
 
     specs = parse_camera_config(args.camera_config)
+    if args.cameras:
+        missing = sorted(set(args.cameras) - set(specs))
+        if missing:
+            raise ValueError(f"Requested cameras are not configured: {missing}")
+        specs = {camera_id: specs[camera_id] for camera_id in args.cameras}
     tasks, skipped_sequences = discover(args.input_root, set(specs))
     if args.limit is not None:
         tasks = tasks[: args.limit]
@@ -184,6 +202,11 @@ def main() -> None:
             started = time.perf_counter()
             with torch.inference_mode():
                 cdm_depth = infer_depth(model, rgb, sensor, args.input_size)
+            cdm_depth, cdm_valid = sanitize_sensor_depth(
+                cdm_depth,
+                min_depth_m=spec.min_depth_m,
+                max_depth_m=spec.max_depth_m,
+            )
             fused, fill_mask, _ = fuse_sensor_and_cdm(
                 sensor,
                 cdm_depth,
@@ -201,7 +224,7 @@ def main() -> None:
                     "camera_id": task.camera_id,
                     "model_id": spec.model_id,
                     "sensor_valid_fraction": float(np.mean(sensor_valid)),
-                    "cdm_valid_fraction": float(np.mean(cdm_depth > 0)),
+                    "cdm_valid_fraction": float(np.mean(cdm_valid)),
                     "fused_valid_fraction": float(np.mean(fused > 0)),
                     "filled_fraction": float(np.mean(fill_mask)),
                     "inference_and_fusion_ms": elapsed * 1000.0,
@@ -217,6 +240,7 @@ def main() -> None:
     report = {
         "method": "camera_depth_models",
         "camera_config": str(args.camera_config),
+        "cameras": sorted(specs),
         "processed_frames": processed,
         "resumed_frames": resumed,
         "skipped_unconfigured_sequences": skipped_sequences,
@@ -224,7 +248,7 @@ def main() -> None:
         "outputs": ["cdm_camera_specific", "cdm_sensor_fused", "cdm_fill_mask"],
         "frames": output_rows,
     }
-    report_path = args.output_root / "cdm_summary.json"
+    report_path = args.output_root / args.summary_name
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print(f"Report: {report_path}")

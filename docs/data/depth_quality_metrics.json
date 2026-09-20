@@ -1,11 +1,13 @@
 {
   "schema": "rgbd_depth_quality_homepage_v1",
-  "updated": "2026-08-20",
+  "updated": "2026-09-20",
   "sources": [
     "outputs/reports/norm_stats.json",
     "outputs/comparisons/comparison_summary.json",
     "outputs/act_no_prompt/final_depth_only/benchmark_report.json",
-    "docs/data/attention_metrics.json"
+    "docs/data/attention_metrics.json",
+    "outputs/processed/cdm_summary.json",
+    "outputs/cdm_quality_evidence/depth_quality_evidence.json"
   ],
   "scope": {
     "datasets": 5,
@@ -14,12 +16,20 @@
     "pixels": 5996106240,
     "act_held_out_frames": 932,
     "roi_events": 19,
-    "roi_records_per_method": 2813
+    "roi_records_per_method": 2813,
+    "cdm_d405_camera_streams": 10,
+    "cdm_d405_frames": 9824
   },
   "depth_distribution": {
     "unit": "m",
-    "valid_range_m": [0.08, 10.0],
-    "display_range_m": [0.2, 4.0],
+    "valid_range_m": [
+      0.08,
+      10.0
+    ],
+    "display_range_m": [
+      0.2,
+      4.0
+    ],
     "raw_valid_fraction": 0.6549496909847948,
     "mean_m": 1.3117069890896955,
     "std_m": 1.4433993797534725,
@@ -117,6 +127,34 @@
       "act_chunk_mae_rad": 0.1147736503374925,
       "act_first_step_mae_rad": 0.07944150878416842,
       "roi_attention_lift": 1.0948306488600776
+    },
+    {
+      "id": "cdm_camera_specific",
+      "label": "CDM D405 纯模型",
+      "kind": "相机专属 RGB-D 模型",
+      "comparison_scope": "仅双腕 D405",
+      "sensor_behavior": "predicted",
+      "valid_fraction": 0.8479225167287819,
+      "filled_fraction": 0.5546976113821017,
+      "sensor_mae_m": 0.016906865736624848,
+      "sensor_rmse_m": 0.03003031697589904,
+      "act_chunk_mae_rad": null,
+      "act_first_step_mae_rad": null,
+      "roi_attention_lift": null
+    },
+    {
+      "id": "cdm_sensor_fused",
+      "label": "CDM D405 传感器融合",
+      "kind": "传感器保真融合",
+      "comparison_scope": "仅双腕 D405",
+      "sensor_behavior": "preserved",
+      "valid_fraction": 0.8486439364457533,
+      "filled_fraction": 0.5546976113821017,
+      "sensor_mae_m": 0.0,
+      "sensor_rmse_m": 0.0,
+      "act_chunk_mae_rad": null,
+      "act_first_step_mae_rad": null,
+      "roi_attention_lift": null
     }
   ],
   "negative_controls": [
@@ -139,5 +177,171 @@
     "sensor_overlap_error": "仅在原始传感器有效且输出有效的重叠像素上，与原始深度比较。",
     "act_chunk_mae": "统一无 Prompt、Depth-only ACT 在留出帧上的 14-DoF 动作块 MAE，单位 rad，越低越好。",
     "roi_attention_lift": "执行腕目标 ROI 的注意力密度相对全图均匀基线的提升；仅用于解释关注分布，不能单独证明任务成功。"
+  },
+  "cdm_d405_evidence": {
+    "scope": "Five datasets, left/right D405 wrist cameras only",
+    "head_camera": "Gemini-335L shown as a dimmed raw reference; no D435 CDM is applied",
+    "no_model_quality": {
+      "cdm_camera_specific": {
+        "valid_fraction": 0.8649671612945492,
+        "flat_region_roughness_m": 0.0,
+        "rgb_depth_edge_f1": 0.40795409670075516
+      },
+      "cdm_sensor_fused": {
+        "valid_fraction": 0.8655648912473793,
+        "flat_region_roughness_m": 0.0,
+        "rgb_depth_edge_f1": 0.3695064418376134
+      }
+    },
+    "occlusion_recovery": {
+      "cdm_camera_specific": {
+        "frames_with_evidence": 60,
+        "evaluable_hole_pixels": 75385,
+        "recovered_pixels": 74908,
+        "recovery_coverage": 0.9936724812628507,
+        "mae_m": 0.019217641185685645,
+        "rmse_m": 0.0375524797553805,
+        "within_5cm_fraction": 0.9068590804720457,
+        "within_10cm_fraction": 0.9636620921663908
+      },
+      "cdm_sensor_fused": {
+        "frames_with_evidence": 60,
+        "evaluable_hole_pixels": 75385,
+        "recovered_pixels": 74908,
+        "recovery_coverage": 0.9936724812628507,
+        "mae_m": 0.019217641185685645,
+        "rmse_m": 0.0375524797553805,
+        "within_5cm_fraction": 0.9068590804720457,
+        "within_10cm_fraction": 0.9636620921663908
+      }
+    },
+    "multiview_geometry": {
+      "cdm_camera_specific": {
+        "synchronized_frames": 30,
+        "mean_plane_inlier_fraction": 0.5586696513858677,
+        "mean_plane_rmse_m": 0.00894321979198961,
+        "three_view_plane_rmse_std_m": 0.000747491216832447,
+        "distribution": {
+          "mean_plane_inlier_fraction": {
+            "mean": 0.5586696513858677,
+            "median": 0.5404362543044976,
+            "p10": 0.44851785714285713,
+            "p90": 0.6689574175824177,
+            "samples": 30
+          },
+          "mean_plane_rmse_m": {
+            "mean": 0.00894321979198961,
+            "median": 0.009434478101782936,
+            "p10": 0.006301284915259955,
+            "p90": 0.01040891609290803,
+            "samples": 30
+          },
+          "three_view_plane_rmse_std_m": {
+            "mean": 0.000747491216832447,
+            "median": 0.0003667354510446699,
+            "p10": 4.730428096415681e-05,
+            "p90": 0.0017110401333246187,
+            "samples": 30
+          }
+        }
+      },
+      "cdm_sensor_fused": {
+        "synchronized_frames": 30,
+        "mean_plane_inlier_fraction": 0.5466025804338475,
+        "mean_plane_rmse_m": 0.009024633709936792,
+        "three_view_plane_rmse_std_m": 0.0009804471153966924,
+        "distribution": {
+          "mean_plane_inlier_fraction": {
+            "mean": 0.5466025804338475,
+            "median": 0.5302678571428572,
+            "p10": 0.42662500000000003,
+            "p90": 0.6711964285714286,
+            "samples": 30
+          },
+          "mean_plane_rmse_m": {
+            "mean": 0.009024633709936792,
+            "median": 0.009863620519941288,
+            "p10": 0.006745132505794494,
+            "p90": 0.010391587246442784,
+            "samples": 30
+          },
+          "three_view_plane_rmse_std_m": {
+            "mean": 0.0009804471153966924,
+            "median": 0.0005963966741577423,
+            "p10": 0.00014606543589141386,
+            "p90": 0.002860655263671688,
+            "samples": 30
+          }
+        }
+      }
+    },
+    "task_roi_geometry": {
+      "cdm_camera_specific": {
+        "event_views": 19,
+        "roi_valid_fraction": 0.9978819532884181,
+        "roi_raw_hole_fill_fraction": 0.9967602642138061,
+        "roi_median_depth_m": 0.10855683623488789,
+        "roi_p90_p10_span_m": 0.03452684909485554,
+        "roi_surface_roughness_m": 0.0,
+        "roi_boundary_valid_fraction": 0.9994466468833915,
+        "roi_boundary_contrast_m": 0.014148990606521746,
+        "roi_sensor_preservation_median_ae_m": 0.005273964007596492,
+        "head": {
+          "event_views": 0,
+          "roi_valid_fraction": null,
+          "roi_raw_hole_fill_fraction": null,
+          "roi_median_depth_m": null,
+          "roi_p90_p10_span_m": null,
+          "roi_surface_roughness_m": null,
+          "roi_boundary_valid_fraction": null,
+          "roi_boundary_contrast_m": null,
+          "roi_sensor_preservation_median_ae_m": null
+        },
+        "wrist": {
+          "event_views": 19,
+          "roi_valid_fraction": 0.9978819532884181,
+          "roi_raw_hole_fill_fraction": 0.9967602642138061,
+          "roi_median_depth_m": 0.10855683623488789,
+          "roi_p90_p10_span_m": 0.03452684909485554,
+          "roi_surface_roughness_m": 0.0,
+          "roi_boundary_valid_fraction": 0.9994466468833915,
+          "roi_boundary_contrast_m": 0.014148990606521746,
+          "roi_sensor_preservation_median_ae_m": 0.005273964007596492
+        }
+      },
+      "cdm_sensor_fused": {
+        "event_views": 19,
+        "roi_valid_fraction": 0.99878263508015,
+        "roi_raw_hole_fill_fraction": 0.9967602642138061,
+        "roi_median_depth_m": 0.1105680406910547,
+        "roi_p90_p10_span_m": 0.03834404665659885,
+        "roi_surface_roughness_m": 0.0,
+        "roi_boundary_valid_fraction": 0.9995818854110333,
+        "roi_boundary_contrast_m": 0.010892225264441393,
+        "roi_sensor_preservation_median_ae_m": 0.0,
+        "head": {
+          "event_views": 0,
+          "roi_valid_fraction": null,
+          "roi_raw_hole_fill_fraction": null,
+          "roi_median_depth_m": null,
+          "roi_p90_p10_span_m": null,
+          "roi_surface_roughness_m": null,
+          "roi_boundary_valid_fraction": null,
+          "roi_boundary_contrast_m": null,
+          "roi_sensor_preservation_median_ae_m": null
+        },
+        "wrist": {
+          "event_views": 19,
+          "roi_valid_fraction": 0.99878263508015,
+          "roi_raw_hole_fill_fraction": 0.9967602642138061,
+          "roi_median_depth_m": 0.1105680406910547,
+          "roi_p90_p10_span_m": 0.03834404665659885,
+          "roi_surface_roughness_m": 0.0,
+          "roi_boundary_valid_fraction": 0.9995818854110333,
+          "roi_boundary_contrast_m": 0.010892225264441393,
+          "roi_sensor_preservation_median_ae_m": 0.0
+        }
+      }
+    }
   }
 }

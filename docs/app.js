@@ -29,7 +29,7 @@ function methodById(id) { return state.catalog.methods.find((method) => method.i
 function availableMethods() {
   return state.view === "depth"
     ? state.catalog.methods.filter((method) => method.family !== "Negative controls")
-    : state.catalog.methods;
+    : state.catalog.methods.filter((method) => currentDataset()?.attention?.[method.id]);
 }
 
 function formatTime(seconds) {
@@ -232,7 +232,9 @@ function renderPlayIcon() {
   lucide.createIcons({ attrs: { "stroke-width": 1.8 } });
 }
 
-function metricText(value) { return Number(value).toFixed(4); }
+function metricText(value) {
+  return Number.isFinite(Number(value)) && value !== null ? Number(value).toFixed(4) : "待评测";
+}
 
 function percentText(value, digits = 2) {
   return `${(Number(value) * 100).toFixed(digits)}%`;
@@ -247,9 +249,13 @@ function renderProjectMetrics() {
 
   const { scope, depth_distribution: distribution, methods, negative_controls: controls } = report;
   const raw = methods.find((method) => method.id === "raw_aligned");
-  const bestCoverage = methods.reduce((best, method) => method.valid_fraction > best.valid_fraction ? method : best);
-  const bestAct = methods.reduce((best, method) => method.act_chunk_mae_rad < best.act_chunk_mae_rad ? method : best);
-  const bestRoi = methods.reduce((best, method) => method.roi_attention_lift > best.roi_attention_lift ? method : best);
+  const globalMethods = methods.filter((method) => !method.comparison_scope);
+  const bestCoverage = globalMethods.filter((method) => Number.isFinite(method.valid_fraction))
+    .reduce((best, method) => method.valid_fraction > best.valid_fraction ? method : best);
+  const bestAct = globalMethods.filter((method) => Number.isFinite(method.act_chunk_mae_rad))
+    .reduce((best, method) => method.act_chunk_mae_rad < best.act_chunk_mae_rad ? method : best);
+  const bestRoi = globalMethods.filter((method) => Number.isFinite(method.roi_attention_lift))
+    .reduce((best, method) => method.roi_attention_lift > best.roi_attention_lift ? method : best);
   const zeroControl = controls.find((control) => control.id === "zero_depth");
   const shuffleControl = controls.find((control) => control.id === "spatially_shuffled_raw");
 
@@ -275,18 +281,24 @@ function renderProjectMetrics() {
     const isCoverageBest = method.id === bestCoverage.id;
     const isActBest = method.id === bestAct.id;
     const isRoiBest = method.id === bestRoi.id;
-    const actDelta = (method.act_chunk_mae_rad - raw.act_chunk_mae_rad) / raw.act_chunk_mae_rad * 100;
+    const hasAct = Number.isFinite(method.act_chunk_mae_rad);
+    const hasRoi = Number.isFinite(method.roi_attention_lift);
+    const actDelta = hasAct
+      ? (method.act_chunk_mae_rad - raw.act_chunk_mae_rad) / raw.act_chunk_mae_rad * 100
+      : null;
     let sensorError;
     if (method.sensor_behavior === "reference") {
       sensorError = `<strong>基准</strong><small>自比较不适用</small>`;
     } else if (method.sensor_behavior === "preserved") {
       sensorError = `<strong class="preserved-value">0（保留）</strong><small>有效像素原样复制</small>`;
-    } else {
+    } else if (Number.isFinite(method.sensor_mae_m) && Number.isFinite(method.sensor_rmse_m)) {
       sensorError = `<strong>${(method.sensor_mae_m * 100).toFixed(2)} cm</strong><small>RMSE ${(method.sensor_rmse_m * 100).toFixed(2)} cm</small>`;
+    } else {
+      sensorError = `<strong>腕部范围</strong><small>D405-only 报告</small>`;
     }
 
     let deltaText = `<span class="delta-baseline">基线</span>`;
-    if (method.id !== raw.id) {
+    if (method.id !== raw.id && hasAct) {
       const direction = actDelta < 0 ? "↓" : "↑";
       const deltaClass = actDelta < 0 ? "delta-better" : "delta-worse";
       deltaText = `<span class="${deltaClass}">${direction} ${Math.abs(actDelta).toFixed(2)}%</span>`;
@@ -294,13 +306,13 @@ function renderProjectMetrics() {
 
     return `
       <tr>
-        <td><strong>${method.label}</strong><small>${method.kind}</small></td>
+        <td><strong>${method.label}</strong><small>${method.kind}${method.comparison_scope ? ` · ${method.comparison_scope}` : ""}</small></td>
         <td><strong>${percentText(method.valid_fraction)}</strong>${isCoverageBest ? '<span class="best-tag">最高</span>' : ""}</td>
         <td><strong>${percentText(method.filled_fraction)}</strong></td>
         <td>${sensorError}</td>
-        <td><strong>${method.act_chunk_mae_rad.toFixed(4)} rad</strong><small>首步 ${method.act_first_step_mae_rad.toFixed(4)}</small>${isActBest ? '<span class="best-tag">最低</span>' : ""}</td>
+        <td>${hasAct ? `<strong>${method.act_chunk_mae_rad.toFixed(4)} rad</strong><small>首步 ${method.act_first_step_mae_rad.toFixed(4)}</small>${isActBest ? '<span class="best-tag">最低</span>' : ""}` : '<strong>待评测</strong><small>未运行 ACT</small>'}</td>
         <td>${deltaText}</td>
-        <td><strong>${method.roi_attention_lift.toFixed(3)}</strong>${isRoiBest ? '<span class="best-tag">最高</span>' : ""}</td>
+        <td>${hasRoi ? `<strong>${method.roi_attention_lift.toFixed(3)}</strong>${isRoiBest ? '<span class="best-tag">最高</span>' : ""}` : '<strong>待评测</strong><small>无 ACT 注意力</small>'}</td>
       </tr>
     `;
   }).join("");
@@ -536,7 +548,10 @@ async function initialize() {
     state.roiMetrics = window.ACT_ROI_METRICS || null;
     if (!state.roiMetrics) throw new Error("最新 ROI 注意力指标未加载");
     state.depthQualityMetrics = window.DEPTH_QUALITY_METRICS || null;
-    const videoCount = state.catalog.datasets.length * (1 + 7 + 9);
+    const firstDataset = state.catalog.datasets[0];
+    const videoCount = state.catalog.datasets.length * (
+      1 + Object.keys(firstDataset.depth || {}).length + Object.keys(firstDataset.attention || {}).length
+    );
     $("media-count").textContent = `${videoCount} 个视频`;
     renderProjectMetrics();
     setupControls();

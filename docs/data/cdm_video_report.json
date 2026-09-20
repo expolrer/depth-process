@@ -1,0 +1,68 @@
+{
+  "methods": [
+    "cdm_camera_specific",
+    "cdm_sensor_fused"
+  ],
+  "records": [
+    {
+      "sequence": "chengzhong_xianxia_main1",
+      "method": "cdm_camera_specific",
+      "frames": 389,
+      "status": "encoded"
+    },
+    {
+      "sequence": "chengzhong_xianxia_main1",
+      "method": "cdm_sensor_fused",
+      "frames": 389,
+      "status": "encoded"
+    },
+    {
+      "sequence": "dajian_xianxia_main1",
+      "method": "cdm_camera_specific",
+      "frames": 601,
+      "status": "encoded"
+    },
+    {
+      "sequence": "dajian_xianxia_main1",
+      "method": "cdm_sensor_fused",
+      "frames": 601,
+      "status": "encoded"
+    },
+    {
+      "sequence": "zhoumian_xianxia_main1",
+      "method": "cdm_camera_specific",
+      "frames": 788,
+      "status": "encoded"
+    },
+    {
+      "sequence": "zhoumian_xianxia_main1",
+      "method": "cdm_sensor_fused",
+      "frames": 788,
+      "status": "encoded"
+    },
+    {
+      "sequence": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003",
+      "method": "cdm_camera_specific",
+      "frames": 1382,
+      "status": "encoded"
+    },
+    {
+      "sequence": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003",
+      "method": "cdm_sensor_fused",
+      "frames": 1382,
+      "status": "encoded"
+    },
+    {
+      "sequence": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003",
+      "method": "cdm_camera_specific",
+      "frames": 1747,
+      "status": "encoded"
+    },
+    {
+      "sequence": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003",
+      "method": "cdm_sensor_fused",
+      "frames": 1747,
+      "status": "encoded"
+    }
+  ]
+}

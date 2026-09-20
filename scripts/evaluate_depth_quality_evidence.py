@@ -25,6 +25,7 @@ import os
 import random
 import time
 from collections import defaultdict
+from itertools import combinations
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -47,6 +48,8 @@ METHODS = (
     "depth_anything_v2_fused",
     "lingbot_v05_sensor_fused",
     "ai_consensus_fused",
+    "cdm_camera_specific",
+    "cdm_sensor_fused",
 )
 METHOD_LABELS = {
     "raw_aligned": "Raw aligned depth",
@@ -56,9 +59,12 @@ METHOD_LABELS = {
     "depth_anything_v2_fused": "Depth Anything V2 fused",
     "lingbot_v05_sensor_fused": "LingBot v0.5 + sensor fusion",
     "ai_consensus_fused": "AI consensus fused",
+    "cdm_camera_specific": "CDM D405 camera-specific",
+    "cdm_sensor_fused": "CDM D405 + sensor fusion",
 }
 MIN_DEPTH_M = 0.08
 MAX_DEPTH_M = 10.0
+RAW_DEPTH_DIR = "depth_raw_mm"
 
 
 class MetricLists:
@@ -173,7 +179,7 @@ def load_rgb(path: Path, scale: float = 1.0) -> np.ndarray:
 def depth_path(root: Path, sequence: str, camera: str, method: str, frame: int) -> Path:
     name = f"{frame:06d}.png"
     if method == "raw_aligned":
-        return root / "outputs" / "extracted" / sequence / camera / "depth_raw_mm" / name
+        return root / "outputs" / "extracted" / sequence / camera / RAW_DEPTH_DIR / name
     return root / "outputs" / "processed" / sequence / camera / method / name
 
 
@@ -222,13 +228,18 @@ def spatial_quality(rgb: np.ndarray, depth: np.ndarray, raw: np.ndarray) -> dict
         else None
     )
     overlap = valid & raw_valid
-    sensor_mae = robust_median(np.abs(depth[overlap] - raw[overlap])) if np.any(overlap) else None
+    sensor_errors = np.abs(depth[overlap] - raw[overlap]) if np.any(overlap) else np.empty(0)
+    sensor_median = float(np.median(sensor_errors)) if sensor_errors.size else None
+    sensor_mae = float(np.mean(sensor_errors)) if sensor_errors.size else None
+    sensor_rmse = float(np.sqrt(np.mean(np.square(sensor_errors)))) if sensor_errors.size else None
     return {
         "valid_fraction": float(valid.mean()),
         "flat_region_roughness_m": roughness,
         "isolated_spike_rate": spike_rate,
         "rgb_depth_edge_f1": edge_f1,
-        "sensor_preservation_median_ae_m": sensor_mae,
+        "sensor_preservation_median_ae_m": sensor_median,
+        "sensor_overlap_mae_m": sensor_mae,
+        "sensor_preservation_rmse_m": sensor_rmse,
     }
 
 
@@ -524,6 +535,7 @@ def write_representative(
     root: Path,
     output_dir: Path,
     row: dict[str, Any],
+    methods: tuple[str, ...],
 ) -> str:
     sequence = row["sequence"]
     camera = row["camera"]
@@ -537,7 +549,7 @@ def write_representative(
     contours, _ = cv2.findContours(mask.astype(np.uint8), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     cv2.drawContours(overlay, contours, -1, (0, 220, 255), 2)
     panels = [label_panel(overlay, "RGB + approved target ROI")]
-    for method in ("raw_aligned", "lingbot_v05", "lingbot_v05_sensor_fused", "ai_consensus_fused"):
+    for method in methods:
         depth = load_depth(depth_path(root, sequence, camera, method, frame), scale=0.5)
         panels.append(label_panel(colorize_depth(depth), METHOD_LABELS[method]))
     canvas = cv2.hconcat(panels)
@@ -554,6 +566,7 @@ def rank_methods(records: dict[str, dict[str, Any]], metric: str, higher_is_bett
 
 
 def main() -> None:
+    global MIN_DEPTH_M, MAX_DEPTH_M, RAW_DEPTH_DIR
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", type=Path, default=Path("/ssd/hhw/depth-processing"))
     parser.add_argument("--output-dir", type=Path)
@@ -563,27 +576,46 @@ def main() -> None:
     parser.add_argument("--roi-stride", type=int, default=20)
     parser.add_argument("--scale", type=float, default=0.5)
     parser.add_argument("--seed", type=int, default=20260820)
+    parser.add_argument("--min-depth-m", type=float, default=MIN_DEPTH_M)
+    parser.add_argument("--max-depth-m", type=float, default=MAX_DEPTH_M)
+    parser.add_argument(
+        "--raw-depth-dir",
+        choices=("depth_raw_mm", "depth_aligned_rgb_mm"),
+        default=RAW_DEPTH_DIR,
+    )
+    parser.add_argument("--methods", nargs="+", choices=METHODS, default=list(METHODS[:7]))
+    parser.add_argument("--cameras", nargs="+", choices=CAMERAS, default=list(CAMERAS))
     args = parser.parse_args()
+    if args.min_depth_m <= 0 or args.max_depth_m <= args.min_depth_m:
+        parser.error("Expected 0 < --min-depth-m < --max-depth-m")
+    MIN_DEPTH_M = args.min_depth_m
+    MAX_DEPTH_M = args.max_depth_m
+    RAW_DEPTH_DIR = args.raw_depth_dir
     args.root = args.root.resolve()
     args.output_dir = (args.output_dir or args.root / "outputs" / "depth_quality_evidence_v1").resolve()
     args.output_dir.mkdir(parents=True, exist_ok=True)
     started = time.time()
     rng = np.random.default_rng(args.seed)
     random.seed(args.seed)
+    methods = tuple(dict.fromkeys(args.methods))
+    cameras = tuple(dict.fromkeys(args.cameras))
+    if len(cameras) < 2:
+        raise ValueError("At least two cameras are required for multiview geometry")
+    camera_pairs = tuple(combinations(cameras, 2))
 
     extraction_report = json.loads(
         (args.root / "outputs" / "extracted" / "extraction_report.json").read_text(encoding="utf-8")
     )
     metadata = {(sequence_from_report(row), row["camera"]): row for row in extraction_report}
     sequences = sorted({sequence for sequence, _ in metadata})
-    spatial = {method: MetricLists() for method in METHODS}
-    temporal = {method: MetricLists() for method in METHODS}
-    recovery = {method: PixelAccumulator() for method in METHODS}
+    spatial = {method: MetricLists() for method in methods}
+    temporal = {method: MetricLists() for method in methods}
+    recovery = {method: PixelAccumulator() for method in methods}
     sampled_spatial_frames = 0
     sampled_temporal_frames = 0
 
     for sequence in sequences:
-        for camera in CAMERAS:
+        for camera in cameras:
             info = metadata[(sequence, camera)]
             frame_count = int(info["paired_frames"])
             spatial_frames = evenly_spaced_frames(frame_count, args.spatial_samples_per_view)
@@ -591,7 +623,7 @@ def main() -> None:
             for frame in spatial_frames:
                 rgb = load_rgb(rgb_path(args.root, sequence, camera, frame), args.scale)
                 raw = load_depth(depth_path(args.root, sequence, camera, "raw_aligned", frame), args.scale)
-                for method in METHODS:
+                for method in methods:
                     depth = raw if method == "raw_aligned" else load_depth(
                         depth_path(args.root, sequence, camera, method, frame), args.scale
                     )
@@ -620,7 +652,7 @@ def main() -> None:
                     raw_current,
                     raw_next,
                 )
-                for method in METHODS:
+                for method in methods:
                     previous = raw_previous if method == "raw_aligned" else load_depth(
                         depth_path(args.root, sequence, camera, method, frame - 1), args.scale
                     )
@@ -650,44 +682,51 @@ def main() -> None:
     planarity_rows: list[dict[str, Any]] = []
     geometry_diagnostics = defaultdict(int)
     for sequence in sequences:
-        head_count = int(metadata[(sequence, "cam_h")]["paired_frames"])
-        for head_frame in evenly_spaced_frames(head_count, args.geometry_samples_per_sequence):
-            head_timestamp = int(timestamps[(sequence, "cam_h")][head_frame])
-            synchronized = {"cam_h": head_frame}
-            sync_delta_ms = {"cam_h": 0.0}
-            for camera in ("cam_l", "cam_r"):
+        reference_camera = cameras[0]
+        reference_count = int(metadata[(sequence, reference_camera)]["paired_frames"])
+        for reference_frame in evenly_spaced_frames(
+            reference_count, args.geometry_samples_per_sequence
+        ):
+            reference_timestamp = int(timestamps[(sequence, reference_camera)][reference_frame])
+            synchronized = {reference_camera: reference_frame}
+            sync_delta_ms = {reference_camera: 0.0}
+            for camera in cameras[1:]:
                 values = timestamps[(sequence, camera)]
-                index = int(np.searchsorted(values, head_timestamp))
+                index = int(np.searchsorted(values, reference_timestamp))
                 candidates = [value for value in (index - 1, index) if 0 <= value < values.size]
-                selected = min(candidates, key=lambda value: abs(int(values[value]) - head_timestamp))
+                selected = min(
+                    candidates,
+                    key=lambda value: abs(int(values[value]) - reference_timestamp),
+                )
                 synchronized[camera] = selected
-                sync_delta_ms[camera] = abs(int(values[selected]) - head_timestamp) / 1e6
+                sync_delta_ms[camera] = abs(int(values[selected]) - reference_timestamp) / 1e6
             if max(sync_delta_ms.values()) > 50.0:
                 geometry_diagnostics["sync_rejected"] += 1
                 continue
 
             rgb_by_camera = {
                 camera: load_rgb(rgb_path(args.root, sequence, camera, synchronized[camera]), args.scale)
-                for camera in CAMERAS
+                for camera in cameras
             }
             depths_by_camera = {
                 method: {
                     camera: load_depth(
                         depth_path(args.root, sequence, camera, method, synchronized[camera]), args.scale
                     )
-                    for camera in CAMERAS
+                    for camera in cameras
                 }
-                for method in METHODS
+                for method in methods
             }
             intrinsics = {
-                camera: intrinsics_matrix(metadata[(sequence, camera)], args.scale) for camera in CAMERAS
+                camera: intrinsics_matrix(metadata[(sequence, camera)], args.scale)
+                for camera in cameras
             }
-            for method in METHODS:
+            for method in methods:
                 per_camera = {
                     camera: dominant_plane_metrics(
                         depths_by_camera[method][camera], intrinsics[camera], rng
                     )
-                    for camera in CAMERAS
+                    for camera in cameras
                 }
                 accepted = [metrics for metrics in per_camera.values() if metrics is not None]
                 if len(accepted) < 2:
@@ -699,7 +738,7 @@ def main() -> None:
                 planarity_rows.append(
                     {
                         "sequence": sequence,
-                        "head_frame": head_frame,
+                        "reference_frame": reference_frame,
                         "method": method,
                         "camera_count": len(accepted),
                         "mean_plane_rmse_m": float(rmse_values.mean()),
@@ -711,7 +750,7 @@ def main() -> None:
                     }
                 )
                 geometry_diagnostics["planarity_accepted"] += 1
-            for camera_a, camera_b in CAMERA_PAIRS:
+            for camera_a, camera_b in camera_pairs:
                 points_a, points_b, feature_diag = feature_correspondences(
                     rgb_by_camera[camera_a], rgb_by_camera[camera_b]
                 )
@@ -737,7 +776,7 @@ def main() -> None:
                     geometry_diagnostics["rigid_fit_rejected"] += 1
                     continue
                 geometry_diagnostics["accepted_pairs"] += 1
-                for method in METHODS:
+                for method in methods:
                     method_points_a, method_valid_a = backproject(
                         points_a, depths_by_camera[method][camera_a], intrinsics[camera_a]
                     )
@@ -758,7 +797,7 @@ def main() -> None:
                     geometry_rows.append(
                         {
                             "sequence": sequence,
-                            "head_frame": head_frame,
+                            "reference_frame": reference_frame,
                             "camera_pair": f"{camera_a}-{camera_b}",
                             "method": method,
                             "sync_delta_ms": max(sync_delta_ms[camera_a], sync_delta_ms[camera_b]),
@@ -771,7 +810,7 @@ def main() -> None:
                     )
 
     geometry_by_method: dict[str, dict[str, Any]] = {}
-    for method in METHODS:
+    for method in methods:
         members = [row for row in geometry_rows if row["method"] == method]
         metrics = MetricLists()
         for row in members:
@@ -787,7 +826,7 @@ def main() -> None:
         }
 
     planarity_by_method: dict[str, dict[str, Any]] = {}
-    for method in METHODS:
+    for method in methods:
         members = [row for row in planarity_rows if row["method"] == method]
         metrics = MetricLists()
         for row in members:
@@ -807,6 +846,8 @@ def main() -> None:
     selected_tracks: list[dict[str, Any]] = []
     by_event_role: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
     for row in tracks:
+        if row["camera"] not in cameras:
+            continue
         by_event_role[(row["event_id"], row["role"])].append(row)
     for members in by_event_role.values():
         members.sort(key=lambda row: int(row["frame_index"]))
@@ -831,7 +872,7 @@ def main() -> None:
         if mask is None or not np.any(mask):
             continue
         raw = load_depth(depth_path(args.root, sequence, camera, "raw_aligned", frame))
-        for method in METHODS:
+        for method in methods:
             depth = raw if method == "raw_aligned" else load_depth(
                 depth_path(args.root, sequence, camera, method, frame)
             )
@@ -862,9 +903,9 @@ def main() -> None:
     )
     roi_by_method = {
         method: event_balanced([row for row in roi_rows if row["method"] == method], roi_metric_names)
-        for method in METHODS
+        for method in methods
     }
-    for method in METHODS:
+    for method in methods:
         for role in ("head", "wrist"):
             roi_by_method[method][role] = event_balanced(
                 [row for row in roi_rows if row["method"] == method and row["role"] == role],
@@ -884,7 +925,7 @@ def main() -> None:
                 "event_id": row["event_id"],
                 "camera": row["camera"],
                 "frame_index": int(row["frame_index"]),
-                "image": write_representative(args.root, args.output_dir, row),
+                "image": write_representative(args.root, args.output_dir, row, methods),
             }
         )
         seen_sequences.add(row["sequence"])
@@ -892,27 +933,30 @@ def main() -> None:
     spatial_summary = {
         method: {name: values["mean"] for name, values in spatial[method].summary().items()}
         | {"distribution": spatial[method].summary()}
-        for method in METHODS
+        for method in methods
     }
     temporal_summary = {
         method: {name: values["mean"] for name, values in temporal[method].summary().items()}
         | {"distribution": temporal[method].summary()}
-        for method in METHODS
+        for method in methods
     }
-    recovery_summary = {method: recovery[method].summary() for method in METHODS}
+    recovery_summary = {method: recovery[method].summary() for method in methods}
 
     report = {
         "schema": "depth_quality_evidence_v1",
         "generated_at_unix": time.time(),
-        "methods": [{"id": method, "label": METHOD_LABELS[method]} for method in METHODS],
+        "methods": [{"id": method, "label": METHOD_LABELS[method]} for method in methods],
         "sampling": {
             "sequences": len(sequences),
-            "camera_views": len(metadata),
+            "camera_views": len(sequences) * len(cameras),
+            "cameras": list(cameras),
             "spatial_frames": sampled_spatial_frames,
             "temporal_triplets": sampled_temporal_frames,
             "roi_frames": len(selected_tracks),
             "scale": args.scale,
             "seed": args.seed,
+            "valid_depth_range_m": [MIN_DEPTH_M, MAX_DEPTH_M],
+            "raw_depth_dir": RAW_DEPTH_DIR,
         },
         "resource_guard": {
             "gpu_used": False,
@@ -1009,7 +1053,7 @@ def main() -> None:
         ]
         writer = csv.DictWriter(handle, fieldnames=fieldnames)
         writer.writeheader()
-        for method in METHODS:
+        for method in methods:
             writer.writerow(
                 {
                     "method": method,

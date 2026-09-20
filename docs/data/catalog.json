@@ -76,6 +76,22 @@
       "globalFirstStepMaeRad": 0.07944150878416842
     },
     {
+      "id": "cdm_camera_specific",
+      "label": "CDM D405 camera-specific",
+      "family": "Processing methods",
+      "globalMaeRad": null,
+      "globalFirstStepMaeRad": null,
+      "evaluationScope": "D405 wrists only; ACT evaluation not run"
+    },
+    {
+      "id": "cdm_sensor_fused",
+      "label": "CDM D405 sensor fused",
+      "family": "Processing methods",
+      "globalMaeRad": null,
+      "globalFirstStepMaeRad": null,
+      "evaluationScope": "D405 wrists only; ACT evaluation not run"
+    },
+    {
       "id": "zero_depth",
       "label": "Zero depth",
       "family": "Negative controls",
@@ -105,7 +121,9 @@
         "lingbot_v05": "media/leju_claw/depth/lingbot_v05.mp4",
         "depth_anything_v2_fused": "media/leju_claw/depth/depth_anything_v2_fused.mp4",
         "lingbot_v05_sensor_fused": "media/leju_claw/depth/lingbot_v05_sensor_fused.mp4",
-        "ai_consensus_fused": "media/leju_claw/depth/ai_consensus_fused.mp4"
+        "ai_consensus_fused": "media/leju_claw/depth/ai_consensus_fused.mp4",
+        "cdm_camera_specific": "media/leju_claw/depth/cdm_camera_specific.mp4",
+        "cdm_sensor_fused": "media/leju_claw/depth/cdm_sensor_fused.mp4"
       },
       "attention": {
         "raw_aligned": "media/leju_claw/attention/raw_aligned.mp4",
@@ -199,6 +217,24 @@
           "first_step_rmse_rad": 0.16827786497324437,
           "depth_attention_mass": 0.9899441965421041,
           "depth_attention_entropy": 0.9931179537375768
+        },
+        "cdm_camera_specific": {
+          "frames": 0,
+          "chunk_mae_rad": null,
+          "chunk_rmse_rad": null,
+          "first_step_mae_rad": null,
+          "first_step_rmse_rad": null,
+          "depth_attention_mass": null,
+          "depth_attention_entropy": null
+        },
+        "cdm_sensor_fused": {
+          "frames": 0,
+          "chunk_mae_rad": null,
+          "chunk_rmse_rad": null,
+          "first_step_mae_rad": null,
+          "first_step_rmse_rad": null,
+          "depth_attention_mass": null,
+          "depth_attention_entropy": null
         }
       }
     },
@@ -216,7 +252,9 @@
         "lingbot_v05": "media/dex_hand/depth/lingbot_v05.mp4",
         "depth_anything_v2_fused": "media/dex_hand/depth/depth_anything_v2_fused.mp4",
         "lingbot_v05_sensor_fused": "media/dex_hand/depth/lingbot_v05_sensor_fused.mp4",
-        "ai_consensus_fused": "media/dex_hand/depth/ai_consensus_fused.mp4"
+        "ai_consensus_fused": "media/dex_hand/depth/ai_consensus_fused.mp4",
+        "cdm_camera_specific": "media/dex_hand/depth/cdm_camera_specific.mp4",
+        "cdm_sensor_fused": "media/dex_hand/depth/cdm_sensor_fused.mp4"
       },
       "attention": {
         "raw_aligned": "media/dex_hand/attention/raw_aligned.mp4",
@@ -310,6 +348,24 @@
           "first_step_rmse_rad": 0.24674193385713222,
           "depth_attention_mass": 0.9890416981754723,
           "depth_attention_entropy": 0.9930787656333421
+        },
+        "cdm_camera_specific": {
+          "frames": 0,
+          "chunk_mae_rad": null,
+          "chunk_rmse_rad": null,
+          "first_step_mae_rad": null,
+          "first_step_rmse_rad": null,
+          "depth_attention_mass": null,
+          "depth_attention_entropy": null
+        },
+        "cdm_sensor_fused": {
+          "frames": 0,
+          "chunk_mae_rad": null,
+          "chunk_rmse_rad": null,
+          "first_step_mae_rad": null,
+          "first_step_rmse_rad": null,
+          "depth_attention_mass": null,
+          "depth_attention_entropy": null
         }
       }
     },
@@ -327,7 +383,9 @@
         "lingbot_v05": "media/chengzhong/depth/lingbot_v05.mp4",
         "depth_anything_v2_fused": "media/chengzhong/depth/depth_anything_v2_fused.mp4",
         "lingbot_v05_sensor_fused": "media/chengzhong/depth/lingbot_v05_sensor_fused.mp4",
-        "ai_consensus_fused": "media/chengzhong/depth/ai_consensus_fused.mp4"
+        "ai_consensus_fused": "media/chengzhong/depth/ai_consensus_fused.mp4",
+        "cdm_camera_specific": "media/chengzhong/depth/cdm_camera_specific.mp4",
+        "cdm_sensor_fused": "media/chengzhong/depth/cdm_sensor_fused.mp4"
       },
       "attention": {
         "raw_aligned": "media/chengzhong/attention/raw_aligned.mp4",
@@ -421,6 +479,24 @@
           "first_step_rmse_rad": 0.28482051703797917,
           "depth_attention_mass": 0.9890824162960052,
           "depth_attention_entropy": 0.9912747124830882
+        },
+        "cdm_camera_specific": {
+          "frames": 0,
+          "chunk_mae_rad": null,
+          "chunk_rmse_rad": null,
+          "first_step_mae_rad": null,
+          "first_step_rmse_rad": null,
+          "depth_attention_mass": null,
+          "depth_attention_entropy": null
+        },
+        "cdm_sensor_fused": {
+          "frames": 0,
+          "chunk_mae_rad": null,
+          "chunk_rmse_rad": null,
+          "first_step_mae_rad": null,
+          "first_step_rmse_rad": null,
+          "depth_attention_mass": null,
+          "depth_attention_entropy": null
         }
       }
     },
@@ -438,7 +514,9 @@
         "lingbot_v05": "media/dajian/depth/lingbot_v05.mp4",
         "depth_anything_v2_fused": "media/dajian/depth/depth_anything_v2_fused.mp4",
         "lingbot_v05_sensor_fused": "media/dajian/depth/lingbot_v05_sensor_fused.mp4",
-        "ai_consensus_fused": "media/dajian/depth/ai_consensus_fused.mp4"
+        "ai_consensus_fused": "media/dajian/depth/ai_consensus_fused.mp4",
+        "cdm_camera_specific": "media/dajian/depth/cdm_camera_specific.mp4",
+        "cdm_sensor_fused": "media/dajian/depth/cdm_sensor_fused.mp4"
       },
       "attention": {
         "raw_aligned": "media/dajian/attention/raw_aligned.mp4",
@@ -532,6 +610,24 @@
           "first_step_rmse_rad": 0.8668318130884002,
           "depth_attention_mass": 0.992080215215683,
           "depth_attention_entropy": 0.993974066178004
+        },
+        "cdm_camera_specific": {
+          "frames": 0,
+          "chunk_mae_rad": null,
+          "chunk_rmse_rad": null,
+          "first_step_mae_rad": null,
+          "first_step_rmse_rad": null,
+          "depth_attention_mass": null,
+          "depth_attention_entropy": null
+        },
+        "cdm_sensor_fused": {
+          "frames": 0,
+          "chunk_mae_rad": null,
+          "chunk_rmse_rad": null,
+          "first_step_mae_rad": null,
+          "first_step_rmse_rad": null,
+          "depth_attention_mass": null,
+          "depth_attention_entropy": null
         }
       }
     },
@@ -549,7 +645,9 @@
         "lingbot_v05": "media/zhoumian/depth/lingbot_v05.mp4",
         "depth_anything_v2_fused": "media/zhoumian/depth/depth_anything_v2_fused.mp4",
         "lingbot_v05_sensor_fused": "media/zhoumian/depth/lingbot_v05_sensor_fused.mp4",
-        "ai_consensus_fused": "media/zhoumian/depth/ai_consensus_fused.mp4"
+        "ai_consensus_fused": "media/zhoumian/depth/ai_consensus_fused.mp4",
+        "cdm_camera_specific": "media/zhoumian/depth/cdm_camera_specific.mp4",
+        "cdm_sensor_fused": "media/zhoumian/depth/cdm_sensor_fused.mp4"
       },
       "attention": {
         "raw_aligned": "media/zhoumian/attention/raw_aligned.mp4",
@@ -643,6 +741,24 @@
           "first_step_rmse_rad": 0.6292856629308065,
           "depth_attention_mass": 0.9943797985712687,
           "depth_attention_entropy": 0.9906217475732167
+        },
+        "cdm_camera_specific": {
+          "frames": 0,
+          "chunk_mae_rad": null,
+          "chunk_rmse_rad": null,
+          "first_step_mae_rad": null,
+          "first_step_rmse_rad": null,
+          "depth_attention_mass": null,
+          "depth_attention_entropy": null
+        },
+        "cdm_sensor_fused": {
+          "frames": 0,
+          "chunk_mae_rad": null,
+          "chunk_rmse_rad": null,
+          "first_step_mae_rad": null,
+          "first_step_rmse_rad": null,
+          "depth_attention_mass": null,
+          "depth_attention_entropy": null
         }
       }
     }

@@ -1,0 +1,680 @@
+{
+  "schema": "depth_quality_evidence_v1",
+  "generated_at_unix": 1789864506.9906518,
+  "methods": [
+    {
+      "id": "raw_aligned",
+      "label": "Raw aligned depth"
+    },
+    {
+      "id": "cdm_camera_specific",
+      "label": "CDM D405 camera-specific"
+    },
+    {
+      "id": "cdm_sensor_fused",
+      "label": "CDM D405 + sensor fusion"
+    }
+  ],
+  "sampling": {
+    "sequences": 5,
+    "camera_views": 10,
+    "cameras": [
+      "cam_l",
+      "cam_r"
+    ],
+    "spatial_frames": 120,
+    "temporal_triplets": 60,
+    "roi_frames": 205,
+    "scale": 0.5,
+    "seed": 20260820,
+    "valid_depth_range_m": [
+      0.07,
+      0.5
+    ],
+    "raw_depth_dir": "depth_aligned_rgb_mm"
+  },
+  "resource_guard": {
+    "gpu_used": false,
+    "processes": 1,
+    "recommended_launcher": "CUDA_VISIBLE_DEVICES='' OMP_NUM_THREADS=1 ionice -c3 nice -n 19"
+  },
+  "no_model_quality": {
+    "description": "Coverage, flat-region local residual, spike rate, RGB/depth edge alignment, sensor preservation, and RGB-flow-compensated temporal residual.",
+    "spatial_by_method": {
+      "raw_aligned": {
+        "flat_region_roughness_m": 3.333290417989095e-05,
+        "isolated_spike_rate": 0.00016332323552748003,
+        "rgb_depth_edge_f1": 0.15174405971638116,
+        "sensor_overlap_mae_m": 0.0,
+        "sensor_preservation_median_ae_m": 0.0,
+        "sensor_preservation_rmse_m": 0.0,
+        "valid_fraction": 0.2824403825995807,
+        "distribution": {
+          "flat_region_roughness_m": {
+            "mean": 3.333290417989095e-05,
+            "median": 0.0,
+            "p10": 0.0,
+            "p90": 0.0,
+            "samples": 120
+          },
+          "isolated_spike_rate": {
+            "mean": 0.00016332323552748003,
+            "median": 5.5686242498899266e-05,
+            "p10": 0.0,
+            "p90": 0.00032135608261074595,
+            "samples": 120
+          },
+          "rgb_depth_edge_f1": {
+            "mean": 0.15174405971638116,
+            "median": 0.14744411291755521,
+            "p10": 0.060094776806724384,
+            "p90": 0.2847039976691832,
+            "samples": 120
+          },
+          "sensor_overlap_mae_m": {
+            "mean": 0.0,
+            "median": 0.0,
+            "p10": 0.0,
+            "p90": 0.0,
+            "samples": 120
+          },
+          "sensor_preservation_median_ae_m": {
+            "mean": 0.0,
+            "median": 0.0,
+            "p10": 0.0,
+            "p90": 0.0,
+            "samples": 120
+          },
+          "sensor_preservation_rmse_m": {
+            "mean": 0.0,
+            "median": 0.0,
+            "p10": 0.0,
+            "p90": 0.0,
+            "samples": 120
+          },
+          "valid_fraction": {
+            "mean": 0.2824403825995807,
+            "median": 0.2708087657232704,
+            "p10": 0.07310534591194968,
+            "p90": 0.46573997641509435,
+            "samples": 120
+          }
+        }
+      },
+      "cdm_camera_specific": {
+        "flat_region_roughness_m": 0.0,
+        "isolated_spike_rate": 0.00018082044334324286,
+        "rgb_depth_edge_f1": 0.40795409670075516,
+        "sensor_overlap_mae_m": 0.016906865736624848,
+        "sensor_preservation_median_ae_m": 0.010054167080670594,
+        "sensor_preservation_rmse_m": 0.03003031697589904,
+        "valid_fraction": 0.8649671612945492,
+        "distribution": {
+          "flat_region_roughness_m": {
+            "mean": 0.0,
+            "median": 0.0,
+            "p10": 0.0,
+            "p90": 0.0,
+            "samples": 120
+          },
+          "isolated_spike_rate": {
+            "mean": 0.00018082044334324286,
+            "median": 7.211756808886962e-05,
+            "p10": 0.0,
+            "p90": 0.0004919206643433879,
+            "samples": 120
+          },
+          "rgb_depth_edge_f1": {
+            "mean": 0.40795409670075516,
+            "median": 0.4072512486625331,
+            "p10": 0.2860139273201837,
+            "p90": 0.527786034165876,
+            "samples": 120
+          },
+          "sensor_overlap_mae_m": {
+            "mean": 0.016906865736624848,
+            "median": 0.012289321981370449,
+            "p10": 0.006793199293315411,
+            "p90": 0.04147499501705173,
+            "samples": 120
+          },
+          "sensor_preservation_median_ae_m": {
+            "mean": 0.010054167080670594,
+            "median": 0.00599999725818634,
+            "p10": 0.0029999978840351106,
+            "p90": 0.021199996024370296,
+            "samples": 120
+          },
+          "sensor_preservation_rmse_m": {
+            "mean": 0.03003031697589904,
+            "median": 0.024652994237840176,
+            "p10": 0.01634993404150009,
+            "p90": 0.05713946633040907,
+            "samples": 120
+          },
+          "valid_fraction": {
+            "mean": 0.8649671612945492,
+            "median": 0.9578174135220126,
+            "p10": 0.5562244496855346,
+            "p90": 0.9999734669811321,
+            "samples": 120
+          }
+        }
+      },
+      "cdm_sensor_fused": {
+        "flat_region_roughness_m": 0.0,
+        "isolated_spike_rate": 0.0017656340625312836,
+        "rgb_depth_edge_f1": 0.3695064418376134,
+        "sensor_overlap_mae_m": 0.0,
+        "sensor_preservation_median_ae_m": 0.0,
+        "sensor_preservation_rmse_m": 0.0,
+        "valid_fraction": 0.8655648912473793,
+        "distribution": {
+          "flat_region_roughness_m": {
+            "mean": 0.0,
+            "median": 0.0,
+            "p10": 0.0,
+            "p90": 0.0,
+            "samples": 120
+          },
+          "isolated_spike_rate": {
+            "mean": 0.0017656340625312836,
+            "median": 0.0012641337763903652,
+            "p10": 0.00042121818569406435,
+            "p90": 0.003957719097372967,
+            "samples": 120
+          },
+          "rgb_depth_edge_f1": {
+            "mean": 0.3695064418376134,
+            "median": 0.37509779631513035,
+            "p10": 0.2794181240634504,
+            "p90": 0.4517304513384654,
+            "samples": 120
+          },
+          "sensor_overlap_mae_m": {
+            "mean": 0.0,
+            "median": 0.0,
+            "p10": 0.0,
+            "p90": 0.0,
+            "samples": 120
+          },
+          "sensor_preservation_median_ae_m": {
+            "mean": 0.0,
+            "median": 0.0,
+            "p10": 0.0,
+            "p90": 0.0,
+            "samples": 120
+          },
+          "sensor_preservation_rmse_m": {
+            "mean": 0.0,
+            "median": 0.0,
+            "p10": 0.0,
+            "p90": 0.0,
+            "samples": 120
+          },
+          "valid_fraction": {
+            "mean": 0.8655648912473793,
+            "median": 0.9584168632075472,
+            "p10": 0.557159001572327,
+            "p90": 0.9999734669811321,
+            "samples": 120
+          }
+        }
+      }
+    },
+    "temporal_by_method": {
+      "raw_aligned": {
+        "flow_compensated_median_residual_m": 0.0018166688581307728,
+        "flow_compensated_p90_residual_m": 0.0070000028858582175,
+        "temporal_evaluable_fraction": 0.24653400157232705,
+        "distribution": {
+          "flow_compensated_median_residual_m": {
+            "mean": 0.0018166688581307728,
+            "median": 0.0010000094771385193,
+            "p10": 0.0009999938309192657,
+            "p90": 0.0031000062823295605,
+            "samples": 60
+          },
+          "flow_compensated_p90_residual_m": {
+            "mean": 0.0070000028858582175,
+            "median": 0.004999995231628418,
+            "p10": 0.0030000045895576476,
+            "p90": 0.014100024104118349,
+            "samples": 60
+          },
+          "temporal_evaluable_fraction": {
+            "mean": 0.24653400157232705,
+            "median": 0.24635908018867925,
+            "p10": 0.058141705974842764,
+            "p90": 0.39274174528301886,
+            "samples": 60
+          }
+        }
+      },
+      "cdm_camera_specific": {
+        "flow_compensated_median_residual_m": 0.004583331818381945,
+        "flow_compensated_p90_residual_m": 0.03671666565040747,
+        "temporal_evaluable_fraction": 0.8489270505765198,
+        "distribution": {
+          "flow_compensated_median_residual_m": {
+            "mean": 0.004583331818381945,
+            "median": 0.003999993205070496,
+            "p10": 0.001999996602535248,
+            "p90": 0.008100014925003052,
+            "samples": 60
+          },
+          "flow_compensated_p90_residual_m": {
+            "mean": 0.03671666565040747,
+            "median": 0.024000011384487152,
+            "p10": 0.012000001966953278,
+            "p90": 0.08139999955892563,
+            "samples": 60
+          },
+          "temporal_evaluable_fraction": {
+            "mean": 0.8489270505765198,
+            "median": 0.911659787735849,
+            "p10": 0.6346845518867925,
+            "p90": 0.9860740959119497,
+            "samples": 60
+          }
+        }
+      },
+      "cdm_sensor_fused": {
+        "flow_compensated_median_residual_m": 0.0048833331714073815,
+        "flow_compensated_p90_residual_m": 0.03919500036786007,
+        "temporal_evaluable_fraction": 0.8498283542976939,
+        "distribution": {
+          "flow_compensated_median_residual_m": {
+            "mean": 0.0048833331714073815,
+            "median": 0.003999993205070496,
+            "p10": 0.0020000040531158447,
+            "p90": 0.008300015330314641,
+            "samples": 60
+          },
+          "flow_compensated_p90_residual_m": {
+            "mean": 0.03919500036786007,
+            "median": 0.027999989688396454,
+            "p10": 0.014899986982345582,
+            "p90": 0.08872999817133342,
+            "samples": 60
+          },
+          "temporal_evaluable_fraction": {
+            "mean": 0.8498283542976939,
+            "median": 0.9143081761006289,
+            "p10": 0.6354078223270442,
+            "p90": 0.9863453223270441,
+            "samples": 60
+          }
+        }
+      }
+    },
+    "rankings": {
+      "coverage": [
+        "cdm_sensor_fused",
+        "cdm_camera_specific",
+        "raw_aligned"
+      ],
+      "flat_region_smoothness": [
+        "cdm_camera_specific",
+        "cdm_sensor_fused",
+        "raw_aligned"
+      ],
+      "edge_alignment": [
+        "cdm_camera_specific",
+        "cdm_sensor_fused",
+        "raw_aligned"
+      ],
+      "temporal_stability": [
+        "raw_aligned",
+        "cdm_camera_specific",
+        "cdm_sensor_fused"
+      ]
+    }
+  },
+  "occlusion_recovery": {
+    "description": "Natural raw-depth holes evaluated only where previous and next raw frames agree after RGB optical-flow warping.",
+    "by_method": {
+      "raw_aligned": {
+        "frames_with_evidence": 60,
+        "evaluable_hole_pixels": 75385,
+        "recovered_pixels": 0,
+        "recovery_coverage": 0.0,
+        "mae_m": null,
+        "rmse_m": null,
+        "within_5cm_fraction": null,
+        "within_10cm_fraction": null
+      },
+      "cdm_camera_specific": {
+        "frames_with_evidence": 60,
+        "evaluable_hole_pixels": 75385,
+        "recovered_pixels": 74908,
+        "recovery_coverage": 0.9936724812628507,
+        "mae_m": 0.019217641185685645,
+        "rmse_m": 0.0375524797553805,
+        "within_5cm_fraction": 0.9068590804720457,
+        "within_10cm_fraction": 0.9636620921663908
+      },
+      "cdm_sensor_fused": {
+        "frames_with_evidence": 60,
+        "evaluable_hole_pixels": 75385,
+        "recovered_pixels": 74908,
+        "recovery_coverage": 0.9936724812628507,
+        "mae_m": 0.019217641185685645,
+        "rmse_m": 0.0375524797553805,
+        "within_5cm_fraction": 0.9068590804720457,
+        "within_10cm_fraction": 0.9636620921663908
+      }
+    },
+    "rankings": {
+      "within_5cm": [
+        "cdm_camera_specific",
+        "cdm_sensor_fused"
+      ],
+      "recovery_coverage": [
+        "cdm_camera_specific",
+        "cdm_sensor_fused",
+        "raw_aligned"
+      ],
+      "mae": [
+        "cdm_camera_specific",
+        "cdm_sensor_fused"
+      ]
+    }
+  },
+  "multiview_geometry": {
+    "strict_calibrated_reprojection": false,
+    "primary_mode": "dominant-surface planarity and residual spread over synchronized head/left-wrist/right-wrist depth",
+    "secondary_mode": "synchronized RGB feature correspondences + raw-depth per-frame rigid fit proxy when enough overlap exists",
+    "limitation": "The bags expose per-camera internal TF but no common head/left-wrist/right-wrist robot-frame extrinsics. Planarity is rotation-invariant; feature scores are proxy residuals, not calibrated camera reprojection error.",
+    "diagnostics": {
+      "planarity_accepted": 90,
+      "pair_attempts": 30,
+      "fundamental_inliers": 16,
+      "feature_rejected": 29,
+      "raw_depth_rejected": 1
+    },
+    "planarity_by_method": {
+      "raw_aligned": {
+        "synchronized_frames": 30,
+        "mean_plane_inlier_fraction": 0.6759679390885238,
+        "mean_plane_rmse_m": 0.007737103766695788,
+        "three_view_plane_rmse_std_m": 0.0007581396613356953,
+        "distribution": {
+          "mean_plane_inlier_fraction": {
+            "mean": 0.6759679390885238,
+            "median": 0.652685929791554,
+            "p10": 0.5511141214696091,
+            "p90": 0.8453756704412998,
+            "samples": 30
+          },
+          "mean_plane_rmse_m": {
+            "mean": 0.007737103766695788,
+            "median": 0.008565051837650214,
+            "p10": 0.004626110732680658,
+            "p90": 0.00988199664925715,
+            "samples": 30
+          },
+          "three_view_plane_rmse_std_m": {
+            "mean": 0.0007581396613356953,
+            "median": 0.0004302771980134539,
+            "p10": 6.933882932852842e-05,
+            "p90": 0.0018662439883519826,
+            "samples": 30
+          }
+        }
+      },
+      "cdm_camera_specific": {
+        "synchronized_frames": 30,
+        "mean_plane_inlier_fraction": 0.5586696513858677,
+        "mean_plane_rmse_m": 0.00894321979198961,
+        "three_view_plane_rmse_std_m": 0.000747491216832447,
+        "distribution": {
+          "mean_plane_inlier_fraction": {
+            "mean": 0.5586696513858677,
+            "median": 0.5404362543044976,
+            "p10": 0.44851785714285713,
+            "p90": 0.6689574175824177,
+            "samples": 30
+          },
+          "mean_plane_rmse_m": {
+            "mean": 0.00894321979198961,
+            "median": 0.009434478101782936,
+            "p10": 0.006301284915259955,
+            "p90": 0.01040891609290803,
+            "samples": 30
+          },
+          "three_view_plane_rmse_std_m": {
+            "mean": 0.000747491216832447,
+            "median": 0.0003667354510446699,
+            "p10": 4.730428096415681e-05,
+            "p90": 0.0017110401333246187,
+            "samples": 30
+          }
+        }
+      },
+      "cdm_sensor_fused": {
+        "synchronized_frames": 30,
+        "mean_plane_inlier_fraction": 0.5466025804338475,
+        "mean_plane_rmse_m": 0.009024633709936792,
+        "three_view_plane_rmse_std_m": 0.0009804471153966924,
+        "distribution": {
+          "mean_plane_inlier_fraction": {
+            "mean": 0.5466025804338475,
+            "median": 0.5302678571428572,
+            "p10": 0.42662500000000003,
+            "p90": 0.6711964285714286,
+            "samples": 30
+          },
+          "mean_plane_rmse_m": {
+            "mean": 0.009024633709936792,
+            "median": 0.009863620519941288,
+            "p10": 0.006745132505794494,
+            "p90": 0.010391587246442784,
+            "samples": 30
+          },
+          "three_view_plane_rmse_std_m": {
+            "mean": 0.0009804471153966924,
+            "median": 0.0005963966741577423,
+            "p10": 0.00014606543589141386,
+            "p90": 0.002860655263671688,
+            "samples": 30
+          }
+        }
+      }
+    },
+    "ranking_by_plane_rmse": [
+      "raw_aligned",
+      "cdm_camera_specific",
+      "cdm_sensor_fused"
+    ],
+    "ranking_by_three_view_spread": [
+      "cdm_camera_specific",
+      "raw_aligned",
+      "cdm_sensor_fused"
+    ],
+    "feature_rigid_fit_by_method": {
+      "raw_aligned": {
+        "accepted_pair_frames": 0,
+        "distribution": {}
+      },
+      "cdm_camera_specific": {
+        "accepted_pair_frames": 0,
+        "distribution": {}
+      },
+      "cdm_sensor_fused": {
+        "accepted_pair_frames": 0,
+        "distribution": {}
+      }
+    },
+    "feature_ranking_by_median_residual": []
+  },
+  "task_roi_geometry": {
+    "description": "Event-balanced geometry inside final human-approved head and executing-wrist SAM2 masks.",
+    "events": 19,
+    "event_views": 19,
+    "sampled_track_frames": 205,
+    "by_method": {
+      "raw_aligned": {
+        "event_views": 19,
+        "roi_valid_fraction": 0.49120586341794603,
+        "roi_raw_hole_fill_fraction": 0.0,
+        "roi_median_depth_m": 0.11174100743292781,
+        "roi_p90_p10_span_m": 0.04658006837360802,
+        "roi_surface_roughness_m": 0.0,
+        "roi_boundary_valid_fraction": 0.48247690394749093,
+        "roi_boundary_contrast_m": 0.010083334323004928,
+        "roi_sensor_preservation_median_ae_m": 0.0,
+        "head": {
+          "event_views": 0,
+          "roi_valid_fraction": null,
+          "roi_raw_hole_fill_fraction": null,
+          "roi_median_depth_m": null,
+          "roi_p90_p10_span_m": null,
+          "roi_surface_roughness_m": null,
+          "roi_boundary_valid_fraction": null,
+          "roi_boundary_contrast_m": null,
+          "roi_sensor_preservation_median_ae_m": null
+        },
+        "wrist": {
+          "event_views": 19,
+          "roi_valid_fraction": 0.49120586341794603,
+          "roi_raw_hole_fill_fraction": 0.0,
+          "roi_median_depth_m": 0.11174100743292781,
+          "roi_p90_p10_span_m": 0.04658006837360802,
+          "roi_surface_roughness_m": 0.0,
+          "roi_boundary_valid_fraction": 0.48247690394749093,
+          "roi_boundary_contrast_m": 0.010083334323004928,
+          "roi_sensor_preservation_median_ae_m": 0.0
+        }
+      },
+      "cdm_camera_specific": {
+        "event_views": 19,
+        "roi_valid_fraction": 0.9978819532884181,
+        "roi_raw_hole_fill_fraction": 0.9967602642138061,
+        "roi_median_depth_m": 0.10855683623488789,
+        "roi_p90_p10_span_m": 0.03452684909485554,
+        "roi_surface_roughness_m": 0.0,
+        "roi_boundary_valid_fraction": 0.9994466468833915,
+        "roi_boundary_contrast_m": 0.014148990606521746,
+        "roi_sensor_preservation_median_ae_m": 0.005273964007596492,
+        "head": {
+          "event_views": 0,
+          "roi_valid_fraction": null,
+          "roi_raw_hole_fill_fraction": null,
+          "roi_median_depth_m": null,
+          "roi_p90_p10_span_m": null,
+          "roi_surface_roughness_m": null,
+          "roi_boundary_valid_fraction": null,
+          "roi_boundary_contrast_m": null,
+          "roi_sensor_preservation_median_ae_m": null
+        },
+        "wrist": {
+          "event_views": 19,
+          "roi_valid_fraction": 0.9978819532884181,
+          "roi_raw_hole_fill_fraction": 0.9967602642138061,
+          "roi_median_depth_m": 0.10855683623488789,
+          "roi_p90_p10_span_m": 0.03452684909485554,
+          "roi_surface_roughness_m": 0.0,
+          "roi_boundary_valid_fraction": 0.9994466468833915,
+          "roi_boundary_contrast_m": 0.014148990606521746,
+          "roi_sensor_preservation_median_ae_m": 0.005273964007596492
+        }
+      },
+      "cdm_sensor_fused": {
+        "event_views": 19,
+        "roi_valid_fraction": 0.99878263508015,
+        "roi_raw_hole_fill_fraction": 0.9967602642138061,
+        "roi_median_depth_m": 0.1105680406910547,
+        "roi_p90_p10_span_m": 0.03834404665659885,
+        "roi_surface_roughness_m": 0.0,
+        "roi_boundary_valid_fraction": 0.9995818854110333,
+        "roi_boundary_contrast_m": 0.010892225264441393,
+        "roi_sensor_preservation_median_ae_m": 0.0,
+        "head": {
+          "event_views": 0,
+          "roi_valid_fraction": null,
+          "roi_raw_hole_fill_fraction": null,
+          "roi_median_depth_m": null,
+          "roi_p90_p10_span_m": null,
+          "roi_surface_roughness_m": null,
+          "roi_boundary_valid_fraction": null,
+          "roi_boundary_contrast_m": null,
+          "roi_sensor_preservation_median_ae_m": null
+        },
+        "wrist": {
+          "event_views": 19,
+          "roi_valid_fraction": 0.99878263508015,
+          "roi_raw_hole_fill_fraction": 0.9967602642138061,
+          "roi_median_depth_m": 0.1105680406910547,
+          "roi_p90_p10_span_m": 0.03834404665659885,
+          "roi_surface_roughness_m": 0.0,
+          "roi_boundary_valid_fraction": 0.9995818854110333,
+          "roi_boundary_contrast_m": 0.010892225264441393,
+          "roi_sensor_preservation_median_ae_m": 0.0
+        }
+      }
+    },
+    "rankings": {
+      "roi_coverage": [
+        "cdm_sensor_fused",
+        "cdm_camera_specific",
+        "raw_aligned"
+      ],
+      "roi_surface_smoothness": [
+        "raw_aligned",
+        "cdm_camera_specific",
+        "cdm_sensor_fused"
+      ],
+      "roi_boundary_completeness": [
+        "cdm_sensor_fused",
+        "cdm_camera_specific",
+        "raw_aligned"
+      ]
+    }
+  },
+  "representatives": [
+    {
+      "sequence": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003",
+      "event_id": "A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003:grasp_000_right",
+      "camera": "cam_r",
+      "frame_index": 90,
+      "image": "representatives/A10-A15-G-S-01-TQ_03_01-4_304-leju_claw-20260512172205-200049-8c435b-v003__00_wrist_cam_r_000090.jpg"
+    },
+    {
+      "sequence": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003",
+      "event_id": "A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003:grasp_000_right",
+      "camera": "cam_r",
+      "frame_index": 156,
+      "image": "representatives/A10-A15-G-S-01-TQ_09_01-P4_297-dex_hand-20260629103123-49-9a5c2d-v003__00_wrist_cam_r_000156.jpg"
+    },
+    {
+      "sequence": "chengzhong_xianxia_main1",
+      "event_id": "chengzhong_xianxia_main1:grasp_000_left",
+      "camera": "cam_l",
+      "frame_index": 86,
+      "image": "representatives/chengzhong_xianxia_main1__00_wrist_cam_l_000086.jpg"
+    },
+    {
+      "sequence": "dajian_xianxia_main1",
+      "event_id": "dajian_xianxia_main1:grasp_000_right",
+      "camera": "cam_r",
+      "frame_index": 232,
+      "image": "representatives/dajian_xianxia_main1__00_wrist_cam_r_000232.jpg"
+    },
+    {
+      "sequence": "zhoumian_xianxia_main1",
+      "event_id": "zhoumian_xianxia_main1:grasp_000_right",
+      "camera": "cam_r",
+      "frame_index": 160,
+      "image": "representatives/zhoumian_xianxia_main1__00_wrist_cam_r_000160.jpg"
+    }
+  ],
+  "limitations": [
+    "Raw sensor depth and temporal consensus are references, not laser-scanner ground truth.",
+    "Lower roughness can indicate denoising or over-smoothing; interpret it with edge alignment and sensor preservation.",
+    "Natural-hole recovery is evaluated only on temporally observable, bidirectionally consistent pixels.",
+    "Cross-view planarity is rotation-invariant; calibrated reprojection remains unavailable because common robot-frame camera extrinsics are absent.",
+    "No attention map or trained policy output is used in these four evidence families."
+  ],
+  "elapsed_seconds": 17.84139585494995
+}

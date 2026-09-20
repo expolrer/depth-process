@@ -74,6 +74,27 @@ P95 为 4.010 m。下游代理评测使用同一个无 Prompt、Depth-only ACT �
 
 首页指标数据同时保存为 `docs/data/depth_quality_metrics.json`，便于复核或二次分析。
 
+### CDM 双腕 D405 实测
+
+CDM 评估只覆盖 5 个数据集的 `cam_l` / `cam_r` 共 10 路 D405、9,824 帧，使用与模型输入一致的
+`depth_aligned_rgb_mm` 和 0.07–0.50 m 有效量程。头部相机为 Gemini-335L，没有套用 D435 权重。
+
+| 指标 | 原始对齐深度 | CDM D405 纯模型 | CDM D405 传感器融合 |
+| --- | ---: | ---: | ---: |
+| 全量有效覆盖率 | 29.39% | 84.79% | **84.86%** |
+| 全量新增填充率 | 0 | 55.47% | **55.47%** |
+| RGB-Depth 边缘 F1（采样） | 0.152 | **0.408** | 0.370 |
+| 自然孔洞恢复覆盖率 | 0 | **99.37%** | **99.37%** |
+| 恢复像素 5 cm 内正确率 | - | **90.69%** | **90.69%** |
+| 任务 ROI 有效覆盖率 | 49.12% | 99.79% | **99.88%** |
+| 传感器重叠区 MAE | 0（基准） | 1.69 cm | **0（保留）** |
+| 主要平面 RMSE | **7.74 mm** | 8.94 mm | 9.02 mm |
+
+这些结果说明 CDM 能显著补全 D405 孔洞并改善 RGB 边缘对齐；传感器融合版严格保留量程内的原始有效像素。
+但补全后的平面代理误差略高于原始深度，不能仅凭覆盖率宣称几何质量全面提升。CDM 尚未进入 ACT/VLA
+下游动作误差或成功率评测，首页对应单元明确显示“待评测”。完整报告位于
+`docs/quality_evidence/cdm_d405/`。
+
 ## 四类无模型深度质量证据
 
 最新评估覆盖 5 个数据集、15 路相机视图、180 帧空间质量样本、90 个时序片段和
@@ -234,7 +255,11 @@ seeking.
 - Depth-Anything-V2 仓库：`/ssd/hhw/Depth-Anything-V2`
 - Depth-Anything-V2-Small 权重：
   `/ssd/hhw/Depth-Anything-V2/checkpoints/depth_anything_v2_vits.pth`
-- CDM 官方仓库与 D435/D405 权重：尚未中转到 56 服务器；脚本已接入，但不能在权重缺失时伪造结果。
+- CDM 官方仓库：`/ssd/hhw/camera-depth-models/manip-as-in-sim-suite/cdm`
+- CDM D405 权重：`/ssd/hhw/camera-depth-models/checkpoints/cdm_d405.ckpt`；SHA256 为
+  `be9a407b36917bb9a16b994da9e09b8ba9076ed963ae5b25198572b0e8a4e331`。
+- D435 官方权重已在 6 服务器完成 SHA256 校验，但没有用于当前 Gemini-335L 头部数据；56 端仅保留可续传分块，
+  不把 D435 结果标记为已运行。
 
 CDM 代码仓库使用 Apache-2.0；官方 D435/D405 模型页面将权重标注为 CC BY-NC 4.0，
 因此这些权重不应直接用于商业交付，使用前需再次核对许可证。
